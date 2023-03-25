@@ -9,3 +9,6 @@
 yarn add -D typescript
 yarn add -D svelte-preprocess
 
+
+yarn add -D bootstrap bootstrap-icons sveltestrap @popperjs/core@^2.11.0
+

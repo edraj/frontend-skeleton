@@ -5,3 +5,7 @@
  yarn install
  yarn build
  yarn run
+
+yarn add -D typescript
+yarn add -D svelte-preprocess
+

@@ -17,6 +17,8 @@
     "mdsvex": "^0.9.3",
     "spank": "^2.0.0-12",
     "svelte": "^3.39.0",
+    "svelte-preprocess": "^5.0.3",
+    "typescript": "^5.0.2",
     "vite": "^4.0.0"
   }
 }

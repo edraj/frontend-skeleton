@@ -4,7 +4,7 @@
  cd frontend-skelton
  yarn install
  yarn build
- yarn run
+ yarn dev
 
 yarn add -D typescript
 yarn add -D svelte-preprocess

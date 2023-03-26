@@ -5,4 +5,25 @@
     const router = createRouter({ routes })
 </script>
 
-<Router {router} />
+<script lang="ts">
+  import { setupI18n, dir } from "./i18n";
+
+  setupI18n();
+  $: {
+    try {
+      document.dir = $dir;
+      if ($dir == "rtl") {
+        document.head.children["bootstrap"].href =
+          "/assets/bootstrap.rtl.min.css";
+      } else {
+        document.head.children["bootstrap"].href = "/assets/bootstrap.min.css";
+      }
+    } catch (error) {
+      console.log("Error in App:", error);
+    }
+  }
+</script>
+
+<div id="routify-app">
+  <Router {router} />
+</div>

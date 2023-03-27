@@ -5,7 +5,7 @@
   import { website } from "../../config";
 </script>
 
-<Navbar class=" px-3 mt-3 " color="light" light>
+<Navbar class=" px-3 mt-0 py-0" color="light" light>
   <SelectLanguage />
   <LocalizedValue field="{website.footer}" />
   <NavbarBrand href="/"><LocalizedValue field="{website.display_name}" /></NavbarBrand>

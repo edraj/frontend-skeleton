@@ -1,14 +1,17 @@
 <script lang="ts">
   import { Button, Icon, Modal } from 'sveltestrap';
+  import { Level, showToast } from '../utils/toast';
+
   let message: string = "Nice day";
   let isOpen = false;
   const toggle = () => (isOpen = !isOpen);
+  const mytoast = () => ( showToast(Level.warn, "Hello"))
 </script>
 
 {message}
 
 
-<Button color="primary">
+<Button color="primary" on:click={mytoast}>
   Nice! <Icon name="emoji-smile-fill" />
 </Button>
 

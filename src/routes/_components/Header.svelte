@@ -1,8 +1,10 @@
 <script lang="ts">
   import { Form, Input, Button, Navbar, NavbarBrand, Nav, NavLink } from "sveltestrap";
-  import { _, locale } from "../../i18n";
+  import { _ } from "../../i18n";
   import { website } from "../../config";
-  import signedin_user from "../management/_stores/signedin_user";
+  import Icon from "../_components/Icon.svelte";
+  // import signedin_user from "../management/_stores/signedin_user";
+  import { user, signout } from "../_stores/user";
   // import { redirect } from "@roxi/routify";
   import LocalizedValue from "./LocalizedValue.svelte";
 
@@ -12,33 +14,22 @@
   //   $redirect(`/search/posts?q=${encodeURI(search)}`);
   }
 
-  let localized_displayname : string = "";
-  $: {
-    // console.log("Signed in user", $signedin_user);
-    if ($signedin_user) {
-      if ($signedin_user.attributes && $signedin_user.attributes.localized_displaynames) {
-        localized_displayname = $signedin_user.attributes.localized_displaynames[$locale];
-      } else if ($signedin_user.displayname) {
-        localized_displayname = $signedin_user.displayname;
-      } else {
-        localized_displayname = $signedin_user.short_name;
-      }
-    } else {
-      localized_displayname = "";
-    }
-  }
 </script>
 
 <Navbar color="light" light expand="md" class="px-2 w-100 py-0">
   <NavbarBrand href="/"><LocalizedValue field="{website.short_name}" /></NavbarBrand>
   <Nav class="me-auto" navbar>
-    {#if $signedin_user}
-      <NavLink href="/managed/folder/posts">{localized_displayname}</NavLink>
+    {#if $user && $user.signedin}
+      <NavLink href="/management/dashboard">{$user.localized_displayname}</NavLink>
     {/if}
     <NavLink href="/about">{$_("about")}</NavLink>
     <NavLink href="/contact">{$_("contact_us")}</NavLink>
-    {#if !$signedin_user}
-      <NavLink href="/managed">{$_("login")}</NavLink>
+    {#if !$user || !$user.signedin}
+      <NavLink href="/management">{$_("login")}</NavLink>
+    {:else}
+      <NavLink href="#" title="{$_('logout')}" on:click="{signout}">
+        <Icon name="power" />
+      </NavLink>
     {/if}
   </Nav>
   <Form inline={true} class="ms-auto d-flex my-2 my-lg-0">
@@ -46,9 +37,9 @@
       bsSize="sm"
       type="search"
       readonly={false}
-      placeholder="{$_('searching_for_what')}"
+      placeholder={$_('searching_for_what')}
       class=" ms-sm-2 "
-      bind:value="{search}"
+      bind:value={search}
        />
     <Button size="sm" outline={true} color="secondary" class="ms-2 my-2 my-sm-0 " on:click="{handleClick}">
       {$_("search")}

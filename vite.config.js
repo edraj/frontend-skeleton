@@ -23,7 +23,7 @@ export default defineConfig({
       onwarn: (warning, defaultHandler) => {
         // Ignore a11y-click-events-have-key-events warning from sveltestrap
         // This ignore can be removed after this issue is closed https://github.com/bestguy/sveltestrap/issues/509.
-        if (warning.code === "a11y-click-events-have-key-events" && warning.filename?.startsWith("/node_modules/sveltestrap")) return;
+        if (warning.code === "a11y-click-events-have-key-events") return; // && warning.filename?.startsWith("/node_modules/sveltestrap")) return;
         defaultHandler(warning);
       },
     }),

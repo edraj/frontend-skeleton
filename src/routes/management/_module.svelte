@@ -1,6 +1,7 @@
 <!-- routify:meta reset -->
 <script lang="ts">
   import { Col, Container, Row } from "sveltestrap";
+  import { Circle3 } from 'svelte-loading-spinners';
   // import Footer from "../../_components/Footer.svelte";
   import {user} from "../_stores/user";
   import Login from "../_components/Login.svelte";
@@ -21,8 +22,9 @@
     </div>
   {:else}
     {#await getSpaces()}
-    <h2> Loading .... </h2>
-      <div />
+      <div class="w-100 h-100 border border-success d-flex justify-content-center align-items-center">
+        <Circle3 size="75" unit="px" duration="1s" />
+      </div>
     {:then _}
       <Container
         fluid={true}

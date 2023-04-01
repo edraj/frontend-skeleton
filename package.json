@@ -20,11 +20,13 @@
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
     "mdsvex": "^0.10.0",
+    "prismjs": "^1.29.0",
     "spank": "^2.0.0-12",
     "svelte": "^3.39.0",
     "svelte-i18n": "^3.6.0",
     "svelte-loading-spinners": "^0.3.4",
     "svelte-preprocess": "^5.0.3",
+    "svelte-prismjs": "^1.0.2",
     "sveltestrap": "^5.10.0",
     "typescript": "^5.0.2",
     "vite": "^4.0.0"

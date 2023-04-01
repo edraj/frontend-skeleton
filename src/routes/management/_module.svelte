@@ -8,7 +8,7 @@
   // import Notifications from "svelte-notifications";
   import { getSpaces } from "./_stores/spaces";
   import Header from "./_components/Header.svelte";
-  // import Sidebar from "./_components/Sidebar.svelte";
+  import Sidebar from "./_components/Sidebar.svelte";
 
   // let init = getSpaces();
 </script>
@@ -37,7 +37,7 @@
           <Col sm="12"><Header /></Col>
         </Row>
         <Row class="w-100 ms-0 my-0 border border-success h-100" noGutters>
-          <Col sm="2" class=" border border-warning">*** Sidebar ***</Col>
+          <Col sm="2" class=" border border-warning"><Sidebar /></Col>
           <Col sm="10" class="border border-info"><slot /></Col>
         </Row>
       </Container>

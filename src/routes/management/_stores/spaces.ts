@@ -23,9 +23,11 @@ const spaces = {
  */
 const getSpaceSubpaths = async (spaceName : string) => {
   const response = await dmart_query({
-    type: QueryType.search,
+    type: QueryType.subpath,
     space_name: spaceName,
     subpath: "/",
+    filter_types:["folder"],
+    exact_subpath: true,
     retrieve_json_payload: true,
     retrieve_attachments: true,
     search: "",
@@ -74,7 +76,7 @@ export const getSpaces = async () => {
       icon: "house-door",
       name: "dashboard",
     });
-    return true;
+    return _spaces;
   } else {
     if (response.error.type === "jwtauth") {
       await signout();

@@ -141,6 +141,7 @@ type QueryRequest = {
   retrieve_attachments?: boolean,
   validate_schema?: boolean,
   jq_filter?: string,
+  exact_subpath?: boolean,
   limit?: number,
   offset?: number
 };
@@ -154,7 +155,7 @@ export enum RequestType {
 };
 
 
-enum ResourceType {
+export enum ResourceType {
     user = "user",
     group = "group",
     folder = "folder",
@@ -269,3 +270,11 @@ export async function request(action: ActionRequest) {
   return data;
 };
 
+
+export async function get_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false
+  , retrieve_attachments: boolean = false) {
+  if (!subpath || subpath == "/")
+    subpath = "__root__";
+  const { data } = await axios.get(`${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`, {headers} );
+  return data;
+}

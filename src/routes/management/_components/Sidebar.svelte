@@ -75,8 +75,8 @@
         <ListGroupItem
           color="light"
           action
-          href={$url(`/management/${$active_section.name}}`)}
-          active={$isActive(`/management/${$active_section.name}`)}>
+          href={$url("/management/" + $active_section.name)}
+          active={$isActive("/management/" + $active_section.name)}>
           {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
           {$_(child.name)}
         </ListGroupItem>

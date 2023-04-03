@@ -1,4 +1,5 @@
-# Routify 3 App
+# Main public page
 
 - [Hello World](/hello-world)
 - [Nice](/nice)
+- [Other](/another)

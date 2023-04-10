@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { query } from "../../../dmart";
+  import { query, QueryType } from "../../../dmart";
   import { active_section } from "../_stores/active_section.js";
   import { active_entry } from "../_stores/active_entry.js";
   import Folder from "./Folder.svelte";
@@ -9,6 +9,7 @@
   import { url, isActive } from "@roxi/routify";
   import { entries } from "../_stores/entries.js";
   import { status_line } from "../_stores/status_line.js";
+  import {active_space} from "../_stores/active_space";
   import { ListGroup, ListGroupItem } from "sveltestrap";
 
   // Section components
@@ -18,11 +19,11 @@
     // "queryform": QueryForm
   };
 
-  let query_type = "subpath";
-  let resource_types = []; // ["folder", "post", "media"];
-  let shortnames = [];
-  let search = "";
-  let max_returned_items = 100;
+  //let query_type = "subpath";
+  // let resource_types = []; // ["folder", "post", "media"];
+  //let shortnames = [];
+  //let search = "";
+  //let max_returned_items = 100;
   //let entries = {};
   //let subpaths = [];
 
@@ -34,12 +35,17 @@
   $: {
     //name = $active_section.name;
     //icon = $active_section.icon;
-    resource_types = $active_section.resource_types;
+    ;
     //children = $active_section.children;
     //console.log("Active section has changed to ", name, children);
     for (let child of $active_section.children) {
       if (child.type && child.type == "folder" && child.imx_path && !(child.imx_path in $entries)) {
-        let subpath = child.imx_path;
+        const subpath : string = child.imx_path || "/";
+        const entries = query({space_name: $active_space, subpath, search: "", type: QueryType.subpath, filter_types: ["folder"]}).then(
+          (response) => {
+
+          }
+        );
         /*imx_entries(subpath, resource_types, shortnames, query_type, search, max_returned_items).then((_entries) => {
           $entries[subpath] = []; // Empty the list of entries for the subpath
           //console.log("Loading entries for ", subpath);

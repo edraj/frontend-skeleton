@@ -1,7 +1,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
-enum Status {
+export enum Status {
   success = "success",
   failed = "failed"
 };
@@ -22,7 +22,7 @@ type ApiResponseRecord = {
   attributes: Record<string, any>
 };
 
-type ApiResponse = {
+export type ApiResponse = {
   status: Status,
   error: Error,
   records: Array<ApiResponseRecord>
@@ -80,7 +80,7 @@ type ProfileResponseRecord = ApiResponseRecord & {
   }
 };
 
-enum ActionType {
+export enum ActionType {
     query = "query",
     view = "view",
     update = "update",
@@ -91,7 +91,7 @@ enum ActionType {
     progress_ticket = "progress_ticket"
 };
 
-type ProfileResponse = ApiResponse & {
+export type ProfileResponse = ApiResponse & {
   records: Array<ProfileResponseRecord>
 }
 
@@ -114,7 +114,7 @@ export enum QueryType {
     reports = "reports"
 };
 
-enum SortyType {
+export enum SortyType {
     ascending = "ascending",
     descending = "descending"
 };
@@ -125,7 +125,7 @@ enum SortyType {
 //   low = "low"
 // };
 
-type QueryRequest = {
+export type QueryRequest = {
   type: QueryType,
   space_name: string,
   subpath: string,
@@ -179,7 +179,7 @@ export enum ResourceType {
 };
 
 
-enum ContentType {
+export enum ContentType {
     text = "text",
     markdown = "markdown",
     json = "json",
@@ -216,7 +216,7 @@ type ResponseRecord = {
   }
 };
 
-type ActionResponse = ApiResponse & {
+export type ActionResponse = ApiResponse & {
   records: Array<ResponseRecord & {attachments: { media: Array<ResponseRecord>, json: Array<ResponseRecord> }}>
 };
 
@@ -230,7 +230,7 @@ type ActionRequestRecord = {
 
 };
 
-type ActionRequest = {
+export type ActionRequest = {
   space_name: string,
   request_type: RequestType,
   records: Array<ActionRequestRecord>
@@ -271,7 +271,7 @@ export async function request(action: ActionRequest) {
 };
 
 
-export async function get_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false
+export async function retrieve_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false
   , retrieve_attachments: boolean = false) {
   if (!subpath || subpath == "/")
     subpath = "__root__";

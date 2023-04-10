@@ -40,7 +40,7 @@
         <Icon name="power" />
       </NavLink>
     </NavItem>
-    <Form inline={true} class="ms-auto ">
+    <Form inline={true} class="ms-auto">
       <InputGroup size="sm">
         <Input placeholder="{$_('searching_for_what')}" />
         <InputGroupText><Icon name="search" /></InputGroupText>

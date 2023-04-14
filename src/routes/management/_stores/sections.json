@@ -1,11 +1,11 @@
 [
   {
-    "name": "memberprofile",
+    "name": "member",
     "icon": "person-circle",
     "children": [
       {
         "type": "link",
-        "name": "memberprofile"
+        "name": "profile"
       }
     ]
   },
@@ -15,7 +15,7 @@
     "children": [
       {
         "type": "link",
-        "name": "dashboard"
+        "name": "stats"
       }
     ]
   },
@@ -39,7 +39,11 @@
     "children": [
       {
         "type": "link",
-        "name": "notifications"
+        "name": "new"
+      },
+      {
+        "type": "link",
+        "name": "archived"
       }
     ]
   },

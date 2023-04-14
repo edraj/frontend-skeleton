@@ -78,11 +78,12 @@
     {#each $active_section.children as child ($active_section.name + child.name)}
       {#if child.type == "link"}
         <!--p class="my-0 font-monospace"><small>{JSON.stringify(child, undefined,1)}</small></p-->
+        {(console.log(child), '')}
         <ListGroupItem
           color="light"
           action
-          href={$url("/management/" + $active_section.name)}
-          active={$isActive("/management/" + $active_section.name)}>
+          href={$url("/management/" + $active_section.name + "/" + child.name)}
+          active={$isActive("/management/" + $active_section.name + "/" + child.name)}>
           {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
           {$_(child.name)}
         </ListGroupItem>

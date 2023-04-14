@@ -31,7 +31,8 @@
         document.head.children["bootstrap"].href =
           "/assets/bootstrap.rtl.min.css";
       } else {
-        document.head.children["bootstrap"].href = "/assets/bootstrap.min.css";
+        if(document && document.head && document.head.children["bootstrap"])
+          document.head.children["bootstrap"].href = "/assets/bootstrap.min.css";
       }
     } catch (error) {
       console.log("Error in App:", error);

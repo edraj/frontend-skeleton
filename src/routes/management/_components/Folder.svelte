@@ -65,9 +65,9 @@
 {#if expanded }
   <ul class="py-1 ps-1 ms-2 border-start">
     {#await get_children(space_name, `${parent_subpath}/${folder.shortname}`, 10, 0, [ResourceType.folder] )}
-      <h6> Loading children of {parent_subpath}/{folder.shortname} </h6>
+      <!--h6> Loading children of {parent_subpath}/{folder.shortname} </h6-->
     {:then children_data}
-      <pre> expanded {children_data.records.length}</pre>
+      <!--pre> expanded {children_data.records.length}</pre-->
       {#if children_data.records.length > 0}
         {#each children_data.records as child }
           <li>

@@ -274,9 +274,11 @@ export async function getProfile() {
 
 };
 
-export async function query(query: QueryRequest) : Promise<ApiResponse> {
+export type ApiQueryResponse = ApiResponse & {attributes: {total: number, returned: number}};
+
+export async function query(query: QueryRequest) : Promise<ApiQueryResponse> {
   query.subpath = query.subpath.replace(/\/+/g, "/");
-  const { data } = await axios.post<ApiResponse & {attributes: {total: number, returned: number}}>( api_url + "/managed/query", query, {headers});
+  const { data } = await axios.post<ApiQueryResponse>( api_url + "/managed/query", query, {headers});
   return data;
 };
 

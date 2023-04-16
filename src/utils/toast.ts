@@ -25,6 +25,9 @@ export enum Level {
   warn="warn"
 };
 
-export function showToast( level : Level, message : string) {
+export function showToast( level : Level, message : string | undefined) {
+  if (message === undefined) {
+    message = (level == Level.info) ? "Success" : "Failed";
+  }
   toast.push(message, { classes: [level] });
 }

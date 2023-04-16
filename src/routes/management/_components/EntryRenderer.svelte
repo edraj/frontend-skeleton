@@ -5,10 +5,13 @@
   import { Nav, Button, ButtonGroup } from "sveltestrap";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
+  import ListView from "./ListView.svelte";
 
   let header_height : number;
   let status : string;
   export let entry : ResponseEntry;
+  export let space_name : string;
+  export let subpath : string;
   export let resource_type : ResourceType;
 
   let tab_option = (resource_type === ResourceType.folder) ? "list" : "edit" ;
@@ -146,6 +149,7 @@
 <div class="px-1 pb-1 tab-content" style="height: calc(100% - {header_height}px); overflow: hidden auto;">
   <div class="h-100 tab-pane" class:active="{tab_option === 'list'}">
     <pre> List goes here </pre>
+    <ListView {space_name} {subpath}/>
     <!--History subpath="{entry.subpath}" shortname="{entry.shortname}" /-->
   </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'source'}">
@@ -157,7 +161,7 @@
     </div>
   </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'edit'}">
-    <h4>Conent type {entry.payload.content_type}</h4>
+    <h4>Conent type {entry.payload?.content_type}</h4>
 
     <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
       <pre> {JSON.stringify(entry,null,1)} </pre>

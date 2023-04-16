@@ -1,11 +1,18 @@
 <script lang="ts">
   import { Button, Icon, Modal } from 'sveltestrap';
   import { Level, showToast } from '../utils/toast';
+  // import { meta } from '@roxi/routify';
 
   let message: string = "Nice day";
   let isOpen = false;
-  const toggle = () => (isOpen = !isOpen);
+  // const toggle = () => (isOpen = !isOpen);
+  async function toggle() { 
+  isOpen = !isOpen
+  }
   const mytoast = () => ( showToast(Level.warn, "Hello"))
+
+  export let context;
+  const { node } = context;
 </script>
 
 {message}
@@ -24,3 +31,7 @@
     class="img-fluid"
   />
 </Modal>
+
+  <h2> {node.name} </h2>
+  <pre> {JSON.stringify(node, null, 2 )} </pre>
+<h1> {JSON.stringify(node.meta)} </h1>

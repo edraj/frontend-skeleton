@@ -1,64 +1,20 @@
 <script lang="ts">
-  import { query, QueryType } from "../../../dmart";
+  import { query, QueryType, RequestType, ResourceType } from "../../../dmart";
   import { active_section } from "../_stores/active_section.js";
-  import { active_entry } from "../_stores/active_entry.js";
+  // import { active_entry } from "../_stores/active_entry.js";
   import Folder from "./Folder.svelte";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
-  //import { onDestroy } from "svelte";
   import { url, isActive } from "@roxi/routify";
   import { entries } from "../_stores/entries.js";
   import { status_line } from "../_stores/status_line.js";
   import {active_space} from "../_stores/active_space";
   import { ListGroup, ListGroupItem } from "sveltestrap";
-
-  // Section components
-  // import QueryForm from "./QueryForm.svelte";
+  import Spaces from "./sidebar/Spaces.svelte"
 
   const components = {
-    // "queryform": QueryForm
+    spaces: Spaces
   };
-
-  //let query_type = "subpath";
-  // let resource_types = []; // ["folder", "post", "media"];
-  //let shortnames = [];
-  //let search = "";
-  //let max_returned_items = 100;
-  //let entries = {};
-  //let subpaths = [];
-
-  //let children = [];
-  //let name = "";
-  //let icon = "";
-
-  //const unsubscribe = active_section.subscribe((value) => {
-  $: {
-    //name = $active_section.name;
-    //icon = $active_section.icon;
-    ;
-    //children = $active_section.children;
-    //console.log("Active section has changed to ", name, children);
-    for (let child of $active_section.children) {
-      if (child.type && child.type == "folder" && child.imx_path && !(child.imx_path in $entries)) {
-        const subpath : string = child.imx_path || "/";
-        const entries = query({space_name: $active_space, subpath, search: "", type: QueryType.subpath, filter_types: ["folder"]}).then(
-          (response) => {
-
-          }
-        );
-        /*imx_entries(subpath, resource_types, shortnames, query_type, search, max_returned_items).then((_entries) => {
-          $entries[subpath] = []; // Empty the list of entries for the subpath
-          //console.log("Loading entries for ", subpath);
-          _entries.forEach((_entry) => {
-            $entries[subpath].push({ data: _entry });
-          });
-        });*/
-      }
-    }
-  }
-  //});
-
-  //onDestroy(unsubscribe);
 
   let head_height : number;
   let foot_height : number;
@@ -76,36 +32,14 @@
   style="height: calc(100% - {head_height + foot_height}px); overflow: hidden auto;">
   <ListGroup flush class="w-100">
     {#each $active_section.children as child ($active_section.name + child.name)}
-      {#if child.type == "link"}
-        <!--p class="my-0 font-monospace"><small>{JSON.stringify(child, undefined,1)}</small></p-->
-        {(console.log(child), '')}
-        <ListGroupItem
-          color="light"
-          action
-          href={$url("/management/" + $active_section.name + "/" + child.name)}
-          active={$isActive("/management/" + $active_section.name + "/" + child.name)}>
-          {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
-          {$_(child.name)}
-        </ListGroupItem>
-      {:else if child.type == "component" && child.name in components}
+      {#if child.type == "component" && child.name in components}
         <svelte:component this={components[child.name]} />
-      {:else if child.type == "folder" && $entries[child.imx_path] && $entries[child.imx_path].length > 0}
-        <ListGroupItem class="px-0">
-          <!--b> {child.name}</b> <br/-->
-          <div class="mb-2">
-            <Icon name="diagram-3" class="me-1" />
-            {$_("entries_of")} <b>{$_(child.imx_path)}</b>
-          </div>
-
-          {#each $entries[child.imx_path] as entry (child.imx_path + entry.data.shortname)}
-            <Folder data="{entry.data}" />
-          {/each}
-        </ListGroupItem>
       {/if}
     {/each}
   </ListGroup>
 </div>
 <div class="w-100" bind:clientHeight={foot_height}>
+  <!--
   {#if $active_entry.data}
     <hr class="my-0" />
     <p class="lh-1 my-0">
@@ -123,4 +57,5 @@
     <hr class="my-1" />
     {@html $status_line}
   {/if}
+-->
 </div>

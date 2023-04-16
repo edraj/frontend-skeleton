@@ -14,7 +14,7 @@ type Error = {
 
 };
 
-type ApiResponseRecord = {
+export type ApiResponseRecord = {
   resource_type: string,
   shortname: string,
   branch_name: string,
@@ -129,7 +129,7 @@ export type QueryRequest = {
   type: QueryType,
   space_name: string,
   subpath: string,
-  filter_types?: Array<string>,
+  filter_types?: Array<ResourceType>,
   filter_schema_names?: Array<string>,
   filter_shortnames?: Array<string>,
   search: string,
@@ -199,7 +199,21 @@ type Payload = {
 
 };
 
-type ResponseRecord = {
+export type ResponseEntry = {
+  uuid: string,
+  shortname: string,
+  subpath: string,
+  is_active: boolean, 
+  displayname: Translation,
+  description: Translation,
+  tags: Set<string>,
+  created_at: string,
+  updated_at: string,
+  owner_shortname: string,
+  payload: Payload
+};
+
+export type ResponseRecord = {
   resource_type: ResourceType,
   uuid: string,
   shortname: string,
@@ -261,6 +275,7 @@ export async function getProfile() {
 };
 
 export async function query(query: QueryRequest) : Promise<ApiResponse> {
+  query.subpath = query.subpath.replace(/\/+/g, "/");
   const { data } = await axios.post<ApiResponse & {attributes: {total: number, returned: number}}>( api_url + "/managed/query", query, {headers});
   return data;
 };
@@ -272,9 +287,34 @@ export async function request(action: ActionRequest) {
 
 
 export async function retrieve_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false
-  , retrieve_attachments: boolean = false) {
+  , retrieve_attachments: boolean = false) : Promise<ResponseEntry> {
   if (!subpath || subpath == "/")
     subpath = "__root__";
-  const { data } = await axios.get(`${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`, {headers} );
+  const { data } = await axios.get<ResponseEntry>(`${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`, {headers} );
   return data;
+}
+
+
+export async function get_spaces() : Promise<ApiResponse> {
+  return await query({
+    type: QueryType.spaces,
+    space_name: "management", 
+    subpath: "/", 
+    search: '',
+    limit: 100
+  });
+}
+
+export async function get_children(space_name: string, subpath : string, limit: number=10, offset: number=0, restrict_types: Array<ResourceType> = []) : Promise<ApiResponse> {
+  return await query({
+    type: QueryType.search,
+    space_name: space_name, 
+    subpath: subpath, 
+    filter_types: restrict_types,
+    exact_subpath: true,
+    search: '',
+    limit: limit,
+    offset: offset
+  });
+
 }

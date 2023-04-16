@@ -24,6 +24,10 @@
     "icon": "rss",
     "children": [
       {
+        "type": "component",
+        "name": "spaces"
+      },
+      {
         "type": "folder",
         "name": "content",
         "expanded": false,

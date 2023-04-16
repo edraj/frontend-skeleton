@@ -1,3 +1,7 @@
+---
+title: "Primary page"
+---
+
 # Main public page
 
 - [Hello World](/hello-world)

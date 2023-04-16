@@ -1,113 +1,82 @@
 <script lang="ts">
-  // import { imx_entries, imx_folder } from "../../../dmart";
-  import { entries } from "../_stores/entries";
   import Icon from "../../_components/Icon.svelte";
-  import File from "./File.svelte";
-  // import { getNotificationsContext } from "svelte-notifications";
-  import ContentModal from "./ContentModal.svelte";
   import { _ } from "../../../i18n";
-
-  //const { addNotification } = getNotificationsContext();
+  import {ApiResponseRecord, get_children, ResourceType} from "../../../dmart";
 
   let expanded = false;
-  //let children_loaded = false;
-  export let data;
 
-  let children_subpath;
-  let displayname;
+  export let space_name : string;
+  export let parent_subpath : string;
+  export let folder : ApiResponseRecord ; 
 
-  $: {
-    children_subpath = data.subpath + "/" + data.shortname;
-    displayname = data.displayname.length < 20 ? data.displayname : data.displayname.substring(0, 20) + " ...";
+
+  function displayname() : string {
+    return folder.shortname;
   }
+
   async function toggle() {
     expanded = !expanded;
-    if (!$entries[children_subpath]) {
-      const _entries = []; // await imx_entries(children_subpath, []);
-      $entries[children_subpath] = [];
-      _entries.forEach((_entry) => {
-        $entries[children_subpath].push({ data: _entry });
-      });
-    }
+    // if (expanded) {
+    //   const data = await get_children(space_name, `${subpath}/${folder.shortname}`, 10, 0, [ResourceType.folder] )
+    //   children = data.records;
+    // }
   }
 
-  let entry_create_modal;
-  async function handleEntryCreated(event) {
-    //let _name = prompt("Enter the new folder shortname", "");
-    /*let entry = { data: event.detail };
-    entry.data.displayname = entry.data.attributes.displayname;
-    entry.data.subpath = children_subpath;
-    entries.add(children_subpath, entry);
-  console.log("Created entry", entry);*/
-    /* 
-    let result = await imx_folder("create", children_subpath, entry.data.shortname);
-    addNotification({
-      text: `Created new folder "${entry.data.shortname}" under ${children_subpath}`,
-      position: "bottom-center",
-      type: result.status == "success" ? "success" : "warning",
-      removeAfter: 5000,
-    });
-    if (result.status == "success") {
-      entries.add(children_subpath, entry);
-  }*/
+
+  function set_url() : boolean{
+    let subpath = `${parent_subpath}/${folder.shortname}`.replace(/\/+/g, "/");
+
+    // Trim leading or traling '/'
+    if (subpath.length > 0 && subpath[0] === '/')
+      subpath = subpath.substring(1);
+    if(subpath.length > 0 && subpath[subpath.length -1] === '/')
+      subpath = subpath.slice(0, -1);
+
+    // If empty, use __root__ magic word
+    if(subpath.length === 0)
+      subpath = "__root__";
+     
+    window.history.replaceState(
+      history.state,
+      "",
+      `/management/content/${space_name}/${subpath.replaceAll("/", "-")}`
+    );
+
+    return true;
   }
 
-  let folder_details_modal;
-  //function folderDetailsModal() {
-  //}
 
-  async function deleteFolder() {
-    if (
-      confirm(
-        `Are you sure you want to delete the folder "${data.shortname}|${data.displayname}" under ${data.subpath}?`
-      )
-    ) {
-      let result = {status: "success"}; // await imx_folder("delete", data.subpath, data.shortname);
-      /*addNotification({
-        text: `Deleted folder "${data.shortname}|${data.displayname}" under ${data.subpath}`,
-        position: "bottom-center",
-        type: result.status == "success" ? "success" : "warning",
-        removeAfter: 5000,
-      });*/
-      if (result.status == "success") {
-        entries.del(data.subpath, data.shortname);
-      }
-    }
-  }
 </script>
 
-<ContentModal subpath="{children_subpath}" bind:open="{entry_create_modal}" on:created="{handleEntryCreated}" />
-<ContentModal bind:open="{folder_details_modal}" fix_resource_type="folder" data="{data}" />
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <span class:expanded class="folder position-relative mt-1 ps-2" on:click="{toggle}">
   <span style="overflow: hidden;">
     <Icon class="text-start" name="folder{expanded ? '2-open' : ''}" />
-    {displayname}
+    {displayname()}
   </span>
   <span class="toolbar top-0 end-0 position-absolute px-0">
-    <span class="px-0" title="{$_('create_subentry')}" on:click|stopPropagation="{() => (entry_create_modal = true)}">
-      <Icon name="file-plus" />
-    </span>
-    <span class="px-0" title="{$_('edit')}" on:click|stopPropagation="{() => (folder_details_modal = true)}">
+    <span class="px-0" title="{$_('edit')}" on:click|stopPropagation="{() => (console.log('fixme'))}">
       <Icon name="pencil" />
-    </span>
-    <span class="px-0" title="{$_('delete')}" on:click|stopPropagation="{deleteFolder}">
-      <Icon name="trash" />
     </span>
   </span>
 </span>
 
-{#if expanded && $entries[children_subpath]}
+{#if expanded }
   <ul class="py-1 ps-1 ms-2 border-start">
-    {#each $entries[children_subpath] as child (children_subpath + child.data.shortname)}
-      <li>
-        {#if child.data.resource_type === "folder"}
-          <svelte:self data="{child.data}" />
-        {:else}
-          <File data="{child.data}" />
-        {/if}
-      </li>
-    {/each}
+    {#await get_children(space_name, `${parent_subpath}/${folder.shortname}`, 10, 0, [ResourceType.folder] )}
+      <h6> Loading children of {parent_subpath}/{folder.shortname} </h6>
+    {:then children_data}
+      <pre> expanded {children_data.records.length}</pre>
+      {#if children_data.records.length > 0}
+        {#each children_data.records as child }
+          <li>
+            <svelte:self folder={child} {space_name} parent_subpath={`${parent_subpath}/${folder.shortname}`} />
+          </li>
+        {/each}
+      {:else if set_url()}
+      {/if}
+    {/await}
   </ul>
 {/if}
 

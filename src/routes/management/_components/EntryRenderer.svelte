@@ -1,11 +1,16 @@
 <script lang="ts">
   // import History from "./History.svelte";
   // import Attachments from "../../_components/Attachments.svelte";
+  import { JSONEditor, Mode } from "svelte-jsoneditor";
+  import { onDestroy } from "svelte";
   import {ResourceType, ResponseEntry} from "../../../dmart";
   import { Nav, Button, ButtonGroup } from "sveltestrap";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
   import ListView from "./ListView.svelte";
+  import Prism from "./Prism.svelte";
+  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+  import { status_line } from "../_stores/status_line";
 
   let header_height : number;
   // let status : string;
@@ -15,13 +20,15 @@
   export let resource_type : ResourceType;
   export let schema_name : string | undefined;
 
-  let tab_option = (resource_type === ResourceType.folder) ? "list" : "edit" ;
+  let tab_option = (resource_type === ResourceType.folder) ? "list" : "view" ;
 
+  onDestroy(() => status_line.set(""));
+  status_line.set(`Updated at ${entry.updated_at}`);
 </script>
-<div bind:clientHeight="{header_height}">
+<div bind:clientHeight="{header_height}" class="py-3 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"><small>{entry.shortname} ({resource_type} {#if schema_name}{schema_name}{/if})</small></span>
+      <span class="font-monospace"><small>{entry.shortname} ({resource_type}{#if schema_name}{schema_name}{/if})</small></span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>
@@ -35,7 +42,7 @@
           title="{$_('list')}"
           on:click="{() => (tab_option = 'list')}"
         >
-          <Icon name="info" />
+          <Icon name="card-list" />
         </Button>
       {/if}
 
@@ -44,9 +51,19 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active="{'edit' == tab_option}"
-        title="{$_('edit')}"
-        on:click="{() => (tab_option = 'edit')}">
+        active={'view' == tab_option}
+        title={$_('view')}
+        on:click={() => (tab_option = 'view')}>
+        <Icon name="binoculars" />
+      </Button>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        class="justify-content-center text-center py-0 px-1"
+        active={'edit' == tab_option}
+        title={$_('edit')}
+        on:click={() => (tab_option = 'edit')}>
         <Icon name="pencil" />
       </Button>
       <Button
@@ -170,9 +187,15 @@
       </pre>
     </div>
   </div>
+  <div class="h-100 tab-pane" class:active="{tab_option === 'view'}">
+    <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
+      <Prism code={entry} />
+    </div>
+  </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'edit'}">
     <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
-      <pre> {JSON.stringify(entry,null,1)} </pre>
+      <!--pre> {JSON.stringify(entry,null,1)} </pre-->
+      <JsonEditor content={{json: JSON.parse(JSON.stringify(entry))}}/>
     </div>
   </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'history'}">

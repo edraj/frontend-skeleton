@@ -20,7 +20,7 @@
   let foot_height : number;
 </script>
 
-<div bind:clientHeight={head_height}>
+<div bind:clientHeight={head_height} class="p-2">
   <h5 class="my-0">
     {#if $active_section.icon}<Icon name={$active_section.icon} class="pe-1" />{/if}
     {#if $active_section.name}{$_($active_section.name)}{/if}

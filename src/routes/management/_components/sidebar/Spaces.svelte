@@ -13,9 +13,9 @@
   <h3> Loading spaces list </h3>
 {:then spaces_data}
   {#each spaces_data.records as space}
-    <ListGroupItem class="px-0">
+    <ListGroupItem class="ps-2 pe-0 py-0">
       <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div class="mb-2" on:click={() => (expanded = space.shortname)}>
+      <div class="mb-2" style="cursor: pointer;" on:click={() => (expanded = space.shortname)}>
         <Icon name="diagram-3" class="me-1" /> <b>{space.shortname}</b>
       </div>
 

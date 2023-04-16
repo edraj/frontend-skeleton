@@ -53,9 +53,9 @@
       </small>
     </p>
   {/if}
+-->
   {#if $status_line}
     <hr class="my-1" />
     {@html $status_line}
   {/if}
--->
 </div>

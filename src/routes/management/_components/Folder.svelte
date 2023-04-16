@@ -75,6 +75,7 @@
           </li>
         {/each}
       {:else if set_url()}
+        <!-- -->
       {/if}
     {/await}
   </ul>
@@ -86,19 +87,19 @@
     cursor: pointer;
     display: list-item;
     list-style: none;
-    border-top: thin dotted grey;
+    /*border-top: thin dotted grey;*/
   }
 
   .folder:hover {
     z-index: 2;
     color: #495057;
     text-decoration: none;
-    background-color: #e8e9ea;
+    /*background-color: #e8e9ea;*/
   }
 
   .expanded {
     background-color: #e8e9ea;
-    border-bottom: thin dotted green;
+    /*border-bottom: thin dotted green;*/
   }
 
   ul {

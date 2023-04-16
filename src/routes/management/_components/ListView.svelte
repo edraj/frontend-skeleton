@@ -28,19 +28,18 @@
   // const base_query = { ...query };
 
 
-  let total;
-  let lastbatch;
+  let total : number;
+  let lastbatch : number;
   let page = 0;
   let items = [{}];
   let currentItem = {};
   let api_status = "-";
   let records = [];
-  let schema_shortname = "";
+  // let schema_shortname = "";
   let infiniteId = Symbol();
 
   async function infiniteHandler({ detail: { loaded, complete, error } }) {
       try {
-      console.log (space_name);
         const resp = await query({
           type: QueryType.search, 
           space_name: space_name, 
@@ -54,10 +53,10 @@
         if (resp.status == "success") {
           lastbatch = resp.attributes.returned;
           total = resp.attributes.total;
-          if (schema_shortname === "") {
-            schema_shortname =
-              records[0]?.attributes?.payload?.schema_shortname;
-          }
+          // if (schema_shortname === "") {
+          //   schema_shortname =
+          //     records[0]?.attributes?.payload?.schema_shortname;
+          // }
           if (lastbatch) {
             page += 1;
             items = [...items, ...resp.records];
@@ -101,7 +100,7 @@
   }
 
 
-  let height;
+  let height : number;
 
 
   $: {
@@ -143,11 +142,11 @@
             return;
           }
           shortname = record.shortname;
-          schema_shortname = record.attributes?.payload?.schema_shortname;
+          const schema_shortname = record.attributes?.payload?.schema_shortname;
           window.history.replaceState(
             history.state,
             "",
-            `/management/content/${space_name}/${record.subpath.replaceAll("/", "-")}/${shortname}/${record.resource_type}/${schema_shortname}`
+            `/management/content/${space_name}/${record.subpath.replaceAll("/", "-")}/${shortname}/${record.resource_type}${schema_shortname?"/"+schema_shortname:""}`
           );
         }}
         class:current={currentItem == index}

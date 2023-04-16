@@ -6,12 +6,12 @@
   import { signout } from "../../_stores/user";
   import { url } from "@roxi/routify";
   import { active_section } from "../_stores/active_section";
-  import sections from "../_stores/sections";
+  import sections from "../_stores/sections.json";
 </script>
 
 <Navbar class="py-0 px-1">
   <Nav tabs class="align-items-center w-100" style="background-color: #f4f4f4;">
-    {#each $sections as section}
+    {#each sections as section}
       <NavItem>
         <NavLink
           href="{$url('/management/' + section.name)}"
@@ -21,9 +21,11 @@
           }}"
           active="{$active_section.name == section.name}">
           <Icon name="{section.icon}" />
+          <!--
           {#if section.notifications > 0}
             <span class="badge rounded-pill bg-danger custom-badge">{section.notifications}</span>
           {/if}
+          -->
         </NavLink>
       </NavItem>
     {/each}
@@ -51,11 +53,12 @@
 </Navbar>
 
 <style>
+  /*
   .custom-badge {
     position: relative;
     right: 0.5rem;
     top: -0.5rem;
     border: 2px solid #fff;
     font-size: 0.6rem;
-  }
+  }*/
 </style>

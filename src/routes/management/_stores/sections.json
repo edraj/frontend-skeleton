@@ -21,7 +21,7 @@
   },
   {
     "name": "content",
-    "icon": "rss",
+    "icon": "card-list",
     "children": [
       {
         "type": "component",

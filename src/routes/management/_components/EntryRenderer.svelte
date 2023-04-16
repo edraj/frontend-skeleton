@@ -91,14 +91,15 @@
         <Icon name="clock-history" />
       </Button>
     </ButtonGroup>
-    <!--ButtonGroup size="sm" class="align-items-center">
+    {#if resource_type === ResourceType.folder}
+    <ButtonGroup size="sm" class="align-items-center">
       <span class="ps-2 pe-1"> {$_("actions")} </span>
       <Button
         outline
         color="success"
         size="sm"
-        title="{$_('activate')}"
-        on:click="{togglePublishEntry}"
+        title={$_('activate')}
+        on:click={() => {}}
         class="justify-content-center text-center py-0 px-1"
       >
         <Icon name="file-check" />
@@ -107,14 +108,15 @@
         outline
         color="success"
         size="sm"
-        title="{$_('delete')}"
-        on:click="{deleteEntry}"
+        title={$_('delete')}
+        on:click={() => {}}
         class="justify-content-center text-center py-0 px-1"
       >
         <Icon name="trash" />
       </Button>
-    </ButtonGroup-->
-    <ButtonGroup size="sm" class="align-items-center">
+    </ButtonGroup>
+    {/if}
+    <!--ButtonGroup size="sm" class="align-items-center">
       <span class="ps-2 pe-1"> {$_("status")} </span>
       <Button
         outline
@@ -133,24 +135,32 @@
         class="justify-content-center text-center py-0 px-1">
         <Icon name="cloud-upload" />
       </Button>
-    </ButtonGroup>
+    </ButtonGroup-->
     <ButtonGroup>
       <Button
         outline
         color="success"
         size="sm"
-        title="{$_('close')}"
+        title="{$_('create')}"
         class="justify-contnet-center text-center py-0 px-1"
-        on:click="{() => {
-        }}"><Icon name="x-circle" /></Button>
+        on:click={() => { }}><Icon name="file-plus" 
+        />
+      </Button>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        title="{$_('create')}"
+        class="justify-contnet-center text-center py-0 px-1"
+        on:click={() => { }}><Icon name="folder-plus" 
+        />
+      </Button>
     </ButtonGroup>
   </Nav>
 </div>
 <div class="px-1 pb-1 tab-content" style="height: calc(100% - {header_height}px); overflow: hidden auto;">
   <div class="h-100 tab-pane" class:active="{tab_option === 'list'}">
-    <pre> List goes here </pre>
     <ListView {space_name} {subpath}/>
-    <!--History subpath="{entry.subpath}" shortname="{entry.shortname}" /-->
   </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'source'}">
     <!--JSONEditor json={entry} /-->

@@ -13,15 +13,15 @@
   export let space_name : string;
   export let subpath : string;
   export let resource_type : ResourceType;
+  export let schema_name : string | undefined;
 
   let tab_option = (resource_type === ResourceType.folder) ? "list" : "edit" ;
 
 </script>
-
 <div bind:clientHeight="{header_height}">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"><small>{entry.shortname}</small></span>
+      <span class="font-monospace"><small>{entry.shortname} ({resource_type} {#if schema_name}{schema_name}{/if})</small></span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>

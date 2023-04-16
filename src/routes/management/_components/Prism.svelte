@@ -3,12 +3,9 @@
   import 'prismjs/components/prism-json';
 
   export let language : string = "json";
+  export let code : Object ;
 
-  export let code ;
-
-  let formatted : string = Prism.highlight(JSON.stringify(code, undefined, 1), Prism.languages[language]);
-  // JSON.stringify(code, undefined, 2); 
-
+  const formatted : string = Prism.highlight(JSON.stringify(code, undefined, 1), Prism.languages[language], language);
 </script>
 
 <pre class="language-{language}"  data-output="2-17"><code class="language-{language}">{@html formatted}</code></pre>

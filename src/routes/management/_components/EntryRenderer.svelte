@@ -8,7 +8,7 @@
   import ListView from "./ListView.svelte";
 
   let header_height : number;
-  let status : string;
+  // let status : string;
   export let entry : ResponseEntry;
   export let space_name : string;
   export let subpath : string;
@@ -26,17 +26,17 @@
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>
       {#if resource_type === ResourceType.folder}
-      <Button
-        outline
-        color="success"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1"
-        active="{'list' == tab_option}"
-        title="{$_('list')}"
-        on:click="{() => (tab_option = 'list')}"
-      >
-        <Icon name="info" />
-      </Button>
+        <Button
+          outline
+          color="success"
+          size="sm"
+          class="justify-content-center text-center py-0 px-1"
+          active="{'list' == tab_option}"
+          title="{$_('list')}"
+          on:click="{() => (tab_option = 'list')}"
+        >
+          <Icon name="info" />
+        </Button>
       {/if}
 
       <Button
@@ -91,7 +91,6 @@
         <Icon name="clock-history" />
       </Button>
     </ButtonGroup>
-    {#if resource_type === ResourceType.folder}
     <ButtonGroup size="sm" class="align-items-center">
       <span class="ps-2 pe-1"> {$_("actions")} </span>
       <Button
@@ -115,7 +114,6 @@
         <Icon name="trash" />
       </Button>
     </ButtonGroup>
-    {/if}
     <!--ButtonGroup size="sm" class="align-items-center">
       <span class="ps-2 pe-1"> {$_("status")} </span>
       <Button
@@ -136,26 +134,28 @@
         <Icon name="cloud-upload" />
       </Button>
     </ButtonGroup-->
-    <ButtonGroup>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        title="{$_('create')}"
-        class="justify-contnet-center text-center py-0 px-1"
-        on:click={() => { }}><Icon name="file-plus" 
-        />
-      </Button>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        title="{$_('create')}"
-        class="justify-contnet-center text-center py-0 px-1"
-        on:click={() => { }}><Icon name="folder-plus" 
-        />
-      </Button>
-    </ButtonGroup>
+    {#if resource_type === ResourceType.folder}
+      <ButtonGroup>
+        <Button
+          outline
+          color="success"
+          size="sm"
+          title="{$_('create')}"
+          class="justify-contnet-center text-center py-0 px-1"
+          on:click={() => { }}><Icon name="file-plus" 
+          />
+        </Button>
+        <Button
+          outline
+          color="success"
+          size="sm"
+          title="{$_('create')}"
+          class="justify-contnet-center text-center py-0 px-1"
+          on:click={() => { }}><Icon name="folder-plus" 
+          />
+        </Button>
+      </ButtonGroup>
+    {/if}
   </Nav>
 </div>
 <div class="px-1 pb-1 tab-content" style="height: calc(100% - {header_height}px); overflow: hidden auto;">
@@ -171,8 +171,6 @@
     </div>
   </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'edit'}">
-    <h4>Conent type {entry.payload?.content_type}</h4>
-
     <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
       <pre> {JSON.stringify(entry,null,1)} </pre>
     </div>

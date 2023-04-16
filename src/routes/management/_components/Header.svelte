@@ -52,7 +52,7 @@
   </Nav>
 </Navbar>
 
-<style>
+<!--style>
   /*
   .custom-badge {
     position: relative;
@@ -61,4 +61,4 @@
     border: 2px solid #fff;
     font-size: 0.6rem;
   }*/
-</style>
+</style-->

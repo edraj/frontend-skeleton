@@ -1,5 +1,14 @@
 <script lang="ts">
-  import { Nav, NavItem, NavLink, Navbar, Form, InputGroup, Input, InputGroupText } from "sveltestrap";
+  import {
+    Nav,
+    NavItem,
+    NavLink,
+    Navbar,
+    Form,
+    InputGroup,
+    Input,
+    InputGroupText,
+  } from "sveltestrap";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
   import SelectLanguage from "../../_components/SelectLanguage.svelte";
@@ -14,13 +23,14 @@
     {#each sections as section}
       <NavItem>
         <NavLink
-          href="{$url('/management/' + section.name)}"
-          title="{$_(section.name)}"
-          on:click="{() => {
+          href={$url("/management/" + section.name)}
+          title={$_(section.name)}
+          on:click={() => {
             $active_section = section;
-          }}"
-          active="{$active_section.name == section.name}">
-          <Icon name="{section.icon}" />
+          }}
+          active={$active_section.name == section.name}
+        >
+          <Icon name={section.icon} />
           <!--
           {#if section.notifications > 0}
             <span class="badge rounded-pill bg-danger custom-badge">{section.notifications}</span>
@@ -30,13 +40,13 @@
       </NavItem>
     {/each}
     <NavItem>
-      <NavLink href="/" title="{$_('published')}">
+      <NavLink href="/" title={$_("published")}>
         <Icon name="globe" />
       </NavLink>
     </NavItem>
     <Form inline={true} class="ms-auto">
       <InputGroup size="sm">
-        <Input placeholder="{$_('searching_for_what')}" />
+        <Input placeholder={$_("searching_for_what")} />
         <InputGroupText><Icon name="search" /></InputGroupText>
       </InputGroup>
     </Form>
@@ -45,7 +55,7 @@
       <SelectLanguage />
     </NavItem>
     <NavItem>
-      <NavLink href="#" title="{$_('logout')}" on:click="{signout}">
+      <NavLink href="#" title={$_("logout")} on:click={signout}>
         <Icon name="power" />
       </NavLink>
     </NavItem>

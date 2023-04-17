@@ -1,9 +1,7 @@
 <script lang="ts">
-  // import History from "./History.svelte";
   import Attachments from "./Attachments.svelte";
-  // import { JSONEditor, Mode } from "svelte-jsoneditor";
   import { onDestroy } from "svelte";
-  import {ResourceType, ResponseEntry} from "../../../dmart";
+  import { ResourceType, ResponseEntry } from "../../../dmart";
   import { Nav, Button, ButtonGroup } from "sveltestrap";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
@@ -12,23 +10,29 @@
   import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
   import { status_line } from "../_stores/status_line";
 
-  let header_height : number;
+  let header_height: number;
   // let status : string;
-  export let entry : ResponseEntry;
-  export let space_name : string;
-  export let subpath : string;
-  export let resource_type : ResourceType;
-  export let schema_name : string | undefined = null;
-  
-  let tab_option = (resource_type === ResourceType.folder) ? "list" : "view" ;
+  export let entry: ResponseEntry;
+  export let space_name: string;
+  export let subpath: string;
+  export let resource_type: ResourceType;
+  export let schema_name: string | undefined = null;
+
+  let tab_option = resource_type === ResourceType.folder ? "list" : "view";
 
   onDestroy(() => status_line.set(""));
   status_line.set(`Updated at ${entry.updated_at}`);
 </script>
-<div bind:clientHeight="{header_height}" class="py-3 px-2">
+
+<div bind:clientHeight={header_height} class="py-3 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"><small><strong>{entry.shortname}</strong> ({resource_type}{#if schema_name}:{schema_name}{/if})</small></span>
+      <span class="font-monospace"
+        ><small
+          ><strong>{entry.shortname}</strong>
+          ({resource_type}{#if schema_name}:{schema_name}{/if})</small
+        ></span
+      >
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>
@@ -38,9 +42,9 @@
           color="success"
           size="sm"
           class="justify-content-center text-center py-0 px-1"
-          active="{'list' == tab_option}"
-          title="{$_('list')}"
-          on:click="{() => (tab_option = 'list')}"
+          active={"list" == tab_option}
+          title={$_("list")}
+          on:click={() => (tab_option = "list")}
         >
           <Icon name="card-list" />
         </Button>
@@ -51,9 +55,10 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active={'view' == tab_option}
-        title={$_('view')}
-        on:click={() => (tab_option = 'view')}>
+        active={"view" == tab_option}
+        title={$_("view")}
+        on:click={() => (tab_option = "view")}
+      >
         <Icon name="binoculars" />
       </Button>
       <Button
@@ -61,9 +66,10 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active={'edit' == tab_option}
-        title={$_('edit')}
-        on:click={() => (tab_option = 'edit')}>
+        active={"edit" == tab_option}
+        title={$_("edit")}
+        on:click={() => (tab_option = "edit")}
+      >
         <Icon name="pencil" />
       </Button>
       <Button
@@ -71,9 +77,10 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active="{'source' == tab_option}"
-        title="{$_('source')}"
-        on:click="{() => (tab_option = 'source')}">
+        active={"source" == tab_option}
+        title={$_("source")}
+        on:click={() => (tab_option = "source")}
+      >
         <Icon name="code-slash" />
       </Button>
       <!--Button
@@ -92,9 +99,10 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active="{'attachments' == tab_option}"
-        title="{$_('attachments')}"
-        on:click="{() => (tab_option = 'attachments')}">
+        active={"attachments" == tab_option}
+        title={$_("attachments")}
+        on:click={() => (tab_option = "attachments")}
+      >
         <Icon name="paperclip" />
       </Button>
       <Button
@@ -102,9 +110,10 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active="{'history' == tab_option}"
-        title="{$_('history')}"
-        on:click="{() => (tab_option = 'history')}">
+        active={"history" == tab_option}
+        title={$_("history")}
+        on:click={() => (tab_option = "history")}
+      >
         <Icon name="clock-history" />
       </Button>
     </ButtonGroup>
@@ -114,7 +123,7 @@
         outline
         color="success"
         size="sm"
-        title={$_('activate')}
+        title={$_("activate")}
         on:click={() => {}}
         class="justify-content-center text-center py-0 px-1"
       >
@@ -124,7 +133,7 @@
         outline
         color="success"
         size="sm"
-        title={$_('delete')}
+        title={$_("delete")}
         on:click={() => {}}
         class="justify-content-center text-center py-0 px-1"
       >
@@ -157,53 +166,70 @@
           outline
           color="success"
           size="sm"
-          title="{$_('create')}"
+          title={$_("create")}
           class="justify-contnet-center text-center py-0 px-1"
-          on:click={() => { }}><Icon name="file-plus" 
-          />
+          on:click={() => {}}
+          ><Icon name="file-plus" />
         </Button>
         <Button
           outline
           color="success"
           size="sm"
-          title="{$_('create')}"
+          title={$_("create")}
           class="justify-contnet-center text-center py-0 px-1"
-          on:click={() => { }}><Icon name="folder-plus" 
-          />
+          on:click={() => {}}
+          ><Icon name="folder-plus" />
         </Button>
       </ButtonGroup>
     {/if}
   </Nav>
 </div>
-<div class="px-1 pb-1 tab-content" style="height: calc(100% - {header_height}px); overflow: hidden auto;">
-  <div class="h-100 tab-pane" class:active="{tab_option === 'list'}">
-    <ListView {space_name} {subpath}/>
+<div
+  class="px-1 pb-1 tab-content"
+  style="height: calc(100% - {header_height}px); overflow: hidden auto;"
+>
+  <div class="h-100 tab-pane" class:active={tab_option === "list"}>
+    <ListView {space_name} {subpath} />
   </div>
-  <div class="h-100 tab-pane" class:active="{tab_option === 'source'}">
+  <div class="h-100 tab-pane" class:active={tab_option === "source"}>
     <!--JSONEditor json={entry} /-->
-    <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
       <pre>
         {JSON.stringify(entry, undefined, 1)}
       </pre>
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active="{tab_option === 'view'}">
-    <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
+  <div class="h-100 tab-pane" class:active={tab_option === "view"}>
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
       <Prism code={entry} />
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active="{tab_option === 'edit'}">
-    <div class="px-1 pb-1 h-100" style="text-align: left; direction: ltr; overflow: hidden auto;">
+  <div class="h-100 tab-pane" class:active={tab_option === "edit"}>
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
       <!--pre> {JSON.stringify(entry,null,1)} </pre-->
-      <JsonEditor content={{json: JSON.parse(JSON.stringify(entry))}}/>
+      <JsonEditor content={{ json: JSON.parse(JSON.stringify(entry)) }} />
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active="{tab_option === 'history'}">
+  <div class="h-100 tab-pane" class:active={tab_option === "history"}>
     <pre> History goes here </pre>
     <!--History subpath="{entry.subpath}" shortname="{entry.shortname}" /-->
   </div>
-  <div class="h-100 tab-pane" class:active="{tab_option === 'attachments'}">
-    <Attachments {space_name} {subpath} parent_shortname={entry.shortname} attachments={Object.values(entry.attachments).pop()} />
+  <div class="h-100 tab-pane" class:active={tab_option === "attachments"}>
+    <Attachments
+      {space_name}
+      {subpath}
+      parent_shortname={entry.shortname}
+      attachments={Object.values(entry.attachments).pop()}
+    />
   </div>
 </div>
 

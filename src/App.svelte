@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
   import { Router, createRouter } from "@roxi/routify";
-  import routes from "../.routify/routes.default.js";
+  import routes from "../.routify/routes.default";
   import { SvelteToast } from "@zerodevx/svelte-toast";
 
   const router = createRouter({ routes });
@@ -15,10 +15,9 @@
     theme: {
       "--toastColor": "mintcream",
     }, // css var overrides
-    classes: ['custom-toast'], // user-defined classes
+    classes: ["custom-toast"], // user-defined classes
   };
 </script>
-
 
 <script lang="ts">
   import { setupI18n, dir } from "./i18n";
@@ -31,8 +30,9 @@
         document.head.children["bootstrap"].href =
           "/assets/bootstrap.rtl.min.css";
       } else {
-        if(document && document.head && document.head.children["bootstrap"])
-          document.head.children["bootstrap"].href = "/assets/bootstrap.min.css";
+        if (document && document.head && document.head.children["bootstrap"])
+          document.head.children["bootstrap"].href =
+            "/assets/bootstrap.min.css";
       }
     } catch (error) {
       console.log("Error in App:", error);
@@ -40,18 +40,18 @@
   }
 </script>
 
+<div id="routify-app">
+  <SvelteToast {options} />
+  <Router {router} />
+</div>
+
 <style>
   :global(.custom-toast.info) {
     --toastBackground: rgba(72, 187, 120, 0.9);
-    --toastBarBackground: #2F855A;
+    --toastBarBackground: #2f855a;
   }
   :global(.custom-toast.warn) {
     --toastBackground: #bb4848e6;
     --toastBarBackground: #852f2f;
   }
 </style>
-
-<div id="routify-app">
-  <SvelteToast {options} />
-  <Router {router} />
-</div>

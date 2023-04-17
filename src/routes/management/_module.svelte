@@ -1,16 +1,13 @@
 <!-- routify:meta reset -->
 <script lang="ts">
   import { Col, Container, Row } from "sveltestrap";
-  import { Circle3 } from 'svelte-loading-spinners';
-  import { retrieve_entry, ResourceType } from '../../dmart';
-  import {user} from "../_stores/user";
+  import { user } from "../_stores/user";
   import Login from "../_components/Login.svelte";
   import Header from "./_components/Header.svelte";
   import Sidebar from "./_components/Sidebar.svelte";
 
   let window_height: number;
   let header_height: number;
-
 </script>
 
 <svelte:window bind:innerHeight={window_height} />
@@ -23,17 +20,19 @@
     <Login />
   </div>
 {:else}
-  <div bind:clientHeight="{header_height}" class="fixed-top"><Header /></div>
+  <div bind:clientHeight={header_height} class="fixed-top"><Header /></div>
   <Container
     fluid={true}
     class="position-relative p-0"
-    style="top: {header_height}px; height: {window_height - header_height - 8}px;" 
+    style="top: {header_height}px; height: {window_height -
+      header_height -
+      8}px;"
   >
     <Row class="h-100" noGutters>
       <Col sm="2" class="h-100 border-end border-light px-1"><Sidebar /></Col>
-      <Col sm="10" class="h-100 border-end border-light px-1 overflow-auto"><slot /> 
-    </Col>
+      <Col sm="10" class="h-100 border-end border-light px-1 overflow-auto"
+        ><slot />
+      </Col>
     </Row>
   </Container>
 {/if}
-

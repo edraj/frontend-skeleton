@@ -75,7 +75,7 @@
   "loading_data": "تحميل البيانات ... ",
   "name": "الاسم",
   "email": "البريد الإلكتروني",
-  "subject": "الموضوع", 
+  "subject": "الموضوع",
   "contact_form": "نموذج الاتصال",
   "message": "الرسالة",
   "submit": "إرسال",
@@ -109,7 +109,7 @@
   "tabular": "مُجَدوَل",
   "description": "الوصف",
   "details": "تفاصيل",
-  "term": "تعريف", 
+  "term": "تعريف",
   "write_a_reply": "عندك تعليق؟",
   "reply": "التعليق",
   "upload": "تحميل",
@@ -139,6 +139,7 @@
   "page_of_total": "الصفحة {page} من {total}",
   "open_tabs": "المُدخلات المفتوحة",
   "views": "المناظر",
+  "view": "منظر",
   "actions": "الإجراءات",
   "status": "الحالة",
   "near_by": "بالقرب منك",
@@ -169,6 +170,6 @@
   "current": "الحالي",
   "hash": "التهشير",
   "events": "أحداث",
-  "terminal" : "طرفية",
+  "terminal": "طرفية",
   "under_development": "تحت التطوير"
 }

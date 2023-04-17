@@ -2,22 +2,19 @@
   import Icon from "../../_components/Icon.svelte";
   import {
     upload_with_payload,
-    request, 
+    request,
     get_attachment_url,
     RequestType,
-    ResourceType
+    ResourceType,
   } from "../../../dmart";
   import { showToast, Level } from "../../../utils/toast";
   import Media from "./Media.svelte";
-    import { debug } from "svelte/internal";
-
   export let attachments;
-  export let space_name : string;
-  export let subpath : string;
-  export let parent_shortname : string;
+  export let space_name: string;
+  export let subpath: string;
+  export let parent_shortname: string;
   // exp rt let forceRefresh;
   let shortname = "auto";
-
 
   // $: console.log({attachments, space_name, subpath, parent_shortname, shortname});
 
@@ -26,12 +23,10 @@
     return ext == null ? "" : ext[1];
   }
 
-
-
-
-
   async function handleDelete(item) {
-    if ( confirm(`Are you sure want to delete ${item.title} attachment`) === false) {
+    if (
+      confirm(`Are you sure want to delete ${item.title} attachment`) === false
+    ) {
       return;
     }
 
@@ -53,7 +48,7 @@
     };
     const response = await request(request_dict);
     if (response.status === "success") {
-       showToast(Level.info);
+      showToast(Level.info);
       attachments = attachments.filter((e) => e.title !== item.title);
     } else {
       showToast(Level.warn);
@@ -73,7 +68,7 @@
     if (response.status === "success") {
       // FIXME await forceRefresh();
     } else {
-      showToast(Level.warn)
+      showToast(Level.warn);
     }
   }
 </script>
@@ -84,16 +79,29 @@
   style="cursor: pointer;"
   on:click={() => {}}
 >
-  <Icon name="plus-square"  />
+  <Icon name="plus-square" />
 </div>
 
 <div class="row mx-auto w-75">
-    <div class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center">
     {#if attachments}
       {#each attachments as attachment}
         <hr />
         <div class="row mb-2">
-          <a class="col-11" style="font-size: 1.25em;" href={get_attachment_url(attachment.resource_type, space_name, subpath, parent_shortname, attachment.shortname, getFileExtension(attachment.attributes?.payload?.body))}> {attachment.shortname}</a>
+          <a
+            class="col-11"
+            style="font-size: 1.25em;"
+            href={get_attachment_url(
+              attachment.resource_type,
+              space_name,
+              subpath,
+              parent_shortname,
+              attachment.shortname,
+              getFileExtension(attachment.attributes?.payload?.body)
+            )}
+          >
+            {attachment.shortname}</a
+          >
           <div class="col-1 d-flex justify-content-between">
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
@@ -107,15 +115,28 @@
             <div
               class="mx-1"
               style="cursor: pointer;"
-              on:click={() => {/*FIXME*/}}
+              on:click={() => {
+                /*FIXME*/
+              }}
             >
               <Icon name="eyeglasses" color="grey" />
             </div>
           </div>
         </div>
-        <Media content_type={attachment.attributes?.payload?.content_type} displayname={attachment.shortname} url={get_attachment_url(attachment.resource_type, space_name, subpath, parent_shortname, attachment.shortname, getFileExtension(attachment.attributes?.payload?.body))} />
+        <Media
+          content_type={attachment.attributes?.payload?.content_type}
+          displayname={attachment.shortname}
+          url={get_attachment_url(
+            attachment.resource_type,
+            space_name,
+            subpath,
+            parent_shortname,
+            attachment.shortname,
+            getFileExtension(attachment.attributes?.payload?.body)
+          )}
+        />
         <hr />
       {/each}
     {/if}
-    </div>
+  </div>
 </div>

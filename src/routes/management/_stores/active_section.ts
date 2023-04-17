@@ -10,7 +10,7 @@ if (!localStorage.getItem("active_section")) {
 
 local = JSON.parse(localStorage.getItem("active_section") || "{}");
 
-const {subscribe, set} = writable(local);
+const { subscribe, set } = writable(local);
 
 function customSet(section) {
   set(section);

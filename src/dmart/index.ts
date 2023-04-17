@@ -17,7 +17,7 @@ type Error = {
 export type ApiResponseRecord = {
   resource_type: string,
   shortname: string,
-  branch_name: string,
+  branch_name?: string,
   subpath: string,
   attributes: Record<string, any>
 };

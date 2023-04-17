@@ -11,6 +11,7 @@
   import Prism from "./Prism.svelte";
   import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
   import { status_line } from "../_stores/status_line";
+  import {timeAgo} from "../../../utils/timeago"
 
   let header_height : number;
   // let status : string;
@@ -23,7 +24,7 @@
   let tab_option = (resource_type === ResourceType.folder) ? "list" : "view" ;
 
   onDestroy(() => status_line.set(""));
-  status_line.set(`Updated at ${entry.updated_at}`);
+  status_line.set(`<small>Last updated: <strong>${timeAgo(new Date(entry.updated_at))}</strong><br/>Attachments: <strong>${Object.keys(entry.attachments).length}</strong></small>`);
 </script>
 <div bind:clientHeight="{header_height}" class="py-3 px-2">
   <Nav class="w-100">

@@ -28,7 +28,7 @@
 <div bind:clientHeight="{header_height}" class="py-3 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"><small>{entry.shortname} ({resource_type}{#if schema_name}{schema_name}{/if})</small></span>
+      <span class="font-monospace"><small><strong>{entry.shortname}</strong> ({resource_type}{#if schema_name}:{schema_name}{/if})</small></span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>

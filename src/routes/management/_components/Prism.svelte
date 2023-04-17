@@ -28,4 +28,8 @@
   @import "prismjs/themes/prism.css";
   @import "prismjs/themes/prism-coy.css";
 
+  pre {
+    font-size: 80% !important;
+  }
+
 </style>

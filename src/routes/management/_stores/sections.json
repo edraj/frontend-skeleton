@@ -28,12 +28,9 @@
         "name": "spaces"
       },
       {
-        "type": "folder",
+        "type": "query",
         "name": "content",
-        "expanded": false,
-        "children_loaded": false,
-        "resource_types": [],
-        "dmart_path": "/"
+        "dmart_query": { }
       }
     ]
   },
@@ -42,12 +39,15 @@
     "icon": "bell",
     "children": [
       {
-        "type": "link",
+        "type": "query",
+        "icon": "stars",
         "name": "new"
+
       },
       {
-        "type": "link",
-        "name": "archived"
+        "type": "query",
+        "icon": "collection",
+        "name": "Archived"
       }
     ]
   },

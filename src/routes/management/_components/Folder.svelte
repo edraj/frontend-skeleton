@@ -10,8 +10,9 @@
   let expanded = false;
 
   export let space_name: string;
-  export let parent_subpath: string;
   export let folder: ApiResponseRecord;
+
+  let children = [];
 
   function displayname(): string {
     return folder.shortname;
@@ -19,10 +20,24 @@
 
   async function toggle() {
     expanded = !expanded;
+    if (expanded) {
+      const data = await get_children(
+        space_name,
+        `${folder.subpath}/${folder.shortname}`,
+        10,
+        0,
+        [ResourceType.folder]
+      );
+      if (data.records.length > 0) {
+        children = data.records;
+      } else {
+        goto_url();
+      }
+    }
   }
 
-  function set_url(): boolean {
-    let subpath = `${parent_subpath}/${folder.shortname}`.replace(/\/+/g, "/");
+  function goto_url(): boolean {
+    let subpath = `${folder.subpath}/${folder.shortname}`.replace(/\/+/g, "/");
 
     // Trim leading or traling '/'
     if (subpath.length > 0 && subpath[0] === "/")
@@ -66,24 +81,13 @@
 
 {#if expanded}
   <ul class="py-1 ps-1 ms-2 border-start">
-    {#await get_children( space_name, `${parent_subpath}/${folder.shortname}`, 10, 0, [ResourceType.folder] )}
-      <!--h6> Loading children of {parent_subpath}/{folder.shortname} </h6-->
-    {:then children_data}
-      <!--pre> expanded {children_data.records.length}</pre-->
-      {#if children_data.records.length > 0}
-        {#each children_data.records as child}
-          <li>
-            <svelte:self
-              folder={child}
-              {space_name}
-              parent_subpath={`${parent_subpath}/${folder.shortname}`}
-            />
-          </li>
-        {/each}
-      {:else if set_url()}
-        <!-- -->
-      {/if}
-    {/await}
+    {#if children.length > 0}
+      {#each children as child}
+        <li>
+          <svelte:self folder={child} {space_name} />
+        </li>
+      {/each}
+    {/if}
   </ul>
 {/if}
 

@@ -267,7 +267,7 @@ export async function logout() {
   return data;
 };
 
-export async function getProfile() {
+export async function get_profile() {
   const { data } = await axios.get<ProfileResponse>(
     api_url + "/user/profile", { headers}
   );

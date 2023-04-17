@@ -1,4 +1,4 @@
-import {login, logout, getProfile, query, QueryType, request, RequestType} from "./index";
+import {login, logout, get_profile, query, QueryType, request, RequestType} from "./index";
 
 // require('util').inspect.defaultOptions.depth = 10;
 
@@ -10,7 +10,7 @@ import {login, logout, getProfile, query, QueryType, request, RequestType} from 
   //console.dir(out, { depth: 5 })
 
   //console.log(out);
-  const profile = await getProfile();
+  const profile = await get_profile();
   //console.log(JSON.stringify(profile, undefined, 2));
   //const query_resp = await query({type: QueryType.search, space_name: "management", subpath: "/users", search: ""});
   const query_resp = await query({type: QueryType.search, space_name: "eser", subpath: "/arabic", search: "", retrieve_attachments: true, retrieve_json_payload: true, limit: 1});

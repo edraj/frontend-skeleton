@@ -4,7 +4,7 @@
     "icon": "person-circle",
     "children": [
       {
-        "type": "link",
+        "type": "component",
         "name": "profile"
       }
     ]
@@ -34,15 +34,21 @@
     "icon": "bell",
     "children": [
       {
-        "type": "query",
+        "type": "folder",
         "icon": "stars",
-        "name": "new"
+        "name": "new",
+        "shortname": "notifications",
+        "subpath": "personal/people/dmart",
+        "space_name": "personal"
 
       },
       {
-        "type": "query",
+        "type": "folder",
         "icon": "collection",
-        "name": "Archived"
+        "name": "messages",
+        "shortname": "notifications",
+        "subpath": "personal/people/dmart",
+        "space_name": "personal"
       }
     ]
   },

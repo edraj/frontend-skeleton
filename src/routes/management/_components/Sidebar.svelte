@@ -5,12 +5,14 @@
   import { status_line } from "../_stores/status_line.js";
   import { ListGroup, ListGroupItem } from "sveltestrap";
   import Spaces from "./sidebar/Spaces.svelte";
+  import Profile from "./sidebar/Profile.svelte";
   import Folder from "./Folder.svelte";
   import { isActive } from "@roxi/routify";
   import { ResourceType } from "../../../dmart";
 
   const components = {
     spaces: Spaces,
+    profile: Profile
   };
 
   let head_height: number;

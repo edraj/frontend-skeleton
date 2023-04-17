@@ -9,14 +9,46 @@
   } from "../../../dmart";
   import { showToast, Level } from "../../../utils/toast";
   import Media from "./Media.svelte";
+  import {
+    Button,
+    Input,
+    Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+  } from "sveltestrap";
+  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+
   export let attachments;
   export let space_name: string;
   export let subpath: string;
   export let parent_shortname: string;
+
   // exp rt let forceRefresh;
   let shortname = "auto";
 
-  // $: console.log({attachments, space_name, subpath, parent_shortname, shortname});
+  let openViewAttachmentModal = false;
+  function toggleViewAttachmentModal() {
+    openViewAttachmentModal = !openViewAttachmentModal;
+  }
+
+  let openCreateAttachemntModal = false;
+  function toggleCreateAttachemntModal() {
+    openCreateAttachemntModal = !openCreateAttachemntModal;
+  }
+
+  let content = {
+    json: {},
+    text: undefined,
+  };
+  function handleView(attachemntTitle) {
+    content = {
+      json: attachments.filter((e) => e.shortname === attachemntTitle)[0],
+      text: undefined,
+    };
+    openViewAttachmentModal = true;
+  }
 
   function getFileExtension(filename) {
     var ext = /^.+\.([^.]+)$/.exec(filename);
@@ -25,14 +57,11 @@
 
   async function handleDelete(item) {
     if (
-      confirm(`Are you sure want to delete ${item.title} attachment`) === false
+      confirm(`Are you sure want to delete ${item.shortname} attachment`) ===
+      false
     ) {
       return;
     }
-
-    const arr = subpath.split("/");
-    arr[0] = "";
-    const _subpath = arr.join("/");
 
     const request_dict = {
       space_name,
@@ -40,8 +69,8 @@
       records: [
         {
           resource_type: ResourceType.media,
-          shortname: item.title,
-          subpath: `${_subpath}/${parent_shortname}`,
+          shortname: item.shortname,
+          subpath: `${item.subpath}/${parent_shortname}`,
           attributes: {},
         },
       ],
@@ -49,7 +78,8 @@
     const response = await request(request_dict);
     if (response.status === "success") {
       showToast(Level.info);
-      attachments = attachments.filter((e) => e.title !== item.title);
+      attachments = attachments.filter((e) => e.shortname !== item.shortname);
+      openCreateAttachemntModal = false;
     } else {
       showToast(Level.warn);
     }
@@ -66,20 +96,73 @@
     );
 
     if (response.status === "success") {
-      // FIXME await forceRefresh();
+      showToast(Level.info);
+      openCreateAttachemntModal = false;
     } else {
       showToast(Level.warn);
     }
   }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div
-  class="d-flex justify-content-end mx-2 flex-row"
-  style="cursor: pointer;"
-  on:click={() => {}}
+<Modal
+  isOpen={openCreateAttachemntModal}
+  toggle={toggleCreateAttachemntModal}
+  size={"lg"}
 >
-  <Icon name="plus-square" />
+  <ModalHeader>
+    <h3>Add attachment</h3>
+  </ModalHeader>
+  <ModalBody>
+    <div class="d-flex flex-column">
+      <Label>Attachment shortname</Label>
+      <Input accept="image/png, image/jpeg" bind:value={shortname} />
+      <hr />
+      <Label>Payload File</Label>
+      <Input
+        accept="image/png, image/jpeg"
+        bind:files={payloadFile}
+        type="file"
+      />
+    </div>
+  </ModalBody>
+  <ModalFooter>
+    <Button
+      type="button"
+      color="secondary"
+      on:click={() => (openCreateAttachemntModal = false)}>close</Button
+    >
+    <Button type="button" color="primary" on:click={async () => upload()}
+      >Upload</Button
+    >
+  </ModalFooter>
+</Modal>
+
+<Modal
+  isOpen={openViewAttachmentModal}
+  toggle={toggleViewAttachmentModal}
+  size={"lg"}
+>
+  <ModalHeader />
+  <ModalBody>
+    <JsonEditor
+      content={{ json: JSON.parse(JSON.stringify(content)) }}
+      readOnly={true}
+    />
+  </ModalBody>
+  <ModalFooter>
+    <Button
+      type="button"
+      color="secondary"
+      on:click={() => (openViewAttachmentModal = false)}>close</Button
+    >
+  </ModalFooter>
+</Modal>
+
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="d-flex justify-content-end mx-2 flex-row">
+  <div on:click={() => (openCreateAttachemntModal = true)}>
+    <Icon style="cursor: pointer;" name="plus-square" />
+  </div>
 </div>
 
 <div class="row mx-auto w-75">
@@ -116,7 +199,7 @@
               class="mx-1"
               style="cursor: pointer;"
               on:click={() => {
-                /*FIXME*/
+                handleView(attachment.shortname);
               }}
             >
               <Icon name="eyeglasses" color="grey" />

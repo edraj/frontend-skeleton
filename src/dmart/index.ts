@@ -1,99 +1,96 @@
-import axios from 'axios';
+import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export enum Status {
   success = "success",
-  failed = "failed"
-};
+  failed = "failed",
+}
 
 type Error = {
-  type: string,
-  code: number,
-  message: string,
-  info: any
-
+  type: string;
+  code: number;
+  message: string;
+  info: any;
 };
 
 export type ApiResponseRecord = {
-  resource_type: string,
-  shortname: string,
-  branch_name?: string,
-  subpath: string,
-  attributes: Record<string, any>
+  resource_type: string;
+  shortname: string;
+  branch_name?: string;
+  subpath: string;
+  attributes: Record<string, any>;
 };
 
 export type ApiResponse = {
-  status: Status,
-  error: Error,
-  records: Array<ApiResponseRecord>
+  status: Status;
+  error: Error;
+  records: Array<ApiResponseRecord>;
 };
 
 type Translation = {
-  "ar": string,
-  "en": string,
-  "kd": string
+  ar: string;
+  en: string;
+  kd: string;
 };
 
 enum UserType {
   web = "web",
   mobile = "mobile",
-  bot = "bot"
-};
+  bot = "bot",
+}
 
 type LoginResponseRecord = ApiResponseRecord & {
   attributes: {
-    access_token: string,
-    type: UserType,
-    displayname: Translation
-  }
+    access_token: string;
+    type: UserType;
+    displayname: Translation;
+  };
 };
 
 // type LoginResponse = ApiResponse  & { records : Array<LoginResponseRecord> };
 
-
 type Permission = {
-  allowed_actions: Array<ActionType>,
-  conditions: Array<string>,
-  restricted_fields: Array<any>,
-  allowed_fields_values: Map<string, any> 
+  allowed_actions: Array<ActionType>;
+  conditions: Array<string>;
+  restricted_fields: Array<any>;
+  allowed_fields_values: Map<string, any>;
 };
 
 enum Language {
   arabic = "arabic",
-  english = "engligh", 
+  english = "engligh",
   kurdish = "kurdish",
   french = "french",
-  turkish = "turkish"
-};
+  turkish = "turkish",
+}
 
 type ProfileResponseRecord = ApiResponseRecord & {
   attributes: {
-    email: string,
-    displayname: Translation,
-    type: string,
-    language: Language,
-    is_email_verified: boolean,
-    is_msisdn_verified: boolean,
-    force_password_change: boolean,
-    permissions: Record<string, Permission>
-
-  }
+    email: string;
+    displayname: Translation;
+    type: string;
+    language: Language;
+    is_email_verified: boolean;
+    is_msisdn_verified: boolean;
+    force_password_change: boolean;
+    permissions: Record<string, Permission>;
+  };
 };
 
 export enum ActionType {
-    query = "query",
-    view = "view",
-    update = "update",
-    create = "create",
-    delete = "delete",
-    attach = "attach",
-    move = "move",
-    progress_ticket = "progress_ticket"
-};
+  query = "query",
+  view = "view",
+  update = "update",
+  create = "create",
+  delete = "delete",
+  attach = "attach",
+  move = "move",
+  progress_ticket = "progress_ticket",
+}
 
 export type ProfileResponse = ApiResponse & {
-  records: Array<ProfileResponseRecord>
-}
+  records: Array<ProfileResponseRecord>;
+};
 
 const api_url = "https://api.dmart.cc";
 
@@ -102,22 +99,21 @@ let headers: { [key: string]: string } = {
   //"Authorization": ""
 };
 
-
 export enum QueryType {
-    search = "search",
-    subpath = "subpath",
-    events = "events",
-    history = "history",
-    tags = "tags",
-    spaces = "spaces",
-    counters = "counters",
-    reports = "reports"
-};
+  search = "search",
+  subpath = "subpath",
+  events = "events",
+  history = "history",
+  tags = "tags",
+  spaces = "spaces",
+  counters = "counters",
+  reports = "reports",
+}
 
 export enum SortyType {
-    ascending = "ascending",
-    descending = "descending"
-};
+  ascending = "ascending",
+  descending = "descending",
+}
 
 // enum NotificationPriority {
 //   high = "high",
@@ -126,24 +122,24 @@ export enum SortyType {
 // };
 
 export type QueryRequest = {
-  type: QueryType,
-  space_name: string,
-  subpath: string,
-  filter_types?: Array<ResourceType>,
-  filter_schema_names?: Array<string>,
-  filter_shortnames?: Array<string>,
-  search: string,
-  from_date?: string,
-  to_date?: string,
-  sort_by?: string,
-  sort_type?: SortyType,
-  retrieve_json_payload?: boolean,
-  retrieve_attachments?: boolean,
-  validate_schema?: boolean,
-  jq_filter?: string,
-  exact_subpath?: boolean,
-  limit?: number,
-  offset?: number
+  type: QueryType;
+  space_name: string;
+  subpath: string;
+  filter_types?: Array<ResourceType>;
+  filter_schema_names?: Array<string>;
+  filter_shortnames?: Array<string>;
+  search: string;
+  from_date?: string;
+  to_date?: string;
+  sort_by?: string;
+  sort_type?: SortyType;
+  retrieve_json_payload?: boolean;
+  retrieve_attachments?: boolean;
+  validate_schema?: boolean;
+  jq_filter?: string;
+  exact_subpath?: boolean;
+  limit?: number;
+  offset?: number;
 };
 
 export enum RequestType {
@@ -151,108 +147,113 @@ export enum RequestType {
   update = "update",
   replace = "replace",
   delete = "delete",
-  move = "move"
-};
-
+  move = "move",
+}
 
 export enum ResourceType {
-    user = "user",
-    group = "group",
-    folder = "folder",
-    schema = "schema",
-    content = "content",
-    acl = "acl",
-    comment = "comment",
-    media = "media",
-    locator = "locator",
-    relationship = "relationship",
-    alteration = "alteration",
-    history = "history",
-    space = "space",
-    branch = "branch",
-    permission = "permission",
-    role = "role",
-    ticket = "ticket",
-    json = "json",
-    plugin_wrapper = "plugin_wrapper",
-    notification = "notification",
-};
-
+  user = "user",
+  group = "group",
+  folder = "folder",
+  schema = "schema",
+  content = "content",
+  acl = "acl",
+  comment = "comment",
+  media = "media",
+  locator = "locator",
+  relationship = "relationship",
+  alteration = "alteration",
+  history = "history",
+  space = "space",
+  branch = "branch",
+  permission = "permission",
+  role = "role",
+  ticket = "ticket",
+  json = "json",
+  plugin_wrapper = "plugin_wrapper",
+  notification = "notification",
+}
 
 export enum ContentType {
-    text = "text",
-    markdown = "markdown",
-    json = "json",
-    image = "image",
-    python = "python",
-    pdf = "pdf",
-    audio = "audio"
-};
+  text = "text",
+  markdown = "markdown",
+  json = "json",
+  image = "image",
+  python = "python",
+  pdf = "pdf",
+  audio = "audio",
+}
 
 type Payload = {
-  content_type: ContentType,
-  schema_shortname: string,
-  checksum: string, 
-  body: string | Record<string, any>,
-  last_validated: string,
-  validation_status: "valid" |  "invalid"
-
+  content_type: ContentType;
+  schema_shortname: string;
+  checksum: string;
+  body: string | Record<string, any>;
+  last_validated: string;
+  validation_status: "valid" | "invalid";
 };
 
 export type ResponseEntry = {
-  uuid: string,
-  shortname: string,
-  subpath: string,
-  is_active: boolean, 
-  displayname: Translation,
-  description: Translation,
-  tags: Set<string>,
-  created_at: string,
-  updated_at: string,
-  owner_shortname: string,
-  payload: Payload,
-  attachments?: Object
+  uuid: string;
+  shortname: string;
+  subpath: string;
+  is_active: boolean;
+  displayname: Translation;
+  description: Translation;
+  tags: Set<string>;
+  created_at: string;
+  updated_at: string;
+  owner_shortname: string;
+  payload: Payload;
+  attachments?: Object;
 };
 
 export type ResponseRecord = {
-  resource_type: ResourceType,
-  uuid: string,
-  shortname: string,
-  subpath: string,
+  resource_type: ResourceType;
+  uuid: string;
+  shortname: string;
+  subpath: string;
   attributes: {
-    is_active: boolean, 
-    displayname: Translation,
-    description: Translation,
-    tags: Set<string>,
-    created_at: string,
-    updated_at: string,
-    owner_shortname: string,
-    payload: Payload
-  }
+    is_active: boolean;
+    displayname: Translation;
+    description: Translation;
+    tags: Set<string>;
+    created_at: string;
+    updated_at: string;
+    owner_shortname: string;
+    payload: Payload;
+  };
 };
 
 export type ActionResponse = ApiResponse & {
-  records: Array<ResponseRecord & {attachments: { media: Array<ResponseRecord>, json: Array<ResponseRecord> }}>
+  records: Array<
+    ResponseRecord & {
+      attachments: {
+        media: Array<ResponseRecord>;
+        json: Array<ResponseRecord>;
+      };
+    }
+  >;
 };
 
 type ActionRequestRecord = {
-  resource_type: ResourceType,
-  uuid?: string,
-  shortname: string,
-  subpath: string,
-  attributes: Record<string, any>,
-  attachments?: Record<ResourceType, Array<any>>
-
+  resource_type: ResourceType;
+  uuid?: string;
+  shortname: string;
+  subpath: string;
+  attributes: Record<string, any>;
+  attachments?: Record<ResourceType, Array<any>>;
 };
 
 export type ActionRequest = {
-  space_name: string,
-  request_type: RequestType,
-  records: Array<ActionRequestRecord>
+  space_name: string;
+  request_type: RequestType;
+  records: Array<ActionRequestRecord>;
 };
 
 export async function login(shortname: string, password: string) {
-  const { data } = await axios.post<ApiResponse  & { records : Array<LoginResponseRecord> }>( api_url + "/user/login", {shortname, password}, {headers});
+  const { data } = await axios.post<
+    ApiResponse & { records: Array<LoginResponseRecord> }
+  >(api_url + "/user/login", { shortname, password }, { headers });
   //console.log(JSON.stringify(data, null, 2));
   // FIXME settins Authorization is only needed when the code is running on the server
   /*headers.Authorization = "";
@@ -263,88 +264,134 @@ export async function login(shortname: string, password: string) {
 }
 
 export async function logout() {
-  const { data } = await axios.post<ApiResponse>( api_url + "/user/logout", {}, {headers});
-  return data;
-};
-
-export async function get_profile() {
-  const { data } = await axios.get<ProfileResponse>(
-    api_url + "/user/profile", { headers}
+  const { data } = await axios.post<ApiResponse>(
+    api_url + "/user/logout",
+    {},
+    { headers }
   );
-  return data;
-
-};
-
-export type ApiQueryResponse = ApiResponse & {attributes: {total: number, returned: number}};
-
-export async function query(query: QueryRequest) : Promise<ApiQueryResponse> {
-  query.subpath = query.subpath.replace(/\/+/g, "/");
-  const { data } = await axios.post<ApiQueryResponse>( api_url + "/managed/query", query, {headers});
-  return data;
-};
-
-export async function request(action: ActionRequest) {
-  const { data } = await axios.post<ActionResponse>( api_url + "/managed/request", action, {headers});
-  return data;
-};
-
-
-export async function retrieve_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false, retrieve_attachments: boolean = false) : Promise<ResponseEntry> {
-  if (!subpath || subpath == "/")
-    subpath = "__root__";
-  const { data } = await axios.get<ResponseEntry>(`${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`, {headers} );
   return data;
 }
 
+export async function get_profile() {
+  const { data } = await axios.get<ProfileResponse>(api_url + "/user/profile", {
+    headers,
+  });
+  return data;
+}
 
-export async function upload_with_payload(space_name : string, subpath : string, resource_type: ResourceType, shortname : string, payload_file : string ) : Promise<ApiResponse> {
+export type ApiQueryResponse = ApiResponse & {
+  attributes: { total: number; returned: number };
+};
 
-  const request_record = new Blob([JSON.stringify({resource_type, subpath, shortname, attributes: {is_active: true}})], { type: "application/json"});
+export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
+  query.subpath = query.subpath.replace(/\/+/g, "/");
+  const { data } = await axios.post<ApiQueryResponse>(
+    api_url + "/managed/query",
+    query,
+    { headers }
+  );
+  return data;
+}
 
-  const form_data = new FormData;
+export async function request(action: ActionRequest) {
+  const { data } = await axios.post<ActionResponse>(
+    api_url + "/managed/request",
+    action,
+    { headers }
+  );
+  return data;
+}
+
+export async function retrieve_entry(
+  resource_type: ResourceType,
+  space_name: string,
+  subpath: string,
+  shortname: string,
+  retrieve_json_payload: boolean = false,
+  retrieve_attachments: boolean = false
+): Promise<ResponseEntry> {
+  if (!subpath || subpath == "/") subpath = "__root__";
+  const { data } = await axios.get<ResponseEntry>(
+    `${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`,
+    { headers }
+  );
+  return data;
+}
+
+export async function upload_with_payload(
+  space_name: string,
+  subpath: string,
+  resource_type: ResourceType,
+  shortname: string,
+  payload_file: string
+): Promise<ApiResponse> {
+  const request_record = new Blob(
+    [
+      JSON.stringify({
+        resource_type,
+        subpath,
+        shortname,
+        attributes: { is_active: true },
+      }),
+    ],
+    { type: "application/json" }
+  );
+
+  const form_data = new FormData();
   form_data.append("space_name", space_name);
   form_data.append("request_record", request_record);
   form_data.append("payload_file", payload_file);
 
-  const { data } = await axios.post<ApiResponse>( api_url + "/managed/resource_with_payload", form_data, {headers});
+  const headers = { "Content-Type": "multipart/form-data" };
+
+  const { data } = await axios.post<ApiResponse>(
+    api_url + "/managed/resource_with_payload",
+    form_data,
+    { headers }
+  );
 
   return data;
 }
 
-
-export async function get_spaces() : Promise<ApiResponse> {
+export async function get_spaces(): Promise<ApiResponse> {
   return await query({
     type: QueryType.spaces,
-    space_name: "management", 
-    subpath: "/", 
-    search: '',
-    limit: 100
+    space_name: "management",
+    subpath: "/",
+    search: "",
+    limit: 100,
   });
 }
 
-export async function get_children(space_name: string, subpath : string, limit: number=10, offset: number=0, restrict_types: Array<ResourceType> = []) : Promise<ApiResponse> {
+export async function get_children(
+  space_name: string,
+  subpath: string,
+  limit: number = 10,
+  offset: number = 0,
+  restrict_types: Array<ResourceType> = []
+): Promise<ApiResponse> {
   return await query({
     type: QueryType.search,
-    space_name: space_name, 
-    subpath: subpath, 
+    space_name: space_name,
+    subpath: subpath,
     filter_types: restrict_types,
     exact_subpath: true,
-    search: '',
+    search: "",
     limit: limit,
-    offset: offset
+    offset: offset,
   });
-
 }
-
 
 export function get_attachment_url(
-  resource_type : ResourceType,
-  space_name : string,
-  subpath : string,
-  parent_shortname : string,
-  shortname : string,
-  ext : string
+  resource_type: ResourceType,
+  space_name: string,
+  subpath: string,
+  parent_shortname: string,
+  shortname: string,
+  ext: string
 ) {
-  return `${api_url}/managed/payload/${resource_type}/${space_name}/${subpath.replace(/\/+$/, "")}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
+  return `${api_url}/managed/payload/${resource_type}/${space_name}/${subpath.replace(
+    /\/+$/,
+    ""
+  )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
 }
-

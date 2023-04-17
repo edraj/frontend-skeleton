@@ -18,11 +18,8 @@
   // exp rt let forceRefresh;
   let shortname = "auto";
 
-  // function getFileExtension(filename : string) {
-  //   var ext = /^.+\.([^.]+)$/.exec(filename);
-  //   return ext == null ? "" : ext[1];
-  // }
 
+  // $: console.log({attachments, space_name, subpath, parent_shortname, shortname});
 
   function getFileExtension(filename) {
     var ext = /^.+\.([^.]+)$/.exec(filename);
@@ -92,6 +89,7 @@
 
 <div class="row mx-auto w-75">
     <div class="d-flex justify-content-center">
+    {#if attachments}
       {#each attachments as attachment}
         <hr />
         <div class="row mb-2">
@@ -118,5 +116,6 @@
         <Media content_type={attachment.attributes?.payload?.content_type} displayname={attachment.shortname} url={get_attachment_url(attachment.resource_type, space_name, subpath, parent_shortname, attachment.shortname, getFileExtension(attachment.attributes?.payload?.body))} />
         <hr />
       {/each}
+    {/if}
     </div>
 </div>

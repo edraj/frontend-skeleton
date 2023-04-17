@@ -289,8 +289,7 @@ export async function request(action: ActionRequest) {
 };
 
 
-export async function retrieve_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false
-  , retrieve_attachments: boolean = false) : Promise<ResponseEntry> {
+export async function retrieve_entry(resource_type: ResourceType, space_name: string, subpath: string, shortname: string, retrieve_json_payload: boolean = false, retrieve_attachments: boolean = false) : Promise<ResponseEntry> {
   if (!subpath || subpath == "/")
     subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(`${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`, {headers} );

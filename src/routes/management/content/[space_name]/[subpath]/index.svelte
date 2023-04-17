@@ -5,8 +5,9 @@
 
   let parent_subpath: string;
   let shortname: string;
+
   $: {
-    let arr = $params.subpath.split("-");
+    const arr = $params.subpath.split("-");
     parent_subpath = arr.slice(0, arr.length - 1).join("/");
     shortname = arr[arr.length - 1];
   }

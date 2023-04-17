@@ -1,6 +1,7 @@
 <script lang="ts">
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
+  import {goto} from "@roxi/routify";
   import {
     ApiResponseRecord,
     get_children,
@@ -31,30 +32,25 @@
       if (data.records.length > 0) {
         children = data.records;
       } else {
-        goto_url();
+        let subpath = `${folder.subpath}/${folder.shortname}`.replace(/\/+/g, "/");
+
+        // Trim leading or traling '/'
+        if (subpath.length > 0 && subpath[0] === "/")
+          subpath = subpath.substring(1);
+        if (subpath.length > 0 && subpath[subpath.length - 1] === "/")
+          subpath = subpath.slice(0, -1);
+
+        // If empty, use __root__ magic word
+        if (subpath.length === 0) subpath = "__root__";
+
+        // window.history.replaceState(
+        //   history.state,
+        //   "",
+        //   `/management/content/${space_name}/${subpath.replaceAll("/", "-")}`
+        // );
+        $goto("/management/content/[space_name]/[subpath]", {space_name: space_name, subpath: subpath.replaceAll("/", "-")});
       }
     }
-  }
-
-  function goto_url(): boolean {
-    let subpath = `${folder.subpath}/${folder.shortname}`.replace(/\/+/g, "/");
-
-    // Trim leading or traling '/'
-    if (subpath.length > 0 && subpath[0] === "/")
-      subpath = subpath.substring(1);
-    if (subpath.length > 0 && subpath[subpath.length - 1] === "/")
-      subpath = subpath.slice(0, -1);
-
-    // If empty, use __root__ magic word
-    if (subpath.length === 0) subpath = "__root__";
-
-    window.history.replaceState(
-      history.state,
-      "",
-      `/management/content/${space_name}/${subpath.replaceAll("/", "-")}`
-    );
-
-    return true;
   }
 </script>
 

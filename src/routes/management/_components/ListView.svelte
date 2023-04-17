@@ -7,6 +7,7 @@
   import cols from "../_stores/list_cols.json";
   import { refresh, search } from "../_stores/triggers";
   import { active_section } from "../_stores/active_section.js";
+  import {goto} from "@roxi/routify";
 
   let quickPreview = false;
   let shortname = "";
@@ -128,16 +129,15 @@
         }
         shortname = record.shortname;
         const schema_shortname = record.attributes?.payload?.schema_shortname;
-        window.history.replaceState(
-          history.state,
-          "",
-          `/management/content/${space_name}/${record.subpath.replaceAll(
-            "/",
-            "-"
-          )}/${shortname}/${record.resource_type}${
-            schema_shortname ? "/" + schema_shortname : ""
-          }`
-        );
+        // window.history.replaceState(
+        //   history.state,
+        //   "",
+        //   `/management/content/${space_name}/${record.subpath.replaceAll( "/", "-")}/${shortname}/${record.resource_type}${ schema_shortname ? "/" + schema_shortname : "" }`
+        // );
+        if(schema_shortname)
+          $goto("/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[schema_name]", {space_name: space_name, subpath: record.subpath.replaceAll("/","-"), shortname: shortname, resource_type: record.resource_type, schema_name: schema_shortname});
+        else
+          $goto("/management/content/[space_name]/[subpath]/[shortname]/[resource_type]", {space_name: space_name, subpath: record.subpath.replaceAll("/","-"), shortname: shortname, resource_type: record.resource_type});
       }}
       class:current={currentItem == index}
     >

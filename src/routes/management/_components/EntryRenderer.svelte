@@ -31,7 +31,7 @@
       <span class="font-monospace"
         ><small
           ><strong>{entry.shortname}</strong>
-          ({resource_type}{#if schema_name}:{schema_name}{/if})</small
+          ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
         ></span
       >
     </ButtonGroup>

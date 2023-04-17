@@ -6,7 +6,7 @@
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 </script>
 
-{#await retrieve_entry(resource_type, $params.space_name, $params.subpath, $params.shortname, true, true)}
+{#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-","/"), $params.shortname, true, true)}
   <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
 {:then entry}
   <EntryRenderer

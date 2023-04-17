@@ -5,7 +5,7 @@
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 </script>
-
+{#if $params.space_name && $params.subpath && $params.shortname}
 {#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-","/"), $params.shortname, true, true)}
   <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
 {:then entry}
@@ -18,3 +18,7 @@
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
+{:else}
+<h4> We shouldn't be here ... </h4>
+<pre>{JSON.stringify($params)}</pre>
+{/if}

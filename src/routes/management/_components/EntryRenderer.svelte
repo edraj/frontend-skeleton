@@ -25,7 +25,7 @@
   status_line.set(`<small>Last updated: <strong>${timeAgo(new Date(entry.updated_at))}</strong><br/>Attachments: <strong>${Object.keys(entry.attachments).length}</strong></small>`);
 </script>
 
-<div bind:clientHeight={header_height} class="py-3 px-2">
+<div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace"

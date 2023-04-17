@@ -17,7 +17,7 @@
   }
 </script>
 
-{#if parent_subpath && shortname }
+{#if $params.space_name && parent_subpath && shortname }
 {#await retrieve_entry(ResourceType.folder, $params.space_name, parent_subpath, shortname, true, true)}
   <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
 {:then entry}
@@ -31,10 +31,8 @@
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
-<!--
 {:else}
   <h4> For some reason ... params doesn't have the needed info</h4>
   <pre>{JSON.stringify($params, null, 2)}</pre>
   <pre>Parent subpath {parent_subpath} ... Entry shortname {shortname}</pre>
--->
 {/if}

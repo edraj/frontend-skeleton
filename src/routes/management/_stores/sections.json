@@ -26,11 +26,6 @@
       {
         "type": "component",
         "name": "spaces"
-      },
-      {
-        "type": "query",
-        "name": "content",
-        "dmart_query": { }
       }
     ]
   },

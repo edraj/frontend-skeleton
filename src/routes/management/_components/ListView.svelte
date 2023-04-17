@@ -54,7 +54,7 @@
         }
         api_status = "success";
         status_line.set(
-          `Loaded ${items.length - 1} of ${total}.<br/>api: ${api_status}`
+          `<small>Loaded: <strong>${items.length - 1} of ${total}</strong><br/>Api: <strong>${api_status}</strong></small>`
         );
       } else {
         console.log("Error with query", resp);
@@ -105,7 +105,7 @@
 
 <div class="list">
   <VirtualList
-    height={height - 105}
+    height={height - 110}
     width="auto"
     stickyIndices={[0]}
     itemCount={items.length}

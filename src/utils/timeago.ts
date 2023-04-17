@@ -1,9 +1,6 @@
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
 
 function getFormattedDate(date : Date, prefomattedDate? : string, hideYear = false) {
+  const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
   const day = date.getDate();
   const month = MONTH_NAMES[date.getMonth()];
   const year = date.getFullYear();
@@ -11,18 +8,14 @@ function getFormattedDate(date : Date, prefomattedDate? : string, hideYear = fal
   let minutes : string = `${(date.getMinutes()<10) ? "0": ""}${date.getMinutes()}`;
 
   if (prefomattedDate) {
-    // Today at 10:20
-    // Yesterday at 10:20
-    return `${ prefomattedDate } at ${ hours }:${ minutes }`;
+    return `${prefomattedDate} at ${hours}:${minutes}`;
   }
 
   if (hideYear) {
-    // 10. January at 10:20
-    return `${ day }. ${ month } at ${ hours }:${ minutes }`;
+    return `${day} of ${month} at ${hours}:${minutes}`;
   }
 
-  // 10. January 2017. at 10:20
-  return `${ day }. ${ month } ${ year }. at ${ hours }:${ minutes }`;
+  return `${day} of ${month}/${year} at ${hours}:${minutes}`;
 }
 
 
@@ -40,11 +33,11 @@ export function timeAgo(date : Date) {
   if (seconds < 5) {
     return 'now';
   } else if (seconds < 60) {
-    return `${ seconds } seconds ago`;
+    return `${seconds} seconds ago`;
   } else if (seconds < 90) {
     return 'about a minute ago';
   } else if (minutes < 60) {
-    return `${ minutes } minutes ago`;
+    return `${minutes} minutes ago`;
   } else if (isToday) {
     return getFormattedDate(date, 'Today'); // Today at 10:20
   } else if (isYesterday) {

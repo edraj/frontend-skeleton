@@ -1,7 +1,7 @@
 <script lang="ts">
   // import History from "./History.svelte";
-  // import Attachments from "../../_components/Attachments.svelte";
-  import { JSONEditor, Mode } from "svelte-jsoneditor";
+  import Attachments from "./Attachments.svelte";
+  // import { JSONEditor, Mode } from "svelte-jsoneditor";
   import { onDestroy } from "svelte";
   import {ResourceType, ResponseEntry} from "../../../dmart";
   import { Nav, Button, ButtonGroup } from "sveltestrap";
@@ -18,8 +18,8 @@
   export let space_name : string;
   export let subpath : string;
   export let resource_type : ResourceType;
-  export let schema_name : string | undefined;
-
+  export let schema_name : string | undefined = null;
+  
   let tab_option = (resource_type === ResourceType.folder) ? "list" : "view" ;
 
   onDestroy(() => status_line.set(""));
@@ -203,8 +203,7 @@
     <!--History subpath="{entry.subpath}" shortname="{entry.shortname}" /-->
   </div>
   <div class="h-100 tab-pane" class:active="{tab_option === 'attachments'}">
-    <pre> Attachments go here </pre>
-    <!--Attachments entry="{entry}" extended="{true}" /-->
+    <Attachments {space_name} {subpath} parent_shortname={entry.shortname} attachments={Object.values(entry.attachments).pop()} />
   </div>
 </div>
 

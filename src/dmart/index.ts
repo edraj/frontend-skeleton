@@ -210,7 +210,8 @@ export type ResponseEntry = {
   created_at: string,
   updated_at: string,
   owner_shortname: string,
-  payload: Payload
+  payload: Payload,
+  attachments?: Object
 };
 
 export type ResponseRecord = {
@@ -297,6 +298,21 @@ export async function retrieve_entry(resource_type: ResourceType, space_name: st
 }
 
 
+export async function upload_with_payload(space_name : string, subpath : string, resource_type: ResourceType, shortname : string, payload_file : string ) : Promise<ApiResponse> {
+
+  const request_record = new Blob([JSON.stringify({resource_type, subpath, shortname, attributes: {is_active: true}})], { type: "application/json"});
+
+  const form_data = new FormData;
+  form_data.append("space_name", space_name);
+  form_data.append("request_record", request_record);
+  form_data.append("payload_file", payload_file);
+
+  const { data } = await axios.post<ApiResponse>( api_url + "/managed/resource_with_payload", form_data, {headers});
+
+  return data;
+}
+
+
 export async function get_spaces() : Promise<ApiResponse> {
   return await query({
     type: QueryType.spaces,
@@ -320,3 +336,16 @@ export async function get_children(space_name: string, subpath : string, limit: 
   });
 
 }
+
+
+export function get_attachment_url(
+  resource_type : ResourceType,
+  space_name : string,
+  subpath : string,
+  parent_shortname : string,
+  shortname : string,
+  ext : string
+) {
+  return `${api_url}/managed/payload/${resource_type}/${space_name}/${subpath.replace(/\/+$/, "")}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
+}
+

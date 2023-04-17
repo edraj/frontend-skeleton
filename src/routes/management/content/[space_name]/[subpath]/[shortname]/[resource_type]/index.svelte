@@ -12,7 +12,7 @@
 {#await retrieve_entry(resource_type, $params.space_name, $params.subpath, $params.shortname, true, true )}
   <h6> Loading ... @{$params.space_name}/{$params.subpath} </h6>
 {:then entry}
-  <EntryRenderer {entry} {resource_type} space_name={$params.space_name} subpath={$params.subpath.replaceAll("-", "/")} />
+  <EntryRenderer {entry} {resource_type} space_name={$params.space_name} subpath={$params.subpath?.replaceAll("-", "/")} />
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}

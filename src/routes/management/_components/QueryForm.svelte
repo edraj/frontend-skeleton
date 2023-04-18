@@ -41,6 +41,6 @@
     <option value="media">{$_("media")}</option>
   </Input>
   <Input id="resource_shortnames" type="text" title={$_("shortnames")} />
-  <Input id="limit" type="number" title={$_("limit")} value={10} />
-  <Input id="offset" type="number" title={$_("offset")} value={0} />
+  <Input id="limit" type="number" title={$_("limit")} value={"10"} />
+  <Input id="offset" type="number" title={$_("offset")} value={"0"} />
 </Form>

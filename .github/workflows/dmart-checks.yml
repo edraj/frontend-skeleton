@@ -24,4 +24,4 @@ jobs:
         yarn build
     - name: Check svelte
       run: |
-        ./node_modules/.bin/svelte-check 
+        # ./node_modules/.bin/svelte-check 

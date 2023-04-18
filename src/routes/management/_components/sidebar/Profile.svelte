@@ -11,8 +11,7 @@
   <h3> Loading profile </h3>
 {:then profile_data}
   {#if profile_data.records[0].attributes.displayname}
-    <strong>Displaname</strong> {profile_data.records[0].attributes.displayname.en}
-    <br/>
+    <strong>Displayname</strong> {profile_data.records[0].attributes.displayname.en}
     <hr />
   {/if} 
   <strong> Notifications / Inbox </strong>
@@ -28,6 +27,7 @@
       <p style="color: red">{error.message}</p>
     {/await}
   </ListGroupItem>
+    <br/>
     <strong>Roles </strong>
     <ListGroup flush>
       {#each profile_data.records[0].attributes.roles as role}

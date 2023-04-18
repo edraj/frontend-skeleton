@@ -1,0 +1,27 @@
+name: DMART Frontend checks
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install frontend js depdenencies
+      run: |
+        yarn install
+    - name: Build frontend
+      run: |
+        yarn build
+    - name: Check svelte
+      run: |
+        ./node_modules/.bin/svelte-check 

@@ -73,7 +73,7 @@
       >
         <Icon name="pencil" />
       </Button>
-      <Button
+      <!--Button
         outline
         color="success"
         size="sm"
@@ -83,7 +83,7 @@
         on:click={() => (tab_option = "source")}
       >
         <Icon name="code-slash" />
-      </Button>
+      </Button-->
       <!--Button
         outline
         color="success"

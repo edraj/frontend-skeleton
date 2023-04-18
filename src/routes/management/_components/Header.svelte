@@ -18,7 +18,7 @@
   import sections from "../_stores/sections.json";
 </script>
 
-<Navbar class="py-0 px-1">
+<Navbar class="py-0 px-0">
   <Nav tabs class="align-items-center w-100" style="background-color: #f4f4f4;">
     {#each sections as section}
       <NavItem>

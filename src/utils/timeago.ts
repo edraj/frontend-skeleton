@@ -1,25 +1,21 @@
 
 function getFormattedDate(date : Date, prefomattedDate? : string, hideYear = false) {
-  const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
+  // const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
   const day = date.getDate();
-  const month = MONTH_NAMES[date.getMonth()];
+  const month = date.getMonth() + 1;  // MONTH_NAMES[date.getMonth()];
   const year = date.getFullYear();
   const hours = date.getHours();
   let minutes : string = `${(date.getMinutes()<10) ? "0": ""}${date.getMinutes()}`;
 
-  if (prefomattedDate) {
-    return `${prefomattedDate} at ${hours}:${minutes}`;
-  }
+  if (prefomattedDate) 
+    return `${prefomattedDate} @ ${hours}:${minutes}`;
+  
+  if (hideYear) 
+    return `${day}/${month} @ ${hours}:${minutes}`;
 
-  if (hideYear) {
-    return `${day} of ${month} at ${hours}:${minutes}`;
-  }
-
-  return `${day} of ${month}/${year} at ${hours}:${minutes}`;
+  return `${day}/${month}/${year} @ ${hours}:${minutes}`;
 }
 
-
-// --- Main function
 export function timeAgo(date : Date) {
   const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000
   const today = new Date();
@@ -31,20 +27,20 @@ export function timeAgo(date : Date) {
   const isThisYear = today.getFullYear() === date.getFullYear();
 
   if (seconds < 5) {
-    return 'now';
+    return 'Now';
   } else if (seconds < 60) {
     return `${seconds} seconds ago`;
   } else if (seconds < 90) {
-    return 'about a minute ago';
+    return 'A minute ago';
   } else if (minutes < 60) {
     return `${minutes} minutes ago`;
   } else if (isToday) {
-    return getFormattedDate(date, 'Today'); // Today at 10:20
+    return getFormattedDate(date, 'Today');
   } else if (isYesterday) {
-    return getFormattedDate(date, 'Yesterday'); // Yesterday at 10:20
+    return getFormattedDate(date, 'Yesterday');
   } else if (isThisYear) {
-    return getFormattedDate(date, undefined, true); // 10. January at 10:20
+    return getFormattedDate(date, undefined, true);
   }
 
-  return getFormattedDate(date); // 10. January 2017. at 10:20
+  return getFormattedDate(date);
 }

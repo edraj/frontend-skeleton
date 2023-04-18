@@ -1,6 +1,6 @@
 <script lang="ts">
   import { get_profile, get_children, ResourceType } from '../../../../dmart';
-  import { ListGroupItem } from 'sveltestrap';
+  import { ListGroup, ListGroupItem } from 'sveltestrap';
   import Icon from '../../../_components/Icon.svelte';
   import {_} from '../../../../i18n';
   import Folder from "../Folder.svelte";
@@ -29,11 +29,11 @@
     {/await}
   </ListGroupItem>
     <strong>Roles </strong>
-  <pre>
-    {#each profile_data.records[0].attributes.roles as role}
-    {role}
-    {/each}
-  </pre>
+    <ListGroup flush>
+      {#each profile_data.records[0].attributes.roles as role}
+        <ListGroupItem disabled >{role}</ListGroupItem>
+      {/each}
+    </ListGroup>
 {:catch error}
 	<p style="color: red">{error.message}</p>
 {/await}

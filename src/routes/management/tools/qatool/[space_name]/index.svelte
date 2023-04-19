@@ -16,13 +16,12 @@
   {/if}
   {#each Object.keys(response.attributes.folders_report) as subpath}
     <ListGroup>
-      <ListGroupItem active
-        >{subpath} ({response.attributes.folders_report[subpath]
+      <ListGroupItem active>
+        {subpath} ({response.attributes.folders_report[subpath]
           ?.valid_entries ??
           response.attributes.folders_report[
             subpath
-          ].invalid_entries.length.toString() + " corrupted"} entry)</ListGroupItem
-      >
+          ].invalid_entries.length.toString() + " corrupted"} entry)</ListGroupItem>
       {#if response.attributes.folders_report[subpath].invalid_entries}
         {#each response.attributes.folders_report[subpath].invalid_entries as entry}
           <ListGroupItem

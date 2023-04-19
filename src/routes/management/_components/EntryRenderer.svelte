@@ -216,7 +216,6 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <!--pre> {JSON.stringify(entry,null,1)} </pre-->
       <JsonEditor content={{ json: JSON.parse(JSON.stringify(entry)) }} />
     </div>
   </div>

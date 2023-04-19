@@ -7,7 +7,7 @@
   import cols from "../_stores/list_cols.json";
   import { refresh, search } from "../_stores/triggers";
   import { active_section } from "../_stores/active_section.js";
-  import {goto} from "@roxi/routify";
+  import { goto } from "@roxi/routify";
 
   let quickPreview = false;
   let shortname = "";
@@ -20,6 +20,7 @@
   onDestroy(() => status_line.set(""));
   export let space_name: string;
   export let subpath: string;
+  export let type: QueryType = QueryType.search;
 
   let total: number;
   let lastbatch: number;
@@ -33,7 +34,7 @@
   async function infiniteHandler({ detail: { loaded, complete, error } }) {
     try {
       const resp = await query({
-        type: QueryType.search,
+        type: type,
         space_name: space_name,
         subpath: subpath,
         limit: 50,
@@ -55,7 +56,9 @@
         }
         api_status = "success";
         status_line.set(
-          `<small>Loaded: <strong>${items.length - 1} of ${total}</strong><br/>Api: <strong>${api_status}</strong></small>`
+          `<small>Loaded: <strong>${
+            items.length - 1
+          } of ${total}</strong><br/>Api: <strong>${api_status}</strong></small>`
         );
       } else {
         console.log("Error with query", resp);
@@ -134,10 +137,27 @@
         //   "",
         //   `/management/content/${space_name}/${record.subpath.replaceAll( "/", "-")}/${shortname}/${record.resource_type}${ schema_shortname ? "/" + schema_shortname : "" }`
         // );
-        if(schema_shortname)
-          $goto("/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[schema_name]", {space_name: space_name, subpath: record.subpath.replaceAll("/","-"), shortname: shortname, resource_type: record.resource_type, schema_name: schema_shortname});
+        if (schema_shortname)
+          $goto(
+            "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[schema_name]",
+            {
+              space_name: space_name,
+              subpath: record.subpath.replaceAll("/", "-"),
+              shortname: shortname,
+              resource_type: record.resource_type,
+              schema_name: schema_shortname,
+            }
+          );
         else
-          $goto("/management/content/[space_name]/[subpath]/[shortname]/[resource_type]", {space_name: space_name, subpath: record.subpath.replaceAll("/","-"), shortname: shortname, resource_type: record.resource_type});
+          $goto(
+            "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]",
+            {
+              space_name: space_name,
+              subpath: record.subpath.replaceAll("/", "-"),
+              shortname: shortname,
+              resource_type: record.resource_type,
+            }
+          );
       }}
       class:current={currentItem == index}
     >

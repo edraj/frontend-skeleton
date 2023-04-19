@@ -8,15 +8,17 @@
   import Profile from "./sidebar/Profile.svelte";
   import Folder from "./Folder.svelte";
   import { isActive } from "@roxi/routify";
-  import { ResourceType } from "../../../dmart";
+  import { ResourceType, get_spaces } from "../../../dmart";
+  import SimpleSpaces from "./sidebar/SimpleSpaces.svelte";
 
   const components = {
     spaces: Spaces,
-    profile: Profile
+    profile: Profile,
   };
 
   let head_height: number;
   let foot_height: number;
+  const withSpaces = ["events", "qatool"];
 </script>
 
 <div bind:clientHeight={head_height} class="p-2">
@@ -43,11 +45,16 @@
         <ListGroupItem
           color="light"
           action
-          href={`/management/{$active_section.name}/{child.name}`}
-          active={$isActive(`/management/{$active_section.name}/{child.name}`)}
+          href={`/management/${$active_section.name}/${child.name}`}
+          active={$isActive(
+            `/management/${$active_section.name}/${child.name}`
+          )}
         >
           {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
           {$_(child.name)}
+          {#if withSpaces.includes(child.name) && $active_section.name === "tools"}
+            <SimpleSpaces />
+          {/if}
         </ListGroupItem>
       {:else if child.type == "folder"}
         <ListGroupItem class="px-0">

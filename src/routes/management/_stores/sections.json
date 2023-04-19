@@ -40,7 +40,6 @@
         "shortname": "notifications",
         "subpath": "personal/people/dmart",
         "space_name": "personal"
-
       },
       {
         "type": "folder",
@@ -55,6 +54,7 @@
   {
     "name": "tools",
     "icon": "tools",
+    "is_expandable": false,
     "children": [
       {
         "type": "link",
@@ -70,6 +70,11 @@
         "type": "link",
         "name": "terminal",
         "icon": "terminal"
+      },
+      {
+        "type": "link",
+        "name": "qatool",
+        "icon": "receipt-cutoff"
       },
       {
         "type": "link",

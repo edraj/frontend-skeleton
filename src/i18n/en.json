@@ -28,6 +28,7 @@
   "data": "Data",
   "submissions": "Submissions",
   "profiles": "Profiles",
+  "space_name": "Space name",
   "other_spaces": "Other spaces",
   "definitions": "Definitions",
   "forum": "Forum",
@@ -171,5 +172,7 @@
   "hash": "Hash",
   "events": "Events",
   "terminal": "Terminal",
-  "under_development": "Under development"
+  "under_development": "Under development",
+  "schema_shortname": "Schema",
+  "qatool": "Data Quality"
 }

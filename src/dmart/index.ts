@@ -312,7 +312,10 @@ export async function retrieve_entry(
 ): Promise<ResponseEntry> {
   if (!subpath || subpath == "/") subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(
-    `${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`,
+    `${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
+      /\/+/g,
+      "/"
+    ),
     { headers }
   );
   return data;
@@ -394,4 +397,12 @@ export function get_attachment_url(
     /\/+$/,
     ""
   )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
+}
+
+export async function get_space_health(space_name) {
+  const { data } = await axios.get<ApiQueryResponse>(
+    `${api_url}/managed/health/${space_name}`,
+    { headers }
+  );
+  return data;
 }

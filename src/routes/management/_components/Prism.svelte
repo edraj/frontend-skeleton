@@ -4,12 +4,14 @@
 
   export let language: string = "json";
   export let code: Object;
-
-  const formatted: string = Prism.highlight(
-    JSON.stringify(code, undefined, 1),
-    Prism.languages[language],
-    language
-  );
+  let formatted: string;
+  $: {
+    formatted = Prism.highlight(
+      JSON.stringify(code, undefined, 1),
+      Prism.languages[language],
+      language
+    );
+  }
 </script>
 
 <pre class="language-{language}" data-output="2-17"><code

@@ -171,5 +171,8 @@
   "hash": "التهشير",
   "events": "أحداث",
   "terminal": "طرفية",
-  "under_development": "تحت التطوير"
+  "under_development": "تحت التطوير",
+  "space_name": "اسم الفضاء",
+  "schema_shortname": "مخطط",
+  "qatool": "جودة البيانات"
 }

@@ -1,7 +1,12 @@
 <script lang="ts">
   import Attachments from "./Attachments.svelte";
   import { onDestroy } from "svelte";
-  import { ResourceType, ResponseEntry } from "../../../dmart";
+  import {
+    RequestType,
+    ResourceType,
+    ResponseEntry,
+    request,
+  } from "../../../dmart";
   import { Nav, Button, ButtonGroup } from "sveltestrap";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
@@ -9,10 +14,11 @@
   import Prism from "./Prism.svelte";
   import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
   import { status_line } from "../_stores/status_line";
-  import {timeAgo} from "../../../utils/timeago"
+  import { timeAgo } from "../../../utils/timeago";
+  import { showToast, Level } from "../../../utils/toast";
+  import { faSave } from "@fortawesome/free-regular-svg-icons";
 
   let header_height: number;
-  // let status : string;
   export let entry: ResponseEntry;
   export let space_name: string;
   export let subpath: string;
@@ -20,9 +26,78 @@
   export let schema_name: string | undefined = null;
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
+  console.log({ entry });
+
+  let content = { json: entry || {}, text: undefined };
 
   onDestroy(() => status_line.set(""));
-  status_line.set(`<small>Last updated: <strong>${timeAgo(new Date(entry.updated_at))}</strong><br/>Attachments: <strong>${Object.keys(entry.attachments).length}</strong></small>`);
+  status_line.set(
+    `<small>Last updated: <strong>${timeAgo(
+      new Date(entry.updated_at)
+    )}</strong><br/>Attachments: <strong>${
+      Object.keys(entry.attachments).length
+    }</strong></small>`
+  );
+
+  let isSchemaValidated;
+  function handleChange(updatedContent, previousContent, patchResult) {
+    const v = patchResult?.contentErrors?.validationErrors;
+    if (v === undefined || v.length === 0) {
+      isSchemaValidated = true;
+    } else {
+      isSchemaValidated = false;
+    }
+  }
+
+  let errorContent = null;
+  async function handleSave() {
+    // if (!isSchemaValidated) {
+    //   alert("The content does is not validated agains the schema");
+    //   return;
+    // }
+    errorContent = null;
+    const data = content.json ? { ...content.json } : JSON.parse(content.text);
+    const response = await request({
+      space_name: space_name,
+      request_type: RequestType.replace,
+      records: [
+        {
+          resource_type,
+          shortname: entry.shortname,
+          subpath,
+          attributes: data,
+        },
+      ],
+    });
+    if (response.status === "success") {
+      showToast(Level.info);
+    } else {
+      errorContent = response;
+      console.log({ errorContent });
+      showToast(Level.warn);
+    }
+  }
+
+  function handleRenderMenu(items, context) {
+    const separator = {
+      separator: true,
+    };
+
+    const saveButton = {
+      onClick: handleSave,
+      icon: faSave,
+      title: "Save",
+    };
+
+    const itemsWithoutSpace = items.slice(0, items.length - 2);
+    return itemsWithoutSpace.concat([
+      separator,
+      saveButton,
+      {
+        space: true,
+      },
+    ]);
+  }
 </script>
 
 <div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
@@ -73,28 +148,6 @@
       >
         <Icon name="pencil" />
       </Button>
-      <!--Button
-        outline
-        color="success"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1"
-        active={"source" == tab_option}
-        title={$_("source")}
-        on:click={() => (tab_option = "source")}
-      >
-        <Icon name="code-slash" />
-      </Button-->
-      <!--Button
-        outline
-        color="success"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1"
-        active="{'details' == tab_option}"
-        title="{$_('details')}"
-        on:click="{() => (tab_option = 'details')}"
-      >
-        <Icon name="info" />
-      </Button-->
       <Button
         outline
         color="success"
@@ -141,26 +194,6 @@
         <Icon name="trash" />
       </Button>
     </ButtonGroup>
-    <!--ButtonGroup size="sm" class="align-items-center">
-      <span class="ps-2 pe-1"> {$_("status")} </span>
-      <Button
-        outline
-        color='secondary'
-        title="{$_('save')}"
-        size="sm"
-        disabled="{true}"
-        class="justify-content-center text-center py-0 px-1 me-1">
-        <span class="font-monospace text-success"><small>{@html status}</small></span>
-      </Button>
-      <Button
-        outline
-        color='secondary'
-        title="{$_('save')}"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1">
-        <Icon name="cloud-upload" />
-      </Button>
-    </ButtonGroup-->
     {#if resource_type === ResourceType.folder}
       <ButtonGroup>
         <Button
@@ -216,8 +249,15 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <!--pre> {JSON.stringify(entry,null,1)} </pre-->
-      <JsonEditor content={{ json: JSON.parse(JSON.stringify(entry)) }} />
+      <JsonEditor
+        bind:content
+        onChange={handleChange}
+        onRenderMenu={handleRenderMenu}
+      />
+      {#if errorContent}
+        <h3 class="mt-3">Error:</h3>
+        <Prism bind:code={errorContent} />
+      {/if}
     </div>
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "history"}>

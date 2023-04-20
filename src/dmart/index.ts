@@ -294,12 +294,16 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
 }
 
 export async function request(action: ActionRequest) {
-  const { data } = await axios.post<ActionResponse>(
-    api_url + "/managed/request",
-    action,
-    { headers }
-  );
-  return data;
+  try {
+    const { data } = await axios.post<ActionResponse>(
+      api_url + "/managed/request",
+      action,
+      { headers }
+    );
+    return data;
+  } catch (error) {
+    return error.response;
+  }
 }
 
 export async function retrieve_entry(

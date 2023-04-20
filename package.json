@@ -37,6 +37,7 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "svelte-prism": "^1.1.6"
   }
 }

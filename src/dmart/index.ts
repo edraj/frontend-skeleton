@@ -403,8 +403,8 @@ export function get_attachment_url(
   )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
 }
 
-export async function get_space_health(space_name) {
-  const { data } = await axios.get<ApiQueryResponse>(
+export async function get_space_health(space_name : string) {
+  const { data } = await axios.get<ApiQueryResponse & { attributes: {folders_report: Object}}>(
     `${api_url}/managed/health/${space_name}`,
     { headers }
   );

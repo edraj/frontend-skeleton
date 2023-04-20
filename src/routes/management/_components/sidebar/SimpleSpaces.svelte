@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { get_spaces, get_children, ResourceType } from "../../../../dmart";
+  import { get_spaces } from "../../../../dmart";
   import { ListGroupItem } from "sveltestrap";
   import Icon from "../../../_components/Icon.svelte";
   import { _ } from "../../../../i18n";

@@ -302,7 +302,7 @@ export async function request(action: ActionRequest) {
     );
     return data;
   } catch (error) {
-    return error.response;
+    return error.response.data;
   }
 }
 

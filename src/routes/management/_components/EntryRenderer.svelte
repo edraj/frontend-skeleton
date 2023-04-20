@@ -2,9 +2,11 @@
   import Attachments from "./Attachments.svelte";
   import { onDestroy } from "svelte";
   import {
+    QueryType,
     RequestType,
     ResourceType,
     ResponseEntry,
+    query,
     request,
   } from "../../../dmart";
   import { Nav, Button, ButtonGroup } from "sveltestrap";
@@ -13,12 +15,15 @@
   import ListView from "./ListView.svelte";
   import Prism from "./Prism.svelte";
   import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+  import { createAjvValidator } from "svelte-jsoneditor/plugins/validator/createAjvValidator";
+  import { Validator } from "svelte-jsoneditor";
   import { status_line } from "../_stores/status_line";
   import { timeAgo } from "../../../utils/timeago";
   import { showToast, Level } from "../../../utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
 
   let header_height: number;
+  let validator: Validator = createAjvValidator({ schema: {} });
   export let entry: ResponseEntry;
   export let space_name: string;
   export let subpath: string;
@@ -26,8 +31,6 @@
   export let schema_name: string | undefined = null;
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
-  console.log({ entry });
-
   let content = { json: entry || {}, text: undefined };
 
   onDestroy(() => status_line.set(""));
@@ -41,7 +44,7 @@
 
   let isSchemaValidated;
   function handleChange(updatedContent, previousContent, patchResult) {
-    const v = patchResult?.contentErrors?.validationErrors;
+    const v = patchResult.contentErrors.validationErrors;
     if (v === undefined || v.length === 0) {
       isSchemaValidated = true;
     } else {
@@ -97,6 +100,33 @@
         space: true,
       },
     ]);
+  }
+
+  function cleanUpSchema(obj) {
+    for (let prop in obj) {
+      if (prop === "comment") delete obj[prop];
+      else if (typeof obj[prop] === "object") cleanUpSchema(obj[prop]);
+    }
+  }
+  let schema = null;
+  async function get_schema() {
+    const query_schema = {
+      space_name,
+      type: QueryType.search,
+      subpath: "/schema",
+      filter_shortnames: [entry.payload.schema_shortname],
+      search: "",
+      retrieve_json_payload: true,
+    };
+    schema = await query(query_schema);
+    schema = schema.records[0].attributes["payload"].body;
+    cleanUpSchema(schema.properties);
+    validator = createAjvValidator({ schema });
+  }
+  $: {
+    if (schema === null) {
+      get_schema();
+    }
   }
 </script>
 
@@ -251,6 +281,7 @@
     >
       <JsonEditor
         bind:content
+        bind:validator
         onChange={handleChange}
         onRenderMenu={handleRenderMenu}
       />

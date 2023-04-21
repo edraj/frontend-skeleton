@@ -63,7 +63,7 @@
           <Folder
             space_name={child.space_name}
             folder={{
-              shortname: child.shortname,
+              shortname: child.name,
               subpath: child.subpath,
               resource_type: ResourceType.folder,
               attributes: {},

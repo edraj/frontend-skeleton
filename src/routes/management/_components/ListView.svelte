@@ -125,7 +125,7 @@
       class="my-row"
       on:click={async () => {
         const record = { ...records[index - 1] };
-        if ($active_section === "events") {
+        if ($active_section.name === "events") {
           content.json = record;
           quickPreview = true;
           return;

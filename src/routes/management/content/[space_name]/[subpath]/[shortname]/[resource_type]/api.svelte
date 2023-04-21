@@ -1,8 +1,106 @@
 <script lang="ts">
+  import axios from "axios";
+  axios.defaults.withCredentials = true;
+  import { website } from "../../../../../../../config";
+  import { Col, Container, Row, Button } from "sveltestrap";
   import { params } from "@roxi/routify";
+  import { retrieve_entry, ResourceType, ApiResponse } from "../../../../../../../dmart";
+  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+    import { JSONContent } from "svelte-jsoneditor";
+
+  // enum VerbType {
+  //   get = "get",
+  //   post = 'post'
+  // }
+
+  type Request = {
+    verb: string,
+    endpoint: string,
+    body?: string
+  };
+
+
+  const headers: { [key: string]: string } = {
+  "Content-type": "application/json",
+  };
+
+  let curl = "";
+  function generateCURL(request : Request) {
+    return `curl -X ${request.verb} "${website.backend}/${request.endpoint}"` +
+           ((request.verb == "post") ? ("-H 'Content-Type: application/json'\n" +
+           `-d '${JSON.stringify((request_je.get() as JSONContent).json, undefined, 2)}'\n` ): "");
+  }
+
+  async function retrieve_request() : Promise<Request> {
+    const data = await retrieve_entry(ResourceType.content, $params.space_name, $params.subpath.replaceAll("-","/"), $params.shortname, true, true)
+    if ( data.payload.body as Record<string, any> ) {
+      return {
+        verb:  data.payload.body["verb"] as string,
+        endpoint: data.payload.body["end_point"].replace(/^\//,"").replace(/\/$/,"").replaceAll(/\/+/g, "/"),
+        body: data.payload.body["request_body"]
+      };
+    }
+  };
+
+  let request_je : JsonEditor;
+  let response_je : JsonEditor;
+  async function call_api(request : Request) {
+    curl = generateCURL(request);
+    if (request.verb === "post") {
+      const response = await axios.post<ApiResponse>(`${website.backend}/${request.endpoint}`, JSON.stringify((request_je.get() as JSONContent).json), {headers});
+      response_je.set({text: JSON.stringify(response.data)}) 
+    } else if (request.verb === "get") {
+      const response = await axios.get<ApiResponse>( `${website.backend}/${request.endpoint}`);
+      response_je.set({text: JSON.stringify(response.data)}) 
+    }
+  }
 </script>
 
-<h1>
-  You are here ... @{$params.space_name}/{$params.subpath}/{$params.shortname}
-</h1>
-<h2>Inside custom api renders</h2>
+{#if $params.space_name && $params.subpath && $params.shortname}
+  {#await retrieve_request()}
+    <!--h6 transition:fade >Loading ... @{$params.space_name}/{$params.subpath}</h6-->
+  {:then request }
+    <Container>
+      <Row class="my-3">
+        <Col class="d-flex justify-content-between">
+          <Col>
+            <p style="margin: 0px"><b>{$params.subpath} / {$params.shortname}</b> - Endpoint: <code>{request.endpoint}</code> Verb: <code>{request.verb}</code>
+              <Button on:click={async () => (await call_api(request))}>Call</Button>
+            </p>
+          </Col>
+        </Col>
+      </Row>
+      <Row>
+        <Col><b> Request </b><br/><JsonEditor bind:this={request_je} content={{json: request.body || {}}} /></Col>
+        <Col><b> Response </b><br/> <JsonEditor bind:this={response_je} content={{text: "{}"}} readOnly={true} /></Col>
+      </Row>
+      <Row>
+        <Col>
+          <div class="result-text">{curl}</div>
+        </Col>
+      </Row>
+    </Container>
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
+{:else}
+  <h4> We shouldn't be here ... </h4>
+  <pre>{JSON.stringify($params)}</pre>
+{/if}
+
+
+
+<style>
+  .result-text {
+    /* width: 100%; */
+    /* max-width: 600px; */
+    height: auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-bottom: 20px;
+  }
+</style>

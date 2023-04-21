@@ -1,5 +1,6 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
+import { website } from "../config.js";
 
 export enum Status {
   success = "success",
@@ -92,7 +93,6 @@ export type ProfileResponse = ApiResponse & {
   records: Array<ProfileResponseRecord>;
 };
 
-const api_url = "https://api.dmart.cc";
 
 let headers: { [key: string]: string } = {
   "Content-type": "application/json",
@@ -253,7 +253,7 @@ export type ActionRequest = {
 export async function login(shortname: string, password: string) {
   const { data } = await axios.post<
     ApiResponse & { records: Array<LoginResponseRecord> }
-  >(api_url + "/user/login", { shortname, password }, { headers });
+  >(website.backend + "/user/login", { shortname, password }, { headers });
   //console.log(JSON.stringify(data, null, 2));
   // FIXME settins Authorization is only needed when the code is running on the server
   /*headers.Authorization = "";
@@ -265,7 +265,7 @@ export async function login(shortname: string, password: string) {
 
 export async function logout() {
   const { data } = await axios.post<ApiResponse>(
-    api_url + "/user/logout",
+    website.backend + "/user/logout",
     {},
     { headers }
   );
@@ -273,7 +273,7 @@ export async function logout() {
 }
 
 export async function get_profile() {
-  const { data } = await axios.get<ProfileResponse>(api_url + "/user/profile", {
+  const { data } = await axios.get<ProfileResponse>(website.backend + "/user/profile", {
     headers,
   });
   return data;
@@ -286,7 +286,7 @@ export type ApiQueryResponse = ApiResponse & {
 export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
   query.subpath = query.subpath.replace(/\/+/g, "/");
   const { data } = await axios.post<ApiQueryResponse>(
-    api_url + "/managed/query",
+    website.backend + "/managed/query",
     query,
     { headers }
   );
@@ -296,7 +296,7 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
 export async function request(action: ActionRequest) {
   try {
     const { data } = await axios.post<ActionResponse>(
-      api_url + "/managed/request",
+      website.backend + "/managed/request",
       action,
       { headers }
     );
@@ -316,10 +316,7 @@ export async function retrieve_entry(
 ): Promise<ResponseEntry> {
   if (!subpath || subpath == "/") subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(
-    `${api_url}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
-      /\/+/g,
-      "/"
-    ),
+    `${website.backend}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(/\/+/g, "/"),
     { headers }
   );
   return data;
@@ -352,7 +349,7 @@ export async function upload_with_payload(
   const headers = { "Content-Type": "multipart/form-data" };
 
   const { data } = await axios.post<ApiResponse>(
-    api_url + "/managed/resource_with_payload",
+    website.backend + "/managed/resource_with_payload",
     form_data,
     { headers }
   );
@@ -397,7 +394,7 @@ export function get_attachment_url(
   shortname: string,
   ext: string
 ) {
-  return `${api_url}/managed/payload/${resource_type}/${space_name}/${subpath.replace(
+  return `${website.backend}/managed/payload/${resource_type}/${space_name}/${subpath.replace(
     /\/+$/,
     ""
   )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
@@ -405,7 +402,7 @@ export function get_attachment_url(
 
 export async function get_space_health(space_name : string) {
   const { data } = await axios.get<ApiQueryResponse & { attributes: {folders_report: Object}}>(
-    `${api_url}/managed/health/${space_name}`,
+    `${website.backend}/managed/health/${space_name}`,
     { headers }
   );
   return data;

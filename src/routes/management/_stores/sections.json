@@ -38,7 +38,7 @@
         "icon": "stars",
         "name": "new",
         "shortname": "notifications",
-        "subpath": "personal/people/dmart",
+        "subpath": "people/dmart",
         "space_name": "personal"
       },
       {
@@ -46,7 +46,7 @@
         "icon": "collection",
         "name": "messages",
         "shortname": "notifications",
-        "subpath": "personal/people/dmart",
+        "subpath": "people/dmart",
         "space_name": "personal"
       }
     ]

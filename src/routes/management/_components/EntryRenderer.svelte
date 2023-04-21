@@ -6,6 +6,7 @@
     RequestType,
     ResourceType,
     ResponseEntry,
+    Status,
     query,
     request,
   } from "../../../dmart";
@@ -72,7 +73,7 @@
         },
       ],
     });
-    if (response.status === "success") {
+    if (response.status == Status.success) {
       showToast(Level.info);
     } else {
       errorContent = response;
@@ -110,21 +111,29 @@
   }
   let schema = null;
   async function get_schema() {
-    const query_schema = {
-      space_name,
-      type: QueryType.search,
-      subpath: "/schema",
-      filter_shortnames: [entry.payload.schema_shortname],
-      search: "",
-      retrieve_json_payload: true,
-    };
-    schema = await query(query_schema);
-    schema = schema.records[0].attributes["payload"].body;
-    cleanUpSchema(schema.properties);
-    validator = createAjvValidator({ schema });
+    if(entry.payload && entry.payload.schema_shortname) {
+      const query_schema = {
+        space_name,
+        type: QueryType.search,
+        subpath: "/schema",
+        filter_shortnames: [entry.payload.schema_shortname],
+        search: "",
+        retrieve_json_payload: true,
+      };
+      const schema_data = await query(query_schema);
+      if(schema_data.status == "success" && schema_data.records.length > 0) {
+        schema = schema_data.records[0].attributes["payload"].body;
+        cleanUpSchema(schema.properties);
+        validator = createAjvValidator({ schema });
+      } else {
+        console.log("Schema loading failed for ", {query_schema, schema_data});
+      }
+    } else {
+      schema = null;
+    }
   }
   $: {
-    if (schema === null) {
+    if (schema === null && entry && entry.payload && entry.payload.schema_shortname) {
       get_schema();
     }
   }

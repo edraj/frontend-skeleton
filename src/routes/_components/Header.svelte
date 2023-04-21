@@ -20,7 +20,7 @@
   <NavbarBrand href="/"><LocalizedValue field="{website.short_name}" /></NavbarBrand>
   <Nav class="me-auto" navbar>
     {#if $user && $user.signedin}
-      <NavLink href="/management/dashboard">{$user.localized_displayname}</NavLink>
+      <NavLink href="/management/content">{$user.localized_displayname}</NavLink>
     {/if}
     <NavLink href="/about">{$_("about")}</NavLink>
     <NavLink href="/contact">{$_("contact_us")}</NavLink>

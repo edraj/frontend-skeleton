@@ -6,7 +6,7 @@
 
 The Frontend requires a proper setup of DMART server. 
 
-Currently the codie is confirgured to use https://api.dmart.cc
+Currently the code is confirgured to use https://api.dmart.cc
 (The configuration option `backend` can be found under src/config.ts)
 
 ```bash
@@ -36,6 +36,5 @@ yarn dev
 - [ ] History section
 - [ ] Bind search input
 - [ ] Implement Data quality
-- [ ] Implement Vitest
 - [ ] Implement vitest (check routify/starter-vitest example)
 - [ ] Migrate Console (terminal)

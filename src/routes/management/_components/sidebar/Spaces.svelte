@@ -9,7 +9,7 @@
 </script>
 
 {#await get_spaces()}
-  <h3>Loading spaces list</h3>
+  <!--h3 transition:fade >Loading spaces list</h3-->
 {:then spaces_data}
   {#each spaces_data.records as space}
     <ListGroupItem class="ps-2 pe-0 py-0">

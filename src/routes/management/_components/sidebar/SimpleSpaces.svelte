@@ -3,12 +3,13 @@
   import { ListGroupItem } from "sveltestrap";
   import Icon from "../../../_components/Icon.svelte";
   import { _ } from "../../../../i18n";
+  // import { fade } from 'svelte/transition';
 
-  let expanded: string;
+  // let expanded: string;
 </script>
 
 {#await get_spaces()}
-  <h3>Loading spaces list</h3>
+  <!--h3 transition:fade >Loading spaces list</h3-->
 {:then spaces_data}
   {#each spaces_data.records as space}
     <ListGroupItem class="ps-2 pe-0 py-0">
@@ -16,7 +17,7 @@
       <div
         class="mb-2"
         style="cursor: pointer;"
-        on:click={() => (expanded = space.shortname)}
+        on:click={() => {/*expanded = space.shortname*/}}
       >
         <Icon name="diagram-3" class="me-1" /> <b>{space.shortname}</b>
       </div>

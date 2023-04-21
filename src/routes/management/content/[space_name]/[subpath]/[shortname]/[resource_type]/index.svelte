@@ -2,12 +2,13 @@
   import { params } from "@roxi/routify";
   import { retrieve_entry, ResourceType } from "../../../../../../../dmart";
   import EntryRenderer from "../../../../../_components/EntryRenderer.svelte";
+  // import { fade } from 'svelte/transition';
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 </script>
 {#if $params.space_name && $params.subpath && $params.shortname}
 {#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-","/"), $params.shortname, true, true)}
-  <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
+  <!--h6 transition:fade >Loading ... @{$params.space_name}/{$params.subpath}</h6-->
 {:then entry}
   <EntryRenderer
     {entry}

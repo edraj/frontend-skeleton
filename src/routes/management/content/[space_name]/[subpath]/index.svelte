@@ -2,6 +2,8 @@
   import { params } from "@roxi/routify";
   import { retrieve_entry, ResourceType } from "../../../../../dmart";
   import EntryRenderer from "../../../_components/EntryRenderer.svelte";
+  // import { fade } from 'svelte/transition';
+
 
   let parent_subpath: string;
   let shortname: string;
@@ -19,7 +21,7 @@
 
 {#if $params.space_name && parent_subpath && shortname }
 {#await retrieve_entry(ResourceType.folder, $params.space_name, parent_subpath, shortname, true, true)}
-  <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
+  <!--h6 transition:fade >Loading ... @{$params.space_name}/{$params.subpath}</h6-->
 {:then entry}
   <!--Prism code={entry} /-->
   <EntryRenderer

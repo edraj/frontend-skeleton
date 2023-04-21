@@ -1,22 +1,23 @@
 <script lang="ts">
   import Prism from "prismjs";
   import "prismjs/components/prism-json";
+  import "prismjs/components/prism-bash";
 
   export let language: string = "json";
-  export let code: Object;
+  export let code: Object | string;
   let formatted: string;
   $: {
     formatted = Prism.highlight(
-      JSON.stringify(code, undefined, 1),
+      language=="json"? JSON.stringify(code, undefined, 1) : code as string,
       Prism.languages[language],
       language
     );
   }
 </script>
 
-<pre class="language-{language}" data-output="2-17"><code
-    class="language-{language}">{@html formatted}</code
-  ></pre>
+<pre class="language-{language}" data-output="2-17">
+  <code class="language-{language}">{@html formatted}</code>
+</pre>
 
 <style global>
   @import "prismjs/themes/prism.css";

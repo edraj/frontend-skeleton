@@ -2,11 +2,12 @@
   import axios from "axios";
   axios.defaults.withCredentials = true;
   import { website } from "../../../../../../../config";
-  import { Col, Container, Row, Button } from "sveltestrap";
+  import { Col, Container, Row, Button, Modal } from "sveltestrap";
   import { params } from "@roxi/routify";
   import { retrieve_entry, ResourceType, ApiResponse } from "../../../../../../../dmart";
   import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
-    import { JSONContent } from "svelte-jsoneditor";
+  import { JSONContent } from "svelte-jsoneditor";
+  import Prism from "../../../../../_components/Prism.svelte";
 
   // enum VerbType {
   //   get = "get",
@@ -26,9 +27,18 @@
 
   let curl = "";
   function generateCURL(request : Request) {
-    return `curl -X ${request.verb} "${website.backend}/${request.endpoint}"` +
-           ((request.verb == "post") ? ("-H 'Content-Type: application/json'\n" +
-           `-d '${JSON.stringify((request_je.get() as JSONContent).json, undefined, 2)}'\n` ): "");
+    return `curl -X ${request.verb} '${website.backend}/${request.endpoint}'` +
+           ((request.verb == "post") ? ("\n-H 'Content-Type: application/json'\n" +
+           `-d '${JSON.stringify((request_je.get() as JSONContent).json, undefined, 2)}'` ): "");
+  }
+
+  let isCurlOpen = false;
+  async function toggleCurl() {
+    if (!isCurlOpen) {
+      const request = await retrieve_request();
+      curl = generateCURL(request);
+    }
+    isCurlOpen = !isCurlOpen;
   }
 
   async function retrieve_request() : Promise<Request> {
@@ -65,7 +75,9 @@
         <Col class="d-flex justify-content-between">
           <Col>
             <p style="margin: 0px"><b>{$params.subpath} / {$params.shortname}</b> - Endpoint: <code>{request.endpoint}</code> Verb: <code>{request.verb}</code>
-              <Button on:click={async () => (await call_api(request))}>Call</Button>
+              <Button on:click={toggleCurl}>Show curl</Button>
+              <Button color="success" on:click={async () => (await call_api(request))}>Call</Button>
+
             </p>
           </Col>
         </Col>
@@ -73,11 +85,6 @@
       <Row>
         <Col><b> Request </b><br/><JsonEditor bind:this={request_je} content={{json: request.body || {}}} /></Col>
         <Col><b> Response </b><br/> <JsonEditor bind:this={response_je} content={{text: "{}"}} readOnly={true} /></Col>
-      </Row>
-      <Row>
-        <Col>
-          <div class="result-text">{curl}</div>
-        </Col>
       </Row>
     </Container>
   {:catch error}
@@ -88,19 +95,12 @@
   <pre>{JSON.stringify($params)}</pre>
 {/if}
 
-
-
-<style>
-  .result-text {
-    /* width: 100%; */
-    /* max-width: 600px; */
-    height: auto;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    font-family: monospace;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin-bottom: 20px;
-  }
-</style>
+<Modal
+    body
+    header="Curl command"
+    isOpen={isCurlOpen}
+    toggle={toggleCurl}
+    size="lg"
+>
+  <Prism language="bash" code={curl} />
+</Modal>

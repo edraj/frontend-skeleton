@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import preprocess from "svelte-preprocess";
@@ -33,4 +34,11 @@ export default defineConfig({
     outDir: "./dist/",
   },
   server: { port: 1337 },
+  test: {
+      environment: 'jsdom',
+      globals: true,
+  },
+  ssr: {
+		noExternal: ['@popperjs/core']
+	}
 })

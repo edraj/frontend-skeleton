@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "svelte-check": "svelte-check --no-tsconfig --ignore .routify",
-    "dev": "vite"
+    "dev": "vite",
+    "test": "vitest run --watch false"
   },
   "devDependencies": {
     "@popperjs/core": "^2.11.7",
@@ -34,10 +35,7 @@
     "svelte-tiny-virtual-list": "^2.0.5",
     "sveltestrap": "^5.10.0",
     "typescript": "^5.0.2",
-    "vite": "^4.0.0"
-  },
-  "dependencies": {
-    "@fortawesome/free-regular-svg-icons": "^6.4.0",
-    "svelte-prism": "^1.1.6"
+    "vite": "^4.0.0",
+    "vitest": "^0.30.1"
   }
 }

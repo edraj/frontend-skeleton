@@ -43,7 +43,7 @@
     }</strong></small>`
   );
 
-  let isSchemaValidated;
+  let isSchemaValidated : boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
     const v = patchResult.contentErrors.validationErrors;
     if (v === undefined || v.length === 0) {

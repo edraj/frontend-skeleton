@@ -32,7 +32,7 @@ let signedout: User = {signedin: false, locale: guess_locale()};
 export let user:Writable<User>;
 
 // Load the user information from store, if it exists
-const data = localStorage.getItem(KEY) || JSON.stringify(signedout);
+const data = (typeof localStorage !== 'undefined') ? (localStorage.getItem(KEY) || JSON.stringify(signedout)) : JSON.stringify(signedout);
 user = writable<User>(JSON.parse(data) || signedout);
 
 export async function signin(username: string, password: string) {

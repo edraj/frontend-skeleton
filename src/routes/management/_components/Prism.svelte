@@ -24,6 +24,8 @@
   @import "prismjs/themes/prism-coy.css";
 
   pre {
+    display:grid;
+    margin-top: 0px !important;
     font-size: 80% !important;
   }
 </style>

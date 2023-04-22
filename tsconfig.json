@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
+        "module": "es2022",
         "moduleResolution": "node",
-        "target": "es2021",
+        "target": "es2022",
         "allowJs": true,
         "checkJs": true,
         "esModuleInterop": true,
@@ -12,7 +13,8 @@
         "paths": {
             "@": ["./src"],
             "@/*": ["./src/*"]
-        }
+        },
+        "types": ["vitest/globals"]
     },
     "include": [
         "src/**/*.d.ts",

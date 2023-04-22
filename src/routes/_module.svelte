@@ -5,6 +5,7 @@
 
   let window_height: number;
   let header_height: number;
+  let footer_height: number;
 </script>
 
 <svelte:window bind:innerHeight={window_height} />
@@ -21,7 +22,6 @@
       <slot />
     </Col>
   </Row>
-  <Row class="align-items-end w-100 ms-0 my-0 border border-dark" noGutters>
-    <Col sm="12" class="border border-error"><Footer /></Col>
-  </Row>
 </Container>
+
+<div bind:clientHeight={footer_height} class="fixed-bottom border border-error"><Footer /></div>

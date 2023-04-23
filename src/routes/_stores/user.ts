@@ -53,7 +53,7 @@ export async function signout() {
   user.set(signedout);
   // localStorage.removeItem(KEY);
   localStorage.setItem(KEY, JSON.stringify(signedout));
-  console.log("Completed signout process");
+  // console.log("Completed signout process");
 }
 
 export function switchLocale(locale : Locale) {

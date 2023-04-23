@@ -4,7 +4,7 @@
   import EntryRenderer from "../../../../../../_components/EntryRenderer.svelte";
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
-  $: console.log({$params });
+  // console.log({$params });
 </script>
 
 {#if $params.space_name && $params.subpath && $params.shortname }

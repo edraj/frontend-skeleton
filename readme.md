@@ -1,3 +1,33 @@
+
+<a href="https://github.com/edraj/frontend-skeleton/releases/latest">
+<img src="https://github.com/edraj/frontend-skeleton/actions/workflows/dmart-checks.yml/badge.svg" > 
+</a>
+
+<!--a href="https://github.com/edraj/frontend-skeleton/releases/latest">
+<img alt="Latest release" src="https://img.shields.io/github/v/release/edraj/frontend-skeleton" />
+</a-->
+
+<a href="https://github.com/edraj/frontend-skeleton/pulse">
+<img alt="Last commit" src="https://img.shields.io/github/last-commit/edraj/frontend-skeleton"/>
+</a>
+
+<a href="https://github.com/edraj/frontend-skeleton/blob/main/LICENSE">
+<img alt="License" src="https://img.shields.io/github/license/edraj/frontend-skeleton" />
+</a>
+
+<a href="https://github.com/edraj/frontend-skeleton/stargazers">
+<img alt="Stars" src="https://img.shields.io/github/stars/edraj/frontend-skeleton" />
+</a>
+
+<a href="https://github.com/edraj/frontend-skeleton/issues">
+<img alt="Issues" src="https://img.shields.io/github/issues/edraj/frontend-skeleton" />
+</a>
+
+<a href="https://github.com/edraj/frontend-skeleton">
+<img alt="Repo Size" src="https://img.shields.io/github/repo-size/edraj/frontend-skeleton" />
+</a>
+
+
 ## Skeleton web app (frontend) for DMART
 
 

@@ -21,7 +21,7 @@
   export let subpath: string;
   export let shortname: string = null;
   export let type: QueryType = QueryType.search;
-  export let columns = cols;
+  export let columns: any = cols;
   export let is_clickable = true;
 
   let total: number;
@@ -96,7 +96,7 @@
   let height: number;
 
   $: {
-    if ($refresh) {
+    if ($search || $search === "") {
       refreshList();
     }
   }

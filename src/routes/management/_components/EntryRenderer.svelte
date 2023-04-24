@@ -159,28 +159,81 @@
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const body = entryContent.json
-      ? { ...entryContent.json }
-      : JSON.parse(entryContent.text);
-    const request_body = {
-      space_name,
-      request_type: RequestType.create,
-      records: [
-        {
-          resource_type: ResourceType.content,
-          shortname: contentShortname === "" ? "auto" : contentShortname,
-          subpath,
-          attributes: {
-            payload: {
-              content_type: "json",
-              schema_shortname: selectedSchema ? selectedSchema : "",
-              body,
+    let response;
+    if (entryType === "content") {
+      const body = entryContent.json
+        ? { ...entryContent.json }
+        : JSON.parse(entryContent.text);
+      const request_body = {
+        space_name,
+        request_type: RequestType.create,
+        records: [
+          {
+            resource_type: ResourceType.content,
+            shortname: contentShortname === "" ? "auto" : contentShortname,
+            subpath,
+            attributes: {
+              is_active: true,
+              payload: {
+                content_type: "json",
+                schema_shortname: selectedSchema ? selectedSchema : "",
+                body,
+              },
             },
           },
-        },
-      ],
-    };
-    const response = await request(request_body);
+        ],
+      };
+      response = await request(request_body);
+    } else if (entryType === "folder") {
+      const request_body = {
+        space_name,
+        request_type: RequestType.create,
+        records: [
+          {
+            resource_type: ResourceType.content,
+            shortname: contentShortname === "" ? "auto" : contentShortname,
+            subpath,
+            attributes: {
+              is_active: true,
+              payload: {
+                content_type: "json",
+                schema_shortname: "folder_rendering",
+                body: {
+                  shortname_title: "Unique ID",
+                  content_schema_shortnames: [
+                    selectedSchema ? selectedSchema : "",
+                  ],
+                  index_attributes: [
+                    {
+                      key: "shortname",
+                      name: "Unique ID",
+                    },
+                    {
+                      key: "created_at",
+                      name: "Created At",
+                    },
+                    {
+                      key: "owner_shortname",
+                      name: "Created By",
+                    },
+                  ],
+                  allow_create: true,
+                  allow_update: true,
+                  allow_delete: true,
+                  use_media: true,
+                  expand_children: false,
+                  content_resource_types: ["content"],
+                  allow_upload_csv: true,
+                  allow_csv: true,
+                  filter: [],
+                },
+              },
+            },
+          },
+        ],
+      };
+      response = await request(request_body);
+    }
     if (response.status === "success") {
       showToast(Level.info);
       contentShortname = "";

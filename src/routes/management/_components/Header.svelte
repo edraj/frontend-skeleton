@@ -19,7 +19,8 @@
   import sections from "../_stores/sections.json";
 
   let search_value = "";
-  function handleSearch() {
+  function handleSearch(e) {
+    e.preventDefault();
     search.set(search_value);
   }
   function handleInput(e) {
@@ -53,7 +54,7 @@
         <Icon name="globe" />
       </NavLink>
     </NavItem>
-    <Form inline={true} class="ms-auto">
+    <Form inline={true} class="ms-auto" on:submit={handleSearch}>
       <InputGroup size="sm">
         <Input placeholder={$_("searching_for_what")} on:input={handleInput} />
         <!-- svelte-ignore a11y-click-events-have-key-events -->

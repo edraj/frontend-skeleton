@@ -12,7 +12,7 @@
     "@codemirror/view" "^6.6.0"
     "@lezer/common" "^1.0.0"
 
-"@codemirror/commands@^6.0.0", "@codemirror/commands@^6.2.1":
+"@codemirror/commands@^6.0.0", "@codemirror/commands@^6.2.2":
   version "6.2.3"
   resolved "https://registry.yarnpkg.com/@codemirror/commands/-/commands-6.2.3.tgz#ec476fd588f7a4333f54584d4783dd3862befe3b"
   integrity sha512-9uf0g9m2wZyrIim1SavcxMdwsu8wc/y5uSw6JRUBYIGWrN+RY4vSru/BqB+MyNWqx4C2uRhQ/Kh7Pw8lAyT3qQ==
@@ -42,7 +42,7 @@
     "@lezer/lr" "^1.0.0"
     style-mod "^4.0.0"
 
-"@codemirror/lint@^6.0.0", "@codemirror/lint@^6.2.0":
+"@codemirror/lint@^6.0.0", "@codemirror/lint@^6.2.1":
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/@codemirror/lint/-/lint-6.2.1.tgz#654581d8cc293c315ecfa5c9d61d78c52bbd9ccd"
   integrity sha512-y1muai5U/uUPAGRyHMx9mHuHLypPcHWxzlZGknp/U5Mdb5Ol8Q5ZLp67UqyTbNFJJ3unVxZ8iX3g1fMN79S1JQ==
@@ -51,7 +51,7 @@
     "@codemirror/view" "^6.0.0"
     crelt "^1.0.5"
 
-"@codemirror/search@^6.0.0", "@codemirror/search@^6.2.3":
+"@codemirror/search@^6.0.0", "@codemirror/search@^6.3.0":
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/@codemirror/search/-/search-6.3.0.tgz#d48b2d636fc7474613e240ba8e56c4c5e6e51822"
   integrity sha512-rBhZxzT34CarfhgCZGhaLBScABDN3iqJxixzNuINp9lrb3lzm0nTpR77G1VrxGO3HOGK7j62jcJftQM7eCOIuw==
@@ -65,7 +65,7 @@
   resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-6.2.0.tgz#a0fb08403ced8c2a68d1d0acee926bd20be922f2"
   integrity sha512-69QXtcrsc3RYtOtd+GsvczJ319udtBf1PTrr2KbLWM/e2CXUPnh0Nz9AUo8WfhSQ7GeL8dPVNUmhQVgpmuaNGA==
 
-"@codemirror/view@^6.0.0", "@codemirror/view@^6.6.0", "@codemirror/view@^6.9.1":
+"@codemirror/view@^6.0.0", "@codemirror/view@^6.6.0", "@codemirror/view@^6.9.5":
   version "6.9.6"
   resolved "https://registry.yarnpkg.com/@codemirror/view/-/view-6.9.6.tgz#6bf302608e03566688d5138c50b38d07356e11a1"
   integrity sha512-g68PxS3RkHpxfYS6DTWCy1jeA5/oHzmdWjMVPkOzqQyxpElHEcPncUd4EeMVSa4okt0sS3hNXVaRnJqO/7MeJw==
@@ -245,14 +245,14 @@
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.4.0.tgz#88da2b70d6ca18aaa6ed3687832e11f39e80624b"
   integrity sha512-HNii132xfomg5QVZw0HwXXpN22s7VBHQBv9CeOu9tfJnhsWQNd2lmTNi8CSrnw5B+5YOmzu1UoPAyxaXsJ6RgQ==
 
-"@fortawesome/free-regular-svg-icons@^6.3.0":
+"@fortawesome/free-regular-svg-icons@^6.4.0":
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.4.0.tgz#cacc53bd8d832d46feead412d9ea9ce80a55e13a"
   integrity sha512-ZfycI7D0KWPZtf7wtMFnQxs8qjBXArRzczABuMQqecA/nXohquJ5J/RCR77PmY5qGWkxAZDxpnUFVXKwtY/jPw==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.4.0"
 
-"@fortawesome/free-solid-svg-icons@^6.3.0":
+"@fortawesome/free-solid-svg-icons@^6.4.0":
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.4.0.tgz#48c0e790847fa56299e2f26b82b39663b8ad7119"
   integrity sha512-kutPeRGWm8V5dltFP1zGjQOEAzaLZj4StdQhWVZnfGFCvAPVvHh8qk5bRrU4KXnRRRNni5tKQI9PBAdI6MP8nQ==
@@ -303,9 +303,9 @@
     "@lezer/lr" "^1.0.0"
 
 "@lezer/lr@^1.0.0":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@lezer/lr/-/lr-1.3.3.tgz#0ac6c889f1235874f33c45a1b9785d7054f60708"
-  integrity sha512-JPQe3mwJlzEVqy67iQiiGozhcngbO8QBgpqZM6oL1Wj/dXckrEexpBLeFkq0edtW5IqnPRFxA24BHJni8Js69w==
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/@lezer/lr/-/lr-1.3.4.tgz#8795bf2ba4f69b998e8fb4b5a7c57ea68753474c"
+  integrity sha512-7o+e4og/QoC/6btozDPJqnzBhUaD1fMfmvnEKQO1wRRiTse1WxaJ3OMEXZJnkgT6HCcTVOctSoXK9jGJw2oe9g==
   dependencies:
     "@lezer/common" "^1.0.0"
 
@@ -335,10 +335,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.7.tgz#ccab5c8f7dc557a52ca3288c10075c9ccd37fff7"
   integrity sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==
 
-"@replit/codemirror-indentation-markers@6.3.0":
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/@replit/codemirror-indentation-markers/-/codemirror-indentation-markers-6.3.0.tgz#6d2af97386b8560a0231a61c239a39ed308c2086"
-  integrity sha512-taY9K4Piqgwk9CxFQo5XCZgotuVCNkU/O/NqdF125zmsY6wA4U71dZ7Bug4S4CFRTSq+4yBfb/8H7/dnYP4u5Q==
+"@replit/codemirror-indentation-markers@6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@replit/codemirror-indentation-markers/-/codemirror-indentation-markers-6.4.0.tgz#8fc0756cfbd9d9896809558bd2993e112ce8e0c1"
+  integrity sha512-iYorMjZnTuxzDceIYYxu2Atgapb+DMbJHlVXIGA+fnwGuvLNsUUtE+pOkpQzozSCubBVHEuAhAk3eaeFqYRw5Q==
 
 "@roxi/routify@^3.0.0-next.1":
   version "3.0.0-next.152"
@@ -1480,7 +1480,7 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jsonrepair@^3.0.2:
+jsonrepair@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/jsonrepair/-/jsonrepair-3.0.3.tgz#f1fb6ad7af6a4409494227a6b6a61452e9c1d24f"
   integrity sha512-3Rhz4/UXWBSERKVCPzbfoIQ7CPdKCKkzvcjJdtoRn+aazf1o8dnpGl+PoT58kekOP8EIaA0o/zt70qFqEE3fVA==
@@ -1973,9 +1973,9 @@ rimraf@^2.5.2:
     glob "^7.1.3"
 
 rollup@^3.20.2:
-  version "3.20.7"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.20.7.tgz#4f045dfb388abe08dd159f8cd286dcaca1e80b28"
-  integrity sha512-P7E2zezKSLhWnTz46XxjSmInrbOCiul1yf+kJccMxT56vxjHwCbDfoLbiqFgu+WQoo9ij2PkraYaBstgB2prBA==
+  version "3.21.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.21.0.tgz#0a71517db56e150222670f88e5e7acfa4fede7c8"
+  integrity sha512-ANPhVcyeHvYdQMUyCbczy33nbLzI7RzrBje4uvNiTDJGIMtlKoOStmympwr9OtS1LZxiDmE2wvxHyVhoLtf1KQ==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -2013,7 +2013,7 @@ sander@^0.5.0:
     mkdirp "^0.5.1"
     rimraf "^2.5.2"
 
-sass@^1.58.3:
+sass@^1.62.0:
   version "1.62.0"
   resolved "https://registry.yarnpkg.com/sass/-/sass-1.62.0.tgz#3686b2195b93295d20765135e562366b33ece37d"
   integrity sha512-Q4USplo4pLYgCi+XlipZCWUQz5pkg/ruSSgJ0WRDSb/+3z9tXUOkQ7QPYn4XrhZKYAK4HlpaQecRwKLJX6+DBg==
@@ -2134,7 +2134,7 @@ supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-svelte-awesome@^3.1.0:
+svelte-awesome@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/svelte-awesome/-/svelte-awesome-3.2.0.tgz#3589891086516015f321b9635a750f67bade9511"
   integrity sha512-A9gqgRDs/6EjUgMHIBHz88vJIiY4fVI7e2X9uu43O7J2EYqdVVSnHHH49TxMnNinbq6K9Z/1kMD9LCZhX7ysUQ==
@@ -2183,36 +2183,36 @@ svelte-infinite-loading@^1.3.8:
   resolved "https://registry.yarnpkg.com/svelte-infinite-loading/-/svelte-infinite-loading-1.3.8.tgz#c479938bd5ca69264fe591ffbbb013b368afe578"
   integrity sha512-hn4o848LKd2Q+M11hiMWnfFxM1GHKVDi92HPZ1FYvfed4bEeRZL+QvFAQzhy1SACq6Si0CAJcQFUZpIYmAEnpQ==
 
-svelte-jsoneditor@^0.16.1:
-  version "0.16.1"
-  resolved "https://registry.yarnpkg.com/svelte-jsoneditor/-/svelte-jsoneditor-0.16.1.tgz#25cb9c46ca8e583a2a63ce03f01f97f0627d1f30"
-  integrity sha512-e4PIek/rCecVqpYIV23nZJ0gHYsrUf2Vcx37GNlaluC8brcX9+hm+sJq4iMwXuRr29Zu0PCJFnwVFu4eewmhBw==
+svelte-jsoneditor@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/svelte-jsoneditor/-/svelte-jsoneditor-0.17.1.tgz#77cc52b285ac68150809bbd3dd7e4dc6101d842c"
+  integrity sha512-BnUAfaBjB0uJKOB/wewKw7K6oXExvDIWu7fngESa8jILsG1MgmG+nsIsSGvyIqu1CEE9cg60M5qc4Htduo1Q3g==
   dependencies:
-    "@codemirror/commands" "^6.2.1"
+    "@codemirror/commands" "^6.2.2"
     "@codemirror/lang-json" "^6.0.1"
     "@codemirror/language" "^6.6.0"
-    "@codemirror/lint" "^6.2.0"
-    "@codemirror/search" "^6.2.3"
+    "@codemirror/lint" "^6.2.1"
+    "@codemirror/search" "^6.3.0"
     "@codemirror/state" "^6.2.0"
-    "@codemirror/view" "^6.9.1"
+    "@codemirror/view" "^6.9.5"
     "@fontsource/fira-mono" "^4.5.10"
-    "@fortawesome/free-regular-svg-icons" "^6.3.0"
-    "@fortawesome/free-solid-svg-icons" "^6.3.0"
-    "@replit/codemirror-indentation-markers" "6.3.0"
+    "@fortawesome/free-regular-svg-icons" "^6.4.0"
+    "@fortawesome/free-solid-svg-icons" "^6.4.0"
+    "@replit/codemirror-indentation-markers" "6.4.0"
     ajv "^8.12.0"
     codemirror "^6.0.1"
     diff-sequences "^29.4.3"
     immutable-json-patch "^5.1.2"
     jmespath "^0.16.0"
     json-source-map "^0.6.1"
-    jsonrepair "^3.0.2"
+    jsonrepair "^3.0.3"
     lodash-es "^4.17.21"
     memoize-one "^6.0.0"
     natural-compare-lite "^1.4.0"
-    sass "^1.58.3"
-    svelte "^3.55.1"
-    svelte-awesome "^3.1.0"
-    svelte-select "^5.4.0"
+    sass "^1.62.0"
+    svelte "^3.58.0"
+    svelte-awesome "^3.2.0"
+    svelte-select "^5.6.0"
     svelte-simple-modal "^1.5.2"
     vanilla-picker "^2.12.1"
 
@@ -2232,7 +2232,7 @@ svelte-preprocess@^5.0.3:
     sorcery "^0.11.0"
     strip-indent "^3.0.0"
 
-svelte-select@^5.4.0:
+svelte-select@^5.6.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/svelte-select/-/svelte-select-5.6.0.tgz#f553bd2be041c9ef2a1ed9e0de9f02ab5fee9065"
   integrity sha512-+EDXupp3Lr/hKlXNra1vR1VEGxEEsFxYPs5yDDqQE+xagyAOd8P54IJtU84Z5QN3HYc8l2Hp+tNCCYZoTWWxyQ==
@@ -2250,7 +2250,7 @@ svelte-tiny-virtual-list@^2.0.5:
   resolved "https://registry.yarnpkg.com/svelte-tiny-virtual-list/-/svelte-tiny-virtual-list-2.0.5.tgz#5a88b14f2041eedc060dc799a2f146ee0355073f"
   integrity sha512-xg9ckb8UeeIme4/5qlwCrl2QNmUZ8SCQYZn3Ji83cUsoASqRNy3KWjpmNmzYvPDqCHSZjruBBsoB7t5hwuzw5g==
 
-svelte@^3.39.0, svelte@^3.46.1, svelte@^3.55.1:
+svelte@^3.39.0, svelte@^3.46.1, svelte@^3.58.0:
   version "3.58.0"
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.58.0.tgz#d3e6f103efd6129e51c7d709225ad3b4c052b64e"
   integrity sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A==

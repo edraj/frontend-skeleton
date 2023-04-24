@@ -27,9 +27,7 @@
   import { _ } from "../../../i18n";
   import ListView from "./ListView.svelte";
   import Prism from "./Prism.svelte";
-  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
-  import { createAjvValidator } from "svelte-jsoneditor/plugins/validator/createAjvValidator";
-  import { Validator } from "svelte-jsoneditor";
+  import {JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
   import { status_line } from "../_stores/status_line";
   import { timeAgo } from "../../../utils/timeago";
   import { showToast, Level } from "../../../utils/toast";
@@ -311,7 +309,7 @@
           <hr />
 
           <Label class="mt-3">Content</Label>
-          <JsonEditor bind:content={entryContent} />
+          <JSONEditor bind:content={entryContent} />
           <!-- onChange={handleChange}
               {validator} -->
 
@@ -507,7 +505,7 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <JsonEditor
+      <JSONEditor
         bind:content
         bind:validator
         onChange={handleChange}

@@ -18,7 +18,7 @@
     ModalFooter,
     ModalHeader,
   } from "sveltestrap";
-  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+  import { JSONEditor } from "svelte-jsoneditor";
 
   export let attachments;
   export let space_name: string;
@@ -144,7 +144,7 @@
 >
   <ModalHeader />
   <ModalBody>
-    <JsonEditor
+    <JSONEditor
       content={{ json: JSON.parse(JSON.stringify(content)) }}
       readOnly={true}
     />

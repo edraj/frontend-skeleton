@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { search } from "./../_stores/triggers";
   import {
     Nav,
     NavItem,
@@ -16,6 +17,14 @@
   import { url } from "@roxi/routify";
   import { active_section } from "../_stores/active_section";
   import sections from "../_stores/sections.json";
+
+  let search_value = "";
+  function handleSearch() {
+    search.set(search_value);
+  }
+  function handleInput(e) {
+    search_value = e.target.value;
+  }
 </script>
 
 <Navbar class="py-0 px-0">
@@ -46,8 +55,11 @@
     </NavItem>
     <Form inline={true} class="ms-auto">
       <InputGroup size="sm">
-        <Input placeholder={$_("searching_for_what")} />
-        <InputGroupText><Icon name="search" /></InputGroupText>
+        <Input placeholder={$_("searching_for_what")} on:input={handleInput} />
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <span on:click={handleSearch}>
+          <InputGroupText><Icon name="search" /></InputGroupText>
+        </span>
       </InputGroup>
     </Form>
     &nbsp;&nbsp;

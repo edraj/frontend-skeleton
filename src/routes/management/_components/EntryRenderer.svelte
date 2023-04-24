@@ -190,7 +190,7 @@
         request_type: RequestType.create,
         records: [
           {
-            resource_type: ResourceType.content,
+            resource_type: ResourceType.folder,
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {

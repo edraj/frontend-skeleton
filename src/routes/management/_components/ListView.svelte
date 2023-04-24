@@ -10,7 +10,6 @@
   import { goto } from "@roxi/routify";
 
   let quickPreview = false;
-  let shortname = "";
 
   let content = {
     json: {},
@@ -20,7 +19,9 @@
   onDestroy(() => status_line.set(""));
   export let space_name: string;
   export let subpath: string;
+  export let shortname: string = null;
   export let type: QueryType = QueryType.search;
+  export let columns = cols;
 
   let total: number;
   let lastbatch: number;
@@ -34,7 +35,8 @@
   async function infiniteHandler({ detail: { loaded, complete, error } }) {
     try {
       const resp = await query({
-        type: type,
+        filter_shortnames: shortname ? [shortname] : [],
+        type,
         space_name: space_name,
         subpath: subpath,
         limit: 50,
@@ -97,12 +99,6 @@
       refreshList();
     }
   }
-
-  $: {
-    if (!quickPreview) {
-      shortname = "";
-    }
-  }
 </script>
 
 <svelte:window bind:innerHeight={height} />
@@ -130,7 +126,7 @@
           quickPreview = true;
           return;
         }
-        shortname = record.shortname;
+        const shortname = record.shortname;
         const schema_shortname = record.attributes?.payload?.schema_shortname;
         // window.history.replaceState(
         //   history.state,
@@ -162,18 +158,22 @@
       class:current={currentItem == index}
     >
       {#if index == 0}
-        {#each Object.keys(cols) as col}
-          <div class="my-cell" style="width: {cols[col].width};">
-            <strong>{cols[col].title}</strong>
+        {#each Object.keys(columns) as col}
+          <div class="my-cell" style="width: {columns[col].width};">
+            <strong>{columns[col].title}</strong>
           </div>
         {/each}
       {:else}
-        {#each Object.keys(cols) as col}
+        {#each Object.keys(columns) as col}
           <div
             class="my-cell hide-scroll"
-            style=" width: {cols[col].width};overflow: auto;"
+            style=" width: {columns[col].width};overflow: auto;"
           >
-            {value(cols[col].path.split("."), items[index], cols[col].type)}
+            {value(
+              columns[col].path.split("."),
+              items[index],
+              columns[col].type
+            )}
           </div>
         {/each}
       {/if}

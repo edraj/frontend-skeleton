@@ -22,6 +22,7 @@
   export let shortname: string = null;
   export let type: QueryType = QueryType.search;
   export let columns = cols;
+  export let is_clickable = true;
 
   let total: number;
   let lastbatch: number;
@@ -120,6 +121,10 @@
       style={style.replaceAll("left:0;", "")}
       class="my-row"
       on:click={async () => {
+        if (!is_clickable) {
+          return;
+        }
+
         const record = { ...records[index - 1] };
         if ($active_section.name === "events") {
           content.json = record;

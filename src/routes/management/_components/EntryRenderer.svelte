@@ -35,6 +35,7 @@
   import { showToast, Level } from "../../../utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import { search } from "../_stores/triggers";
+  import history_cols from "../_stores/list_cols_history.json";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -59,7 +60,7 @@
 
   let isSchemaValidated: boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
-    const v = patchResult.contentErrors.validationErrors;
+    const v = patchResult?.contentErrors?.validationErrors;
     if (v === undefined || v.length === 0) {
       isSchemaValidated = true;
     } else {
@@ -472,6 +473,8 @@
         {subpath}
         type={QueryType.history}
         shortname={entry.shortname}
+        is_clickable={false}
+        columns={history_cols}
       />
     {/key}
     <!--History subpath="{entry.subpath}" shortname="{entry.shortname}" /-->

@@ -10,7 +10,19 @@
     query,
     request,
   } from "../../../dmart";
-  import { Nav, Button, ButtonGroup } from "sveltestrap";
+  import {
+    Form,
+    FormGroup,
+    Button,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Label,
+    Input,
+    Nav,
+    ButtonGroup,
+  } from "sveltestrap";
   import Icon from "../../_components/Icon.svelte";
   import { _ } from "../../../i18n";
   import ListView from "./ListView.svelte";
@@ -22,6 +34,7 @@
   import { timeAgo } from "../../../utils/timeago";
   import { showToast, Level } from "../../../utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
+  import { search } from "../_stores/triggers";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -33,6 +46,7 @@
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry || {}, text: undefined };
+  let entryContent = { json: {} || {}, text: undefined };
 
   onDestroy(() => status_line.set(""));
   status_line.set(
@@ -43,7 +57,7 @@
     }</strong></small>`
   );
 
-  let isSchemaValidated : boolean;
+  let isSchemaValidated: boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
     const v = patchResult.contentErrors.validationErrors;
     if (v === undefined || v.length === 0) {
@@ -77,7 +91,6 @@
       showToast(Level.info);
     } else {
       errorContent = response;
-      console.log({ errorContent });
       showToast(Level.warn);
     }
   }
@@ -111,7 +124,7 @@
   }
   let schema = null;
   async function get_schema() {
-    if(entry.payload && entry.payload.schema_shortname) {
+    if (entry.payload && entry.payload.schema_shortname) {
       const query_schema = {
         space_name,
         type: QueryType.search,
@@ -120,24 +133,170 @@
         search: "",
         retrieve_json_payload: true,
       };
+
       const schema_data = await query(query_schema);
-      if(schema_data.status == "success" && schema_data.records.length > 0) {
+      if (schema_data.status == "success" && schema_data.records.length > 0) {
         schema = schema_data.records[0].attributes["payload"].body;
         cleanUpSchema(schema.properties);
         validator = createAjvValidator({ schema });
       } else {
-        console.log("Schema loading failed for ", {query_schema, schema_data});
+        console.log("Schema loading failed for ", {
+          query_schema,
+          schema_data,
+        });
       }
     } else {
       schema = null;
     }
   }
+
+  let isModalOpen = false;
+  let modalFlag = "create";
+  let entryType = "folder";
+  let contentShortname = "";
+  let selectedSchema = "";
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const body = entryContent.json
+      ? { ...entryContent.json }
+      : JSON.parse(entryContent.text);
+    const request_body = {
+      space_name,
+      request_type: RequestType.create,
+      records: [
+        {
+          resource_type: ResourceType.content,
+          shortname: contentShortname === "" ? "auto" : contentShortname,
+          subpath,
+          attributes: {
+            payload: {
+              content_type: "json",
+              schema_shortname: selectedSchema ? selectedSchema : "",
+              body,
+            },
+          },
+        },
+      ],
+    };
+    const response = await request(request_body);
+    if (response.status === "success") {
+      showToast(Level.info);
+      contentShortname = "";
+      isModalOpen = false;
+    } else {
+      showToast(Level.warn);
+    }
+  }
   $: {
-    if (schema === null && entry && entry.payload && entry.payload.schema_shortname) {
+    if (
+      schema === null &&
+      entry &&
+      entry.payload &&
+      entry.payload.schema_shortname
+    ) {
       get_schema();
     }
   }
+
+  async function handleDelete() {
+    if (
+      confirm(`Are you sure want to delete ${entry.shortname} entry`) === false
+    ) {
+      return;
+    }
+    const request_body = {
+      space_name,
+      request_type: RequestType.delete,
+      records: [
+        {
+          resource_type,
+          shortname: entry.shortname,
+          subpath,
+          branch_name: "master",
+          attributes: {},
+        },
+      ],
+    };
+    const response = await request(request_body);
+    if (response.status === "success") {
+      showToast(Level.info);
+      history.go(-1);
+    } else {
+      showToast(Level.warn);
+    }
+  }
 </script>
+
+<Modal
+  isOpen={isModalOpen}
+  toggle={() => {
+    isModalOpen = !isModalOpen;
+    contentShortname = "";
+  }}
+  size={"lg"}
+>
+  <ModalHeader />
+  <Form on:submit={async (e) => await handleSubmit(e)}>
+    <ModalBody>
+      <FormGroup>
+        {#if modalFlag === "create"}
+          <Label class="mt-3">Schema</Label>
+          <Input bind:value={selectedSchema} type="select">
+            <option value={""}>{"None"}</option>
+            {#await query( { space_name, type: QueryType.search, subpath: "/schema", search: "", retrieve_json_payload: true, limit: 99 } ) then schemas}
+              {#each schemas.records.map((e) => e.shortname) as schema}
+                <option value={schema}>{schema}</option>
+              {/each}
+            {/await}
+          </Input>
+        {/if}
+        {#if entryType === "content" && modalFlag === "create"}
+          <Label class="mt-3">Shortname</Label>
+          <Input placeholder="Shortname..." bind:value={contentShortname} />
+          <hr />
+
+          <Label class="mt-3">Content</Label>
+          <JsonEditor bind:content={entryContent} />
+          <!-- onChange={handleChange}
+              {validator} -->
+
+          <hr />
+
+          <!-- <Label>Schema</Label>
+            <ContentJsonEditor
+              bind:self={refJsonEditor}
+              content={contentSchema}
+              readOnly={true}
+              mode={Mode.tree}
+            /> -->
+        {/if}
+        {#if entryType === "folder"}
+          <Label class="mt-3">Shortname</Label>
+          <Input
+            placeholder="Shortname..."
+            bind:value={contentShortname}
+            required
+          />
+          {#if modalFlag === "update"}
+            <Label class="mt-3">Content</Label>
+          {/if}
+        {/if}
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter>
+      <Button
+        type="button"
+        color="secondary"
+        on:click={() => {
+          isModalOpen = false;
+          contentShortname = "";
+        }}>cancel</Button
+      >
+      <Button type="submit" color="primary">Submit</Button>
+    </ModalFooter>
+  </Form>
+</Modal>
 
 <div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
   <Nav class="w-100">
@@ -227,7 +386,7 @@
         color="success"
         size="sm"
         title={$_("delete")}
-        on:click={() => {}}
+        on:click={handleDelete}
         class="justify-content-center text-center py-0 px-1"
       >
         <Icon name="trash" />
@@ -241,7 +400,10 @@
           size="sm"
           title={$_("create")}
           class="justify-contnet-center text-center py-0 px-1"
-          on:click={() => {}}
+          on:click={() => {
+            isModalOpen = true;
+            entryType = "content";
+          }}
           ><Icon name="file-plus" />
         </Button>
         <Button
@@ -250,7 +412,10 @@
           size="sm"
           title={$_("create")}
           class="justify-contnet-center text-center py-0 px-1"
-          on:click={() => {}}
+          on:click={() => {
+            isModalOpen = true;
+            entryType = "folder";
+          }}
           ><Icon name="folder-plus" />
         </Button>
       </ButtonGroup>
@@ -301,7 +466,14 @@
     </div>
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "history"}>
-    <pre> History goes here </pre>
+    {#key tab_option}
+      <ListView
+        {space_name}
+        {subpath}
+        type={QueryType.history}
+        shortname={entry.shortname}
+      />
+    {/key}
     <!--History subpath="{entry.subpath}" shortname="{entry.shortname}" /-->
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "attachments"}>

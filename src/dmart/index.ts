@@ -1,6 +1,6 @@
 import axios from "axios";
-axios.defaults.withCredentials = true;
 import { website } from "../config.js";
+axios.defaults.withCredentials = true;
 
 export enum Status {
   success = "success",
@@ -92,7 +92,6 @@ export enum ActionType {
 export type ProfileResponse = ApiResponse & {
   records: Array<ProfileResponseRecord>;
 };
-
 
 let headers: { [key: string]: string } = {
   "Content-type": "application/json",
@@ -273,9 +272,21 @@ export async function logout() {
 }
 
 export async function get_profile() {
-  const { data } = await axios.get<ProfileResponse>(website.backend + "/user/profile", {
-    headers,
-  });
+  const { data } = await axios.get<ProfileResponse>(
+    website.backend + "/user/profile",
+    {
+      headers,
+    }
+  );
+  if (data.status === "success") {
+    localStorage.setItem(
+      "permissions",
+      JSON.stringify(data.records[0].attributes.permissions)
+    );
+  } else {
+    await logout();
+  }
+
   return data;
 }
 
@@ -316,7 +327,10 @@ export async function retrieve_entry(
 ): Promise<ResponseEntry> {
   if (!subpath || subpath == "/") subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(
-    `${website.backend}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(/\/+/g, "/"),
+    `${website.backend}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
+      /\/+/g,
+      "/"
+    ),
     { headers }
   );
   return data;
@@ -394,16 +408,17 @@ export function get_attachment_url(
   shortname: string,
   ext: string
 ) {
-  return `${website.backend}/managed/payload/${resource_type}/${space_name}/${subpath.replace(
+  return `${
+    website.backend
+  }/managed/payload/${resource_type}/${space_name}/${subpath.replace(
     /\/+$/,
     ""
   )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
 }
 
-export async function get_space_health(space_name : string) {
-  const { data } = await axios.get<ApiQueryResponse & { attributes: {folders_report: Object}}>(
-    `${website.backend}/managed/health/${space_name}`,
-    { headers }
-  );
+export async function get_space_health(space_name: string) {
+  const { data } = await axios.get<
+    ApiQueryResponse & { attributes: { folders_report: Object } }
+  >(`${website.backend}/managed/health/${space_name}`, { headers });
   return data;
 }

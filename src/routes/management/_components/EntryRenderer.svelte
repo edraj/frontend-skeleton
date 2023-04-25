@@ -45,6 +45,7 @@
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry || {}, text: undefined };
+  let oldContent = { json: entry || {}, text: undefined };
   let entryContent = { json: {} || {}, text: undefined };
 
   onDestroy(() => status_line.set(""));
@@ -278,7 +279,27 @@
       showToast(Level.warn);
     }
   }
+
+  function beforeUnload(event) {
+    event.preventDefault();
+
+    const x = content.json ? { ...content.json } : JSON.parse(content.text);
+    const y = oldContent.json
+      ? { ...oldContent.json }
+      : JSON.parse(oldContent.text);
+
+    if (JSON.stringify(x) !== JSON.stringify(y)) {
+      if (
+        confirm("You have unsaved changes, do you want to leave ?") === false
+      ) {
+        event.returnValue = "";
+        return "...";
+      }
+    }
+  }
 </script>
+
+<svelte:window on:beforeunload={beforeUnload} />
 
 <Modal
   isOpen={isModalOpen}

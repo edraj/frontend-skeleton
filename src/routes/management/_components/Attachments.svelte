@@ -170,54 +170,58 @@
     {#if attachments}
       {#each attachments as attachment}
         <hr />
-        <div class="row mb-2">
-          <a
-            class="col-11"
-            style="font-size: 1.25em;"
-            href={get_attachment_url(
-              attachment.resource_type,
-              space_name,
-              subpath,
-              parent_shortname,
-              attachment.shortname,
-              getFileExtension(attachment.attributes?.payload?.body)
-            )}
-          >
-            {attachment.shortname}</a
-          >
-          <div class="col-1 d-flex justify-content-between">
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="mx-1"
-              style="cursor: pointer;"
-              on:click={async () => await handleDelete(attachment)}
+        <div class="col">
+          <div class="row mb-2">
+            <a
+              class="col-11"
+              style="font-size: 1.25em;"
+              href={get_attachment_url(
+                attachment.resource_type,
+                space_name,
+                subpath,
+                parent_shortname,
+                attachment.shortname,
+                getFileExtension(attachment.attributes?.payload?.body)
+              )}
             >
-              <Icon name="trash" color="red" />
-            </div>
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <div
-              class="mx-1"
-              style="cursor: pointer;"
-              on:click={() => {
-                handleView(attachment.shortname);
-              }}
+              {attachment.shortname}</a
             >
-              <Icon name="eyeglasses" color="grey" />
+            <div class="col-1 d-flex justify-content-between">
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <div
+                class="mx-1"
+                style="cursor: pointer;"
+                on:click={async () => await handleDelete(attachment)}
+              >
+                <Icon name="trash" color="red" />
+              </div>
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <div
+                class="mx-1"
+                style="cursor: pointer;"
+                on:click={() => {
+                  handleView(attachment.shortname);
+                }}
+              >
+                <Icon name="eyeglasses" color="grey" />
+              </div>
             </div>
           </div>
+          <div class="d-flex col justify-content-center">
+            <Media
+              content_type={attachment.attributes?.payload?.content_type}
+              displayname={attachment.shortname}
+              url={get_attachment_url(
+                attachment.resource_type,
+                space_name,
+                subpath,
+                parent_shortname,
+                attachment.shortname,
+                getFileExtension(attachment.attributes?.payload?.body)
+              )}
+            />
+          </div>
         </div>
-        <Media
-          content_type={attachment.attributes?.payload?.content_type}
-          displayname={attachment.shortname}
-          url={get_attachment_url(
-            attachment.resource_type,
-            space_name,
-            subpath,
-            parent_shortname,
-            attachment.shortname,
-            getFileExtension(attachment.attributes?.payload?.body)
-          )}
-        />
         <hr />
       {/each}
     {/if}

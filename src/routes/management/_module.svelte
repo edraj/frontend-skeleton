@@ -14,9 +14,14 @@
   import Login from "../_components/Login.svelte";
   import Header from "./_components/Header.svelte";
   import Sidebar from "./_components/Sidebar.svelte";
+  import { get_profile } from "../../dmart";
 
   let window_height: number;
   let header_height: number;
+
+  $: {
+    get_profile();
+  }
 </script>
 
 <svelte:window bind:innerHeight={window_height} />

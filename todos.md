@@ -12,6 +12,7 @@
 - [ ] [Medium] Custom user resource renderer
 - [ ] [Medium] Custom tickte resource renderer
 - [ ] [Medium] Custom schema renderer / editor 
+- [ ] [Medium] Cusomt Markdown / Text / MDX / Html renderer
 - [ ] [Medium] Use meta schema with json editor validation
 - [ ] [Low] Improve Logs / Healthcheck space listing and fix the goto issue
 - [ ] [Low] Use caching to improve speed and survive network outage

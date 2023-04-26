@@ -6,6 +6,7 @@
     get_attachment_url,
     RequestType,
     ResourceType,
+    ResourceAttachementType,
   } from "../../../dmart";
   import { showToast, Level } from "../../../utils/toast";
   import Media from "./Media.svelte";
@@ -86,11 +87,12 @@
   }
 
   let payloadFile;
+  let resourceType;
   async function upload() {
     const response = await upload_with_payload(
       space_name,
       subpath + "/" + parent_shortname,
-      ResourceType.media,
+      ResourceType[resourceType],
       shortname,
       payloadFile[0]
     );
@@ -116,6 +118,12 @@
     <div class="d-flex flex-column">
       <Label>Attachment shortname</Label>
       <Input accept="image/png, image/jpeg" bind:value={shortname} />
+      <Label>Attachement Type</Label>
+      <Input type="select" bind:value={resourceType}>
+        {#each Object.values(ResourceAttachementType) as type}
+          <option value={type}>{type}</option>
+        {/each}
+      </Input>
       <hr />
       <Label>Payload File</Label>
       <Input

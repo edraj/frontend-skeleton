@@ -1,13 +1,12 @@
 <script lang="ts">
   import axios from "axios";
   axios.defaults.withCredentials = true;
-  import { website } from "../../../../../../../config";
+  import { website } from "../../../../../../../../config";
   import { Col, Container, Row, Button, Modal } from "sveltestrap";
   import { params } from "@roxi/routify";
-  import { retrieve_entry, ResourceType, ApiResponse } from "../../../../../../../dmart";
-  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
-  import { JSONContent } from "svelte-jsoneditor";
-  import Prism from "../../../../../_components/Prism.svelte";
+  import { retrieve_entry, ResourceType, ApiResponse } from "../../../../../../../../dmart";
+  import { JSONEditor, JSONContent } from "svelte-jsoneditor";
+  import Prism from "../../../../../../_components/Prism.svelte";
 
   // enum VerbType {
   //   get = "get",
@@ -52,8 +51,8 @@
     }
   };
 
-  let request_je : JsonEditor;
-  let response_je : JsonEditor;
+  let request_je : JSONEditor;
+  let response_je : JSONEditor;
   async function call_api(request : Request) {
     curl = generateCURL(request);
     if (request.verb === "post") {
@@ -83,8 +82,8 @@
         </Col>
       </Row>
       <Row>
-        <Col><b> Request </b><br/><JsonEditor bind:this={request_je} content={{json: request.body || {}}} /></Col>
-        <Col><b> Response </b><br/> <JsonEditor bind:this={response_je} content={{text: "{}"}} readOnly={true} /></Col>
+        <Col><b> Request </b><br/><JSONEditor bind:this={request_je} content={{json: request.body || {}}} /></Col>
+        <Col><b> Response </b><br/> <JSONEditor bind:this={response_je} content={{text: "{}"}} readOnly={true} /></Col>
       </Row>
     </Container>
   {:catch error}

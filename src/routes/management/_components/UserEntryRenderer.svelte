@@ -2,6 +2,7 @@
   import Attachments from "./Attachments.svelte";
   import { onDestroy } from "svelte";
   import {
+    ActionResponse,
     QueryType,
     RequestType,
     ResourceType,
@@ -27,9 +28,7 @@
   import { _ } from "../../../i18n";
   import ListView from "./ListView.svelte";
   import Prism from "./Prism.svelte";
-  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
-  import { createAjvValidator } from "svelte-jsoneditor/plugins/validator/createAjvValidator";
-  import { Validator } from "svelte-jsoneditor";
+  import {JSONEditor, createAjvValidator, Validator} from "svelte-jsoneditor";
   import { status_line } from "../_stores/status_line";
   import { timeAgo } from "../../../utils/timeago";
   import { showToast, Level } from "../../../utils/toast";
@@ -160,9 +159,9 @@
   let contentShortname = "";
   let selectedSchema = "";
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e : Event) {
     e.preventDefault();
-    let response;
+    let response : ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }
@@ -378,7 +377,7 @@
           <hr />
 
           <Label class="mt-3">Content</Label>
-          <JsonEditor bind:content={entryContent} />
+          <JSONEditor bind:content={entryContent} />
           <!-- onChange={handleChange}
                 {validator} -->
 
@@ -633,7 +632,7 @@
         <Button type="submit">Save</Button>
       </Form>
 
-      <JsonEditor
+      <JSONEditor
         bind:content
         bind:validator
         onChange={handleChange}

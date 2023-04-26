@@ -13,6 +13,7 @@
 - [ ] [Medium] Custom tickte resource renderer
 - [ ] [Medium] Custom schema renderer / editor 
 - [ ] [Medium] Cusomt Markdown / Text / MDX / Html renderer
+- [ ] [Medium] Show space / folder displayname if available instead of shortname according to the user's language preference: ar, en ...etc
 - [ ] [Medium] Use meta schema with json editor validation
 - [ ] [Low] Improve Logs / Healthcheck space listing and fix the goto issue
 - [ ] [Low] Use caching to improve speed and survive network outage

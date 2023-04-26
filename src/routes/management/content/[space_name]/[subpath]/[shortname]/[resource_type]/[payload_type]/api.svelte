@@ -1,12 +1,12 @@
 <script lang="ts">
   import axios from "axios";
   axios.defaults.withCredentials = true;
-  import { website } from "../../../../../../../config";
+  import { website } from "../../../../../../../../config";
   import { Col, Container, Row, Button, Modal } from "sveltestrap";
   import { params } from "@roxi/routify";
-  import { retrieve_entry, ResourceType, ApiResponse } from "../../../../../../../dmart";
+  import { retrieve_entry, ResourceType, ApiResponse } from "../../../../../../../../dmart";
   import { JSONEditor, JSONContent } from "svelte-jsoneditor";
-  import Prism from "../../../../../_components/Prism.svelte";
+  import Prism from "../../../../../../_components/Prism.svelte";
 
   // enum VerbType {
   //   get = "get",

@@ -6,6 +6,7 @@
     RequestType,
     ResourceType,
     ResponseEntry,
+    ActionResponse,
     Status,
     query,
     request,
@@ -32,7 +33,7 @@
   import { timeAgo } from "../../../utils/timeago";
   import { showToast, Level } from "../../../utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  import { search } from "../_stores/triggers";
+  // import { search } from "../_stores/triggers";
   import history_cols from "../_stores/list_cols_history.json";
 
   let header_height: number;
@@ -57,14 +58,10 @@
     }</strong></small>`
   );
 
-  let isSchemaValidated: boolean;
+  // let isSchemaValidated: boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
-    const v = patchResult?.contentErrors?.validationErrors;
-    if (v === undefined || v.length === 0) {
-      isSchemaValidated = true;
-    } else {
-      isSchemaValidated = false;
-    }
+    // const v = patchResult?.contentErrors?.validationErrors;
+    // isSchemaValidated =  (v === undefined || v.length === 0)
   }
 
   let errorContent = null;
@@ -116,7 +113,7 @@
     ]);
   }
 
-  function cleanUpSchema(obj) {
+  function cleanUpSchema(obj : Object) {
     for (let prop in obj) {
       if (prop === "comment") delete obj[prop];
       else if (typeof obj[prop] === "object") cleanUpSchema(obj[prop]);
@@ -156,9 +153,9 @@
   let contentShortname = "";
   let selectedSchema = "";
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    let response;
+  async function handleSubmit(event : Event) {
+    event.preventDefault();
+    let response : ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }
@@ -280,7 +277,7 @@
     }
   }
 
-  function beforeUnload(event) {
+  function beforeUnload(event : Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -292,7 +289,7 @@
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        event.returnValue = "";
+        event.returnValue = false;
         return "...";
       }
     }

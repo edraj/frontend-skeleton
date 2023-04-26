@@ -304,7 +304,7 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
   return data;
 }
 
-export async function request(action: ActionRequest) {
+export async function request(action: ActionRequest) : Promise<ActionResponse>{
   try {
     const { data } = await axios.post<ActionResponse>(
       website.backend + "/managed/request",

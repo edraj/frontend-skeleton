@@ -14,6 +14,7 @@
     "test": "vitest run --watch false"
   },
   "devDependencies": {
+    "@lezer/common": "^1.0.2",
     "@popperjs/core": "^2.11.7",
     "@roxi/routify": "^3.0.0-next.1",
     "@sveltejs/vite-plugin-svelte": "^2.0.0-next.13",
@@ -29,7 +30,7 @@
     "svelte-check": "^3.2.0",
     "svelte-i18n": "^3.6.0",
     "svelte-infinite-loading": "^1.3.8",
-    "svelte-jsoneditor": "^0.16.1",
+    "svelte-jsoneditor": "^0.17.1",
     "svelte-loading-spinners": "^0.3.4",
     "svelte-preprocess": "^5.0.3",
     "svelte-tiny-virtual-list": "^2.0.5",

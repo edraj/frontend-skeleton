@@ -335,7 +335,7 @@ export async function retrieve_entry(
 ): Promise<ResponseEntry> {
   if (!subpath || subpath == "/") subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(
-    `${website.backend}/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
+    website.backend + `/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
       /\/+/g,
       "/"
     ),
@@ -416,17 +416,10 @@ export function get_attachment_url(
   shortname: string,
   ext: string
 ) {
-  return `${
-    website.backend
-  }/managed/payload/${resource_type}/${space_name}/${subpath.replace(
-    /\/+$/,
-    ""
-  )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
+  return website.backend + `/managed/payload/${resource_type}/${space_name}/${subpath.replace(/\/+$/, "")}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
 }
 
 export async function get_space_health(space_name: string) {
-  const { data } = await axios.get<
-    ApiQueryResponse & { attributes: { folders_report: Object } }
-  >(`${website.backend}/managed/health/${space_name}`, { headers });
+  const { data } = await axios.get<ApiQueryResponse & { attributes: { folders_report: Object } }>(website.backend+`/managed/health/${space_name}`, { headers });
   return data;
 }

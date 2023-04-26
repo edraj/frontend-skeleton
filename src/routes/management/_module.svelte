@@ -1,4 +1,13 @@
 <!-- routify:meta reset -->
+
+<!--script context="module" lang="ts">
+    export const load = _ => {
+        return {
+            redirect: '/login'
+        }
+    }
+</script-->
+
 <script lang="ts">
   import { Col, Container, Row } from "sveltestrap";
   import { user } from "../_stores/user";

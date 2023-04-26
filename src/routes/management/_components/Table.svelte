@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Table } from "sveltestrap";
   import { _, number } from "../../../i18n";
 
@@ -22,7 +22,7 @@
 </script>
 
 <div class="h-100" style="overflow-y: auto;">
-  <Table class="h-100 " hover responsive>
+  <Table class="h-100 " hover responsive striped>
     <thead>
       <tr>
         <th> # </th>

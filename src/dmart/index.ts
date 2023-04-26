@@ -182,17 +182,19 @@ export enum ResourceType {
 
 export enum ContentType {
   text = "text",
+  html = "html",
   markdown = "markdown",
   json = "json",
   image = "image",
   python = "python",
   pdf = "pdf",
   audio = "audio",
+  video = "video"
 }
 
 type Payload = {
   content_type: ContentType;
-  schema_shortname: string;
+  schema_shortname?: string;
   checksum: string;
   body: string | Record<string, any>;
   last_validated: string;
@@ -210,7 +212,7 @@ export type ResponseEntry = {
   created_at: string;
   updated_at: string;
   owner_shortname: string;
-  payload: Payload;
+  payload?: Payload;
   attachments?: Object;
 };
 
@@ -227,7 +229,7 @@ export type ResponseRecord = {
     created_at: string;
     updated_at: string;
     owner_shortname: string;
-    payload: Payload;
+    payload?: Payload;
   };
 };
 

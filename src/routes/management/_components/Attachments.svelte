@@ -5,6 +5,7 @@
     request,
     get_attachment_url,
     RequestType,
+    ContentType,
     ResourceType,
     ResourceAttachementType,
   } from "../../../dmart";
@@ -19,7 +20,7 @@
     ModalFooter,
     ModalHeader,
   } from "sveltestrap";
-  import { JSONEditor } from "svelte-jsoneditor";
+  import { JSONEditor, Content } from "svelte-jsoneditor";
 
   export let attachments;
   export let space_name: string;
@@ -43,7 +44,7 @@
     json: {},
     text: undefined,
   };
-  function handleView(attachemntTitle) {
+  function handleView(attachemntTitle : string) {
     content = {
       json: attachments.filter((e) => e.shortname === attachemntTitle)[0],
       text: undefined,
@@ -51,7 +52,7 @@
     openViewAttachmentModal = true;
   }
 
-  function getFileExtension(filename) {
+  function getFileExtension(filename : string) {
     var ext = /^.+\.([^.]+)$/.exec(filename);
     return ext == null ? "" : ext[1];
   }
@@ -87,7 +88,9 @@
   }
 
   let payloadFile;
-  let resourceType;
+  let payloadContent : Content = {json: {"name": "test"}};
+  let resourceType : ResourceAttachementType = ResourceAttachementType.media;
+  let contentType : ContentType = ContentType.image; 
   async function upload() {
     const response = await upload_with_payload(
       space_name,
@@ -119,18 +122,42 @@
       <Label>Attachment shortname</Label>
       <Input accept="image/png, image/jpeg" bind:value={shortname} />
       <Label>Attachement Type</Label>
-      <Input type="select" bind:value={resourceType}>
+      <Input type="select" bind:value={resourceType} >
         {#each Object.values(ResourceAttachementType) as type}
+        {#if type != ResourceAttachementType.alteration && type != ResourceAttachementType.relationship}
           <option value={type}>{type}</option>
+        {/if}
         {/each}
       </Input>
+      {#key resourceType}
+      {#if resourceType == ResourceAttachementType.media}
+      <Label>Content Type</Label>
+      <Input type="select" bind:value={contentType}>
+        {#each Object.values(ContentType) as type}
+          {#if type != ContentType.json}
+          <option value={type}>{type}</option>
+          {/if}
+        {/each}
+      </Input>
+      {:else if resourceType == ResourceAttachementType.json }
+        <b> TBD ... select optional schema shortname </b>
+      {/if}
+      {/key}
       <hr />
+      {#key resourceType}
+      {#if resourceType == ResourceAttachementType.media}
       <Label>Payload File</Label>
       <Input
         accept="image/png, image/jpeg"
         bind:files={payloadFile}
         type="file"
       />
+      {:else if resourceType == ResourceAttachementType.json}
+        <JSONEditor bind:content={payloadContent} />
+      {:else}
+        <b> TBD ... show custom fields for resource type : {resourceType} </b>
+      {/if}
+      {/key}
     </div>
   </ModalBody>
   <ModalFooter>

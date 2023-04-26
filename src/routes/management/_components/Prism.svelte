@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Prism from "prismjs";
+  import {highlight, languages} from "prismjs";
   import "prismjs/components/prism-json";
   import "prismjs/components/prism-bash";
 
@@ -7,11 +7,7 @@
   export let code: Object | string;
   let formatted: string;
   $: {
-    formatted = Prism.highlight(
-      language=="json"? JSON.stringify(code, undefined, 1) : code as string,
-      Prism.languages[language],
-      language
-    );
+    formatted = highlight(language=="json"?JSON.stringify(code, undefined,1):code as string,languages[language],language);
   }
 </script>
 

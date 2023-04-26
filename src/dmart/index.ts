@@ -149,6 +149,14 @@ export enum RequestType {
   move = "move",
 }
 
+export enum ResourceAttachementType {
+  json = "json",
+  comment = "comment",
+  media = "media",
+  relationship = "relationship",
+  alteration = "alteration",
+}
+
 export enum ResourceType {
   user = "user",
   group = "group",

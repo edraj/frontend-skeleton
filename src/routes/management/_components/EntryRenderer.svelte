@@ -152,6 +152,7 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
+  let new_resource_type : ResourceType = ResourceType.content;
 
   async function handleSubmit(event : Event) {
     event.preventDefault();
@@ -165,7 +166,7 @@
         request_type: RequestType.create,
         records: [
           {
-            resource_type: ResourceType.content,
+            resource_type: new_resource_type,
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
@@ -311,6 +312,12 @@
     <ModalBody>
       <FormGroup>
         {#if modalFlag === "create"}
+          <Label class="mt-3">Resource type</Label>
+          <Input bind:value={new_resource_type} type="select">
+              {#each Object.values(ResourceType) as type }
+                <option value={type}>{type}</option>
+              {/each}
+          </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
             <option value={""}>{"None"}</option>

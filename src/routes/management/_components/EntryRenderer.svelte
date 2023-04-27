@@ -126,7 +126,7 @@
         space_name,
         type: QueryType.search,
         subpath: "/schema",
-        filter_shortnames: [entry.payload.schema_shortname],
+        // filter_shortnames: [entry.payload.schema_shortname],
         search: "",
         retrieve_json_payload: true,
       };

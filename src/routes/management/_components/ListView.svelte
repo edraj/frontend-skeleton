@@ -138,7 +138,7 @@
         //   "",
         //   `/management/content/${space_name}/${record.subpath.replaceAll( "/", "-")}/${shortname}/${record.resource_type}${ schema_shortname ? "/" + schema_shortname : "" }`
         // );
-        console.log({ r: record.attributes?.payload });
+        // console.log({ r: record.attributes?.payload });
 
         if (schema_shortname)
           $goto(

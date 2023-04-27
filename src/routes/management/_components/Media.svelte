@@ -1,10 +1,15 @@
 <script lang="ts">
+  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+
   export let content_type: string = "";
+  export let body: any = {};
   export let url: string;
   export let displayname: string = undefined;
 </script>
 
-{#if content_type.includes("image")}
+{#if content_type.includes("json")}
+  <JsonEditor content={{ json: body, text: undefined }} readOnly={true} />
+{:else if content_type.includes("image")}
   <img src={url} alt={displayname} class="mw-100 border" />
 {:else if content_type.includes("audio")}
   <audio controls src={url}>

@@ -16,7 +16,12 @@
   let children = [];
 
   function displayname(): string {
-    return folder.shortname;
+    const lang = JSON.parse(localStorage.getItem("preferred_locale"));
+    if (folder?.attributes?.displayname) {
+      return folder?.attributes?.displayname[lang];
+    } else {
+      return folder.shortname;
+    }
   }
 
   async function toggle() {

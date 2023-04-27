@@ -351,7 +351,7 @@ export async function upload_with_payload(
   subpath: string,
   resource_type: ResourceType,
   shortname: string,
-  payload_file: string
+  payload_file: File
 ): Promise<ApiResponse> {
   const request_record = new Blob(
     [

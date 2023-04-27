@@ -1,5 +1,5 @@
 <script lang="ts">
-  import JSONEditor from "svelte-jsoneditor";
+  import { JSONEditor } from "svelte-jsoneditor";
 
   export let content_type: string = "";
   export let body: any = {};

@@ -6,6 +6,14 @@
   import Folder from "../Folder.svelte";
 
   let expanded: string;
+  function displayname(space_name): string {
+    const lang = JSON.parse(localStorage.getItem("preferred_locale"));
+    if (space_name?.attributes?.displayname) {
+      return space_name?.attributes?.displayname[lang];
+    } else {
+      return space_name.shortname;
+    }
+  }
 </script>
 
 {#await get_spaces()}
@@ -19,7 +27,7 @@
         style="cursor: pointer;"
         on:click={() => (expanded = space.shortname)}
       >
-        <Icon name="diagram-3" class="me-1" /> <b>{space.shortname}</b>
+        <Icon name="diagram-3" class="me-1" /> <b>{displayname(space)}</b>
       </div>
 
       {#if expanded === space.shortname}

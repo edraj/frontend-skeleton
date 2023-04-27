@@ -309,6 +309,7 @@
             <Media
               content_type={attachment.attributes?.payload?.content_type}
               displayname={attachment.shortname}
+              body={attachment.attributes?.payload?.body}
               url={get_attachment_url(
                 attachment.resource_type,
                 space_name,

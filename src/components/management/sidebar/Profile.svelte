@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { get_profile, get_children, ResourceType } from '../../../../dmart';
+  import { get_profile, get_children, ResourceType } from '@/dmart';
   import { ListGroup, ListGroupItem } from 'sveltestrap';
-  import Icon from '../../../_components/Icon.svelte';
-  import {_} from '../../../../i18n';
+  import Icon from '../../Icon.svelte';
+  import {_} from '@/i18n';
   import Folder from "../Folder.svelte";
 
 </script>

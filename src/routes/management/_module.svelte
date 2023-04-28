@@ -10,11 +10,11 @@
 
 <script lang="ts">
   import { Col, Container, Row } from "sveltestrap";
-  import { user } from "../_stores/user";
-  import Login from "../_components/Login.svelte";
-  import Header from "./_components/Header.svelte";
-  import Sidebar from "./_components/Sidebar.svelte";
-  import { get_profile } from "../../dmart";
+  import { user } from "@/stores/user";
+  import Login from "@/components/Login.svelte";
+  import Header from "@/components/management/Header.svelte";
+  import Sidebar from "@/components/management/Sidebar.svelte";
+  import { get_profile } from "@/dmart";
 
   let window_height: number;
   let header_height: number;

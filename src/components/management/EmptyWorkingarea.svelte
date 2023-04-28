@@ -1,7 +1,7 @@
-<script>
-  import { active_section } from "../_stores/active_section";
-  import { _ } from "../../../i18n";
-  import Icon from "../../_components/Icon.svelte";
+<script lang="ts">
+  import { active_section } from "@/stores/management/active_section";
+  import { _ } from "@/i18n";
+  import Icon from "../Icon.svelte";
 </script>
 
 <div

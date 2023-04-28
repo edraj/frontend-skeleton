@@ -9,8 +9,8 @@
     Input,
     Button,
   } from "sveltestrap";
-  import {user, signin} from "../_stores/user";
-  import { _ } from "../../i18n";
+  import {signin} from "@/stores/user";
+  import { _ } from "@/i18n";
 
   let username : string;
   let password : string;

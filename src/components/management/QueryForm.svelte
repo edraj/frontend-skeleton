@@ -1,13 +1,13 @@
-<script>
-  import Form from "../../_components/Form.svelte";
-  import Input from "../../_components/Input.svelte";
-  import { _ } from "../../../i18n";
-  import { QueryType, ResourceType, get_spaces, query } from "../../../dmart";
+<script lang="ts">
+  import Form from "../Form.svelte";
+  import Input from "../Input.svelte";
+  import { _ } from "@/i18n";
+  import { QueryType, ResourceType, get_spaces, query } from "@/dmart";
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
-  async function handleResponse(event) {
+  async function handleResponse(event : CustomEvent) {
     const { type, space_name, subpath, shortname, search, offset, limit } =
       event.detail;
     const query_request = {

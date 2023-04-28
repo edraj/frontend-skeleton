@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { Label, Button, Form, FormGroup, Row, Col } from "sveltestrap";
   import { createEventDispatcher } from "svelte";
   import Captcha from "./Captcha.svelte";
-  import { _ } from "../../i18n";
+  import { _ } from "@/i18n";
   const dispatch = createEventDispatcher();
 
   export let captcha = false;

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Form, Input, Button, Navbar, NavbarBrand, Nav, NavLink } from "sveltestrap";
-  import { _ } from "../../i18n";
-  import { website } from "../../config";
-  import Icon from "../_components/Icon.svelte";
+  import { _ } from "@/i18n";
+  import { website } from "@/config";
+  import Icon from "@/components/Icon.svelte";
   // import signedin_user from "../management/_stores/signedin_user";
-  import { user, signout } from "../_stores/user";
+  import { user, signout } from "@/stores/user";
   // import { redirect } from "@roxi/routify";
   import LocalizedValue from "./LocalizedValue.svelte";
 

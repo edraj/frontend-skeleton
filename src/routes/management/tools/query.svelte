@@ -1,15 +1,10 @@
 <script lang="ts">
-  import Table from "../_components/Table.svelte";
-  import { _ } from "../../../i18n";
+  import Table from "@/components/management/Table.svelte";
+  import { _ } from "@/i18n";
   import { TabPane, TabContent } from "sveltestrap";
   import { Container, Row, Col } from "sveltestrap";
-  import QueryForm from "../_components/QueryForm.svelte";
-  import Prism from "../_components/Prism.svelte";
-
-  export let scoped;
-  scoped;
-  export let scopedSync;
-  scopedSync;
+  import QueryForm from "@/components/management/QueryForm.svelte";
+  import Prism from "@/components/Prism.svelte";
 
   let results = { records: [] };
   let rows = [];

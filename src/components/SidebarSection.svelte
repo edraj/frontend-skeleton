@@ -1,7 +1,7 @@
 <script lang="ts">
   import SidebarItem from "./SidebarItem.svelte";
   import Icon from "./Icon.svelte";
-  import { _ } from "../../i18n";
+  import { _ } from "@/i18n";
   import {Section} from "./types";
 
   export let section : Section; 

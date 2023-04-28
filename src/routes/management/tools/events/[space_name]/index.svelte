@@ -1,6 +1,6 @@
-<script>
-  import { QueryType } from "../../../../../dmart/index";
-  import ListView from "../../../_components/ListView.svelte";
+<script lang="ts">
+  import { QueryType } from "@/dmart";
+  import ListView from "@/components/management/ListView.svelte";
   import { params } from "@roxi/routify";
 </script>
 

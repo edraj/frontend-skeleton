@@ -2,15 +2,15 @@
   import Attachments from "./Attachments.svelte";
   import { onDestroy } from "svelte";
   import {
-    ActionResponse,
     QueryType,
     RequestType,
     ResourceType,
     ResponseEntry,
+    ActionResponse,
     Status,
     query,
     request,
-  } from "../../../dmart";
+  } from "@/dmart";
   import {
     Form,
     FormGroup,
@@ -24,23 +24,21 @@
     Nav,
     ButtonGroup,
   } from "sveltestrap";
-  import Icon from "../../_components/Icon.svelte";
-  import { _ } from "../../../i18n";
+  import Icon from "../Icon.svelte";
+  import { _ } from "@/i18n";
   import ListView from "./ListView.svelte";
-  import Prism from "./Prism.svelte";
-  import {JSONEditor, createAjvValidator, Validator} from "svelte-jsoneditor";
-  import { status_line } from "../_stores/status_line";
-  import { timeAgo } from "../../../utils/timeago";
-  import { showToast, Level } from "../../../utils/toast";
+  import Prism from "../Prism.svelte";
+  import {JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
+  import { status_line } from "@/stores/management/status_line";
+  import { timeAgo } from "@/utils/timeago";
+  import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  import history_cols from "../_stores/list_cols_history.json";
-  import "bootstrap";
+  // import { search } from "../_stores/triggers";
+  import history_cols from "@/stores/management/list_cols_history.json";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
   export let entry: ResponseEntry;
-  console.log({ entry });
-
   export let space_name: string;
   export let subpath: string;
   export let resource_type: ResourceType;
@@ -60,14 +58,10 @@
     }</strong></small>`
   );
 
-  let isSchemaValidated: boolean;
+  // let isSchemaValidated: boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
-    const v = patchResult?.contentErrors?.validationErrors;
-    if (v === undefined || v.length === 0) {
-      isSchemaValidated = true;
-    } else {
-      isSchemaValidated = false;
-    }
+    // const v = patchResult?.contentErrors?.validationErrors;
+    // isSchemaValidated =  (v === undefined || v.length === 0)
   }
 
   let errorContent = null;
@@ -119,7 +113,7 @@
     ]);
   }
 
-  function cleanUpSchema(obj) {
+  function cleanUpSchema(obj : Object) {
     for (let prop in obj) {
       if (prop === "comment") delete obj[prop];
       else if (typeof obj[prop] === "object") cleanUpSchema(obj[prop]);
@@ -132,7 +126,7 @@
         space_name,
         type: QueryType.search,
         subpath: "/schema",
-        filter_shortnames: [entry.payload.schema_shortname],
+        // filter_shortnames: [entry.payload.schema_shortname],
         search: "",
         retrieve_json_payload: true,
       };
@@ -158,9 +152,10 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
+  let new_resource_type : ResourceType = ResourceType.content;
 
-  async function handleSubmit(e : Event) {
-    e.preventDefault();
+  async function handleSubmit(event : Event) {
+    event.preventDefault();
     let response : ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
@@ -171,7 +166,7 @@
         request_type: RequestType.create,
         records: [
           {
-            resource_type: ResourceType.content,
+            resource_type: new_resource_type,
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
@@ -283,7 +278,7 @@
     }
   }
 
-  function beforeUnload(event) {
+  function beforeUnload(event : Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -295,54 +290,10 @@
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        event.returnValue = "";
+        // Deprecated event.returnValue = false;
         return false;
       }
     }
-  }
-  // const user = {
-  //   email: user_entry.email,
-  //   msisdn: entry.msisdn,
-  //   password: "",
-  //   is_email_verified: entry.is_email_verified,
-  //   is_msisdn_verified: entry.is_msisdn_verified,
-  //   force_password_change: entry.force_password_change,
-  // };
-  // function handleInputChange(e) {
-  //   const { name, value, checked } = e.target;
-  //   console.log({ name, value, checked });
-  //   if(["force_password_change", "is_msisdn_verified", "is_email_verified"].includes(name)){
-
-  //   }
-  // }
-
-  async function handleUserSubmit(e) {
-    e.preventDefault();
-    // if (user.password === "") {
-    //   delete user.password;
-    // }
-    //
-    // const response = await request({
-    //   space_name: space_name,
-    //   request_type: RequestType.update,
-    //   records: [
-    //     {
-    //       resource_type,
-    //       shortname: entry.shortname,
-    //       subpath,
-    //       attributes: user,
-    //     },
-    //   ],
-    // });
-    // if (response.status == Status.success) {
-    //   showToast(Level.info);
-    //   content.json = { ...content.json, ...user };
-    //   content = { ...content };
-    //   oldContent = { ...content };
-    // } else {
-    //   errorContent = response;
-    //   showToast(Level.warn);
-    // }
   }
 </script>
 
@@ -361,6 +312,12 @@
     <ModalBody>
       <FormGroup>
         {#if modalFlag === "create"}
+          <Label class="mt-3">Resource type</Label>
+          <Input bind:value={new_resource_type} type="select">
+              {#each Object.values(ResourceType) as type }
+                <option value={type}>{type}</option>
+              {/each}
+          </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
             <option value={""}>{"None"}</option>
@@ -379,17 +336,17 @@
           <Label class="mt-3">Content</Label>
           <JSONEditor bind:content={entryContent} />
           <!-- onChange={handleChange}
-                {validator} -->
+              {validator} -->
 
           <hr />
 
           <!-- <Label>Schema</Label>
-              <ContentJsonEditor
-                bind:self={refJsonEditor}
-                content={contentSchema}
-                readOnly={true}
-                mode={Mode.tree}
-              /> -->
+            <ContentJsonEditor
+              bind:self={refJsonEditor}
+              content={contentSchema}
+              readOnly={true}
+              mode={Mode.tree}
+            /> -->
         {/if}
         {#if entryType === "folder"}
           <Label class="mt-3">Shortname</Label>
@@ -556,8 +513,8 @@
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
       <pre>
-          {JSON.stringify(entry, undefined, 1)}
-        </pre>
+        {JSON.stringify(entry, undefined, 1)}
+      </pre>
     </div>
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "view"}>
@@ -573,65 +530,6 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <!-- <Form class="px-5" on:submit={handleUserSubmit}> -->
-      <!--   <FormGroup> -->
-      <!--     <Label>Email</Label> -->
-      <!--     <!-- on:change={handleInputChange} --> -->
-      <!--     <Input -->
-      <!--       bind:value={user.email} -->
-      <!--       class="w-25" -->
-      <!--       type="email" -->
-      <!--       name="email" -->
-      <!--       placeholder="Email..." -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Label>MSISDN</Label> -->
-      <!--     <Input -->
-      <!--       bind:value={user.msisdn} -->
-      <!--       class="w-25" -->
-      <!--       type="text" -->
-      <!--       name="msisdn" -->
-      <!--       placeholder="Email..." -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Label>Password</Label> -->
-      <!--     <Input -->
-      <!--       bind:value={user.password} -->
-      <!--       class="w-25" -->
-      <!--       type="password" -->
-      <!--       name="password" -->
-      <!--       placeholder="password..." -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Input -->
-      <!--       name="is_email_verified" -->
-      <!--       bind:checked={user.is_email_verified} -->
-      <!--       type="checkbox" -->
-      <!--       label="Is Email Verified" -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Input -->
-      <!--       name="is_msisdn_verified" -->
-      <!--       bind:checked={user.is_msisdn_verified} -->
-      <!--       type="checkbox" -->
-      <!--       label="Is MSISDN Verified" -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Input -->
-      <!--       name="force_password_change" -->
-      <!--       bind:checked={user.force_password_change} -->
-      <!--       type="checkbox" -->
-      <!--       label="Force Password Change" -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <Button type="submit">Save</Button> -->
-      <!-- </Form> -->
-
       <JSONEditor
         bind:content
         bind:validator

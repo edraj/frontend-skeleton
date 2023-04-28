@@ -1,12 +1,13 @@
 <script lang="ts">
   import { Col, Container, Row } from "sveltestrap";
-  import Header from "./_components/Header.svelte";
-  import Footer from "./_components/Footer.svelte";
-  import Sidebar from "./_components/Sidebar.svelte";
+  import Header from "@/components/Header.svelte";
+  import Footer from "@/components/Footer.svelte";
+  import Sidebar from "@/components/Sidebar.svelte";
 
   let window_height: number;
   let header_height: number;
   let footer_height: number;
+
 </script>
 
 <svelte:window bind:innerHeight={window_height} />

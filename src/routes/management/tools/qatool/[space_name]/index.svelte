@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { params } from "@roxi/routify";
   import { ListGroup, ListGroupItem } from "sveltestrap";
   import "bootstrap";

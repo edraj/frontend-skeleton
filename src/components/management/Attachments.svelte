@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Icon from "../../_components/Icon.svelte";
+  import Icon from "../Icon.svelte";
   import {
     upload_with_payload,
     request,
@@ -11,8 +11,8 @@
     ResourceType,
     ResourceAttachementType,
     ApiResponse,
-  } from "../../../dmart";
-  import { showToast, Level } from "../../../utils/toast";
+  } from "@/dmart";
+  import { showToast, Level } from "@/utils/toast";
   import Media from "./Media.svelte";
   import {
     Button,

@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { active_section } from "../_stores/active_section";
-  import Icon from "../../_components/Icon.svelte";
-  import { _ } from "../../../i18n";
-  import { status_line } from "../_stores/status_line";
+  import { active_section } from "@/stores/management/active_section";
+  import Icon from "../Icon.svelte";
+  import { _ } from "@/i18n";
+  import { status_line } from "@/stores/management/status_line";
   import { ListGroup, ListGroupItem } from "sveltestrap";
   import Spaces from "./sidebar/Spaces.svelte";
   import Profile from "./sidebar/Profile.svelte";
   import Folder from "./Folder.svelte";
   import { isActive } from "@roxi/routify";
-  import { ResourceType } from "../../../dmart";
+  import { ResourceType } from "@/dmart";
   import SimpleSpaces from "./sidebar/SimpleSpaces.svelte";
 
   const components = {

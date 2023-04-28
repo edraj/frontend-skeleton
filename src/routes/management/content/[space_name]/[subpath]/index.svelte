@@ -1,7 +1,7 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
-  import { retrieve_entry, ResourceType } from "../../../../../dmart";
-  import EntryRenderer from "../../../_components/EntryRenderer.svelte";
+  import { retrieve_entry, ResourceType } from "@/dmart";
+  import EntryRenderer from "@/components/management/EntryRenderer.svelte";
   // import { fade } from 'svelte/transition';
 
 

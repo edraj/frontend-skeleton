@@ -3,9 +3,9 @@
   import {
     retrieve_entry,
     ResourceType,
-  } from "../../../../../../../../../dmart";
-  import EntryRenderer from "../../../../../../../_components/EntryRenderer.svelte";
-  import UserEntryRenderer from "../../../../../../../_components/UserEntryRenderer.svelte";
+  } from "@/dmart";
+  import EntryRenderer from "@/components/management/EntryRenderer.svelte";
+  import UserEntryRenderer from "@/components/management/UserEntryRenderer.svelte";
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 

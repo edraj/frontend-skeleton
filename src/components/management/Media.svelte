@@ -1,13 +1,22 @@
 <script lang="ts">
   import { JSONEditor } from "svelte-jsoneditor";
 
-  export let content_type: string = "";
-  export let body: any = {};
+  export let attributes: any = {};
+  export let resource_type: string;
+  let content_type: string = attributes?.payload?.content_type;
+  let body: any = attributes?.payload?.body;
+
   export let url: string;
   export let displayname: string = undefined;
 </script>
 
-{#if content_type.includes("json")}
+{#if resource_type === "comment"}
+  <div>
+    <p style="margin: 0px"><b>State:</b>{attributes.state}</p>
+    <br />
+    <p style="margin: 0px"><b>Body:</b>{attributes.body}</p>
+  </div>
+{:else if content_type.includes("json")}
   <JSONEditor content={{ json: body, text: undefined }} readOnly={true} />
 {:else if content_type.includes("image")}
   <img src={url} alt={displayname} class="mw-100 border" />

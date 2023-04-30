@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { search } from "./../_stores/triggers";
+  import { search } from "@/stores/management/triggers";
   import {
     Nav,
     NavItem,
@@ -10,13 +10,13 @@
     Input,
     InputGroupText,
   } from "sveltestrap";
-  import Icon from "../../_components/Icon.svelte";
-  import { _ } from "../../../i18n";
-  import SelectLanguage from "../../_components/SelectLanguage.svelte";
-  import { signout } from "../../_stores/user";
+  import Icon from "../Icon.svelte";
+  import { _ } from "@/i18n";
+  import SelectLanguage from "../SelectLanguage.svelte";
+  import { signout } from "@/stores/user";
   import { url } from "@roxi/routify";
-  import { active_section } from "../_stores/active_section";
-  import sections from "../_stores/sections.json";
+  import { active_section } from "@/stores/management/active_section";
+  import sections from "@/stores/management/sections.json";
 
   let search_value = "";
   function handleSearch(e) {

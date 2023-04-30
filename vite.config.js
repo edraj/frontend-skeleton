@@ -4,12 +4,23 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import preprocess from "svelte-preprocess";
 import routify from "@roxi/routify/vite-plugin";
 import { mdsvex } from "mdsvex";
+// import path from "path";
 
 const production = process.env.NODE_ENV === "production";
 
 export default defineConfig({
   clearScreen: false,
-
+  resolve: {
+    alias: {
+      /*'@': path.resolve(__dirname, './src'),*/
+      '@':  process.cwd() + '/src'
+    },
+  },
+  /*resolve: {
+    alias: {
+      $root: path.resolve('./src')
+    }
+  },*/
   plugins: [
     routify({
       ssr: { enable: false },

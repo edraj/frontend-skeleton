@@ -2,6 +2,7 @@
   import Attachments from "./Attachments.svelte";
   import { onDestroy } from "svelte";
   import {
+    ActionResponse,
     QueryType,
     RequestType,
     ResourceType,
@@ -9,7 +10,7 @@
     Status,
     query,
     request,
-  } from "../../../dmart";
+  } from "@/dmart";
   import {
     Form,
     FormGroup,
@@ -23,18 +24,16 @@
     Nav,
     ButtonGroup,
   } from "sveltestrap";
-  import Icon from "../../_components/Icon.svelte";
-  import { _ } from "../../../i18n";
+  import Icon from "../Icon.svelte";
+  import { _ } from "@/i18n";
   import ListView from "./ListView.svelte";
-  import Prism from "./Prism.svelte";
-  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
-  import { createAjvValidator } from "svelte-jsoneditor/plugins/validator/createAjvValidator";
-  import { Validator } from "svelte-jsoneditor";
-  import { status_line } from "../_stores/status_line";
-  import { timeAgo } from "../../../utils/timeago";
-  import { showToast, Level } from "../../../utils/toast";
+  import Prism from "../Prism.svelte";
+  import {JSONEditor, createAjvValidator, Validator} from "svelte-jsoneditor";
+  import { status_line } from "@/stores/management/status_line";
+  import { timeAgo } from "@/utils/timeago";
+  import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  import history_cols from "../_stores/list_cols_history.json";
+  import history_cols from "@/stores/management/list_cols_history.json";
   import "bootstrap";
 
   let header_height: number;
@@ -160,9 +159,9 @@
   let contentShortname = "";
   let selectedSchema = "";
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e : Event) {
     e.preventDefault();
-    let response;
+    let response : ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }
@@ -301,14 +300,14 @@
       }
     }
   }
-  const user = {
-    email: entry.email,
-    msisdn: entry.msisdn,
-    password: "",
-    is_email_verified: entry.is_email_verified,
-    is_msisdn_verified: entry.is_msisdn_verified,
-    force_password_change: entry.force_password_change,
-  };
+  // const user = {
+  //   email: user_entry.email,
+  //   msisdn: entry.msisdn,
+  //   password: "",
+  //   is_email_verified: entry.is_email_verified,
+  //   is_msisdn_verified: entry.is_msisdn_verified,
+  //   force_password_change: entry.force_password_change,
+  // };
   // function handleInputChange(e) {
   //   const { name, value, checked } = e.target;
   //   console.log({ name, value, checked });
@@ -319,31 +318,31 @@
 
   async function handleUserSubmit(e) {
     e.preventDefault();
-    if (user.password === "") {
-      delete user.password;
-    }
-
-    const response = await request({
-      space_name: space_name,
-      request_type: RequestType.update,
-      records: [
-        {
-          resource_type,
-          shortname: entry.shortname,
-          subpath,
-          attributes: user,
-        },
-      ],
-    });
-    if (response.status == Status.success) {
-      showToast(Level.info);
-      content.json = { ...content.json, ...user };
-      content = { ...content };
-      oldContent = { ...content };
-    } else {
-      errorContent = response;
-      showToast(Level.warn);
-    }
+    // if (user.password === "") {
+    //   delete user.password;
+    // }
+    //
+    // const response = await request({
+    //   space_name: space_name,
+    //   request_type: RequestType.update,
+    //   records: [
+    //     {
+    //       resource_type,
+    //       shortname: entry.shortname,
+    //       subpath,
+    //       attributes: user,
+    //     },
+    //   ],
+    // });
+    // if (response.status == Status.success) {
+    //   showToast(Level.info);
+    //   content.json = { ...content.json, ...user };
+    //   content = { ...content };
+    //   oldContent = { ...content };
+    // } else {
+    //   errorContent = response;
+    //   showToast(Level.warn);
+    // }
   }
 </script>
 
@@ -378,7 +377,7 @@
           <hr />
 
           <Label class="mt-3">Content</Label>
-          <JsonEditor bind:content={entryContent} />
+          <JSONEditor bind:content={entryContent} />
           <!-- onChange={handleChange}
                 {validator} -->
 
@@ -574,66 +573,66 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <Form class="px-5" on:submit={handleUserSubmit}>
-        <FormGroup>
-          <Label>Email</Label>
-          <!-- on:change={handleInputChange} -->
-          <Input
-            bind:value={user.email}
-            class="w-25"
-            type="email"
-            name="email"
-            placeholder="Email..."
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label>MSISDN</Label>
-          <Input
-            bind:value={user.msisdn}
-            class="w-25"
-            type="text"
-            name="msisdn"
-            placeholder="Email..."
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label>Password</Label>
-          <Input
-            bind:value={user.password}
-            class="w-25"
-            type="password"
-            name="password"
-            placeholder="password..."
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            name="is_email_verified"
-            bind:checked={user.is_email_verified}
-            type="checkbox"
-            label="Is Email Verified"
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            name="is_msisdn_verified"
-            bind:checked={user.is_msisdn_verified}
-            type="checkbox"
-            label="Is MSISDN Verified"
-          />
-        </FormGroup>
-        <FormGroup>
-          <Input
-            name="force_password_change"
-            bind:checked={user.force_password_change}
-            type="checkbox"
-            label="Force Password Change"
-          />
-        </FormGroup>
-        <Button type="submit">Save</Button>
-      </Form>
+      <!-- <Form class="px-5" on:submit={handleUserSubmit}> -->
+      <!--   <FormGroup> -->
+      <!--     <Label>Email</Label> -->
+      <!--     <!-- on:change={handleInputChange} --> -->
+      <!--     <Input -->
+      <!--       bind:value={user.email} -->
+      <!--       class="w-25" -->
+      <!--       type="email" -->
+      <!--       name="email" -->
+      <!--       placeholder="Email..." -->
+      <!--     /> -->
+      <!--   </FormGroup> -->
+      <!--   <FormGroup> -->
+      <!--     <Label>MSISDN</Label> -->
+      <!--     <Input -->
+      <!--       bind:value={user.msisdn} -->
+      <!--       class="w-25" -->
+      <!--       type="text" -->
+      <!--       name="msisdn" -->
+      <!--       placeholder="Email..." -->
+      <!--     /> -->
+      <!--   </FormGroup> -->
+      <!--   <FormGroup> -->
+      <!--     <Label>Password</Label> -->
+      <!--     <Input -->
+      <!--       bind:value={user.password} -->
+      <!--       class="w-25" -->
+      <!--       type="password" -->
+      <!--       name="password" -->
+      <!--       placeholder="password..." -->
+      <!--     /> -->
+      <!--   </FormGroup> -->
+      <!--   <FormGroup> -->
+      <!--     <Input -->
+      <!--       name="is_email_verified" -->
+      <!--       bind:checked={user.is_email_verified} -->
+      <!--       type="checkbox" -->
+      <!--       label="Is Email Verified" -->
+      <!--     /> -->
+      <!--   </FormGroup> -->
+      <!--   <FormGroup> -->
+      <!--     <Input -->
+      <!--       name="is_msisdn_verified" -->
+      <!--       bind:checked={user.is_msisdn_verified} -->
+      <!--       type="checkbox" -->
+      <!--       label="Is MSISDN Verified" -->
+      <!--     /> -->
+      <!--   </FormGroup> -->
+      <!--   <FormGroup> -->
+      <!--     <Input -->
+      <!--       name="force_password_change" -->
+      <!--       bind:checked={user.force_password_change} -->
+      <!--       type="checkbox" -->
+      <!--       label="Force Password Change" -->
+      <!--     /> -->
+      <!--   </FormGroup> -->
+      <!--   <Button type="submit">Save</Button> -->
+      <!-- </Form> -->
 
-      <JsonEditor
+      <JSONEditor
         bind:content
         bind:validator
         onChange={handleChange}

@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
   import { params } from "@roxi/routify";
   import { ListGroup, ListGroupItem } from "sveltestrap";
   import "bootstrap";
-  import { get_space_health } from "../../../../../dmart";
+  import { get_space_health } from "@/dmart";
 </script>
 
 <div class="mx-2 mt-3 mb-3" />

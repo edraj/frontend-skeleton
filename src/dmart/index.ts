@@ -182,17 +182,19 @@ export enum ResourceType {
 
 export enum ContentType {
   text = "text",
+  html = "html",
   markdown = "markdown",
   json = "json",
   image = "image",
   python = "python",
   pdf = "pdf",
   audio = "audio",
+  video = "video"
 }
 
 type Payload = {
   content_type: ContentType;
-  schema_shortname: string;
+  schema_shortname?: string;
   checksum: string;
   body: string | Record<string, any>;
   last_validated: string;
@@ -210,7 +212,7 @@ export type ResponseEntry = {
   created_at: string;
   updated_at: string;
   owner_shortname: string;
-  payload: Payload;
+  payload?: Payload;
   attachments?: Object;
 };
 
@@ -227,7 +229,7 @@ export type ResponseRecord = {
     created_at: string;
     updated_at: string;
     owner_shortname: string;
-    payload: Payload;
+    payload?: Payload;
   };
 };
 
@@ -312,7 +314,7 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
   return data;
 }
 
-export async function request(action: ActionRequest) {
+export async function request(action: ActionRequest) : Promise<ActionResponse>{
   try {
     const { data } = await axios.post<ActionResponse>(
       website.backend + "/managed/request",
@@ -350,7 +352,7 @@ export async function upload_with_payload(
   subpath: string,
   resource_type: ResourceType,
   shortname: string,
-  payload_file: string
+  payload_file: File
 ): Promise<ApiResponse> {
   const request_record = new Blob(
     [

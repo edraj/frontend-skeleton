@@ -1,5 +1,5 @@
 import { getLocaleFromNavigator } from "svelte-i18n";
-import { login, logout } from "../../dmart";
+import { login, logout } from "@/dmart";
 import { writable, Writable } from "svelte/store";
 
 enum Locale {

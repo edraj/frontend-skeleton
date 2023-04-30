@@ -3,9 +3,9 @@
 
   let className = "";
   export { className as class };
-  export let name;
+  export let name : string;
 
-  function toClassName(value) {
+  function toClassName(value : any) {
     let result = "";
 
     if (typeof value === "string" || typeof value === "number") {

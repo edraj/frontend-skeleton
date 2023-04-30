@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { FormGroup, Label, Input } from "sveltestrap";
-  import { _, dir } from "../../i18n";
+  import { _, dir } from "@/i18n";
 
   function randomString(length, chars) {
     var result = "";

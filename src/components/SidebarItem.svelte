@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from "@roxi/routify";
-  import { _ } from "../../i18n";
+  import { _ } from "@/i18n";
   // import { active_subsection } from "../_stores/active_subsection";
   import Icon from "./Icon.svelte";
   import {Item} from "./types";

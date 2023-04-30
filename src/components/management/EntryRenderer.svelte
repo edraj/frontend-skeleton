@@ -6,10 +6,11 @@
     RequestType,
     ResourceType,
     ResponseEntry,
+    ActionResponse,
     Status,
     query,
     request,
-  } from "../../../dmart";
+  } from "@/dmart";
   import {
     Form,
     FormGroup,
@@ -23,17 +24,17 @@
     Nav,
     ButtonGroup,
   } from "sveltestrap";
-  import Icon from "../../_components/Icon.svelte";
-  import { _ } from "../../../i18n";
+  import Icon from "../Icon.svelte";
+  import { _ } from "@/i18n";
   import ListView from "./ListView.svelte";
-  import Prism from "./Prism.svelte";
+  import Prism from "../Prism.svelte";
   import {JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
-  import { status_line } from "../_stores/status_line";
-  import { timeAgo } from "../../../utils/timeago";
-  import { showToast, Level } from "../../../utils/toast";
+  import { status_line } from "@/stores/management/status_line";
+  import { timeAgo } from "@/utils/timeago";
+  import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  import { search } from "../_stores/triggers";
-  import history_cols from "../_stores/list_cols_history.json";
+  // import { search } from "../_stores/triggers";
+  import history_cols from "@/stores/management/list_cols_history.json";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -57,14 +58,10 @@
     }</strong></small>`
   );
 
-  let isSchemaValidated: boolean;
+  // let isSchemaValidated: boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
-    const v = patchResult?.contentErrors?.validationErrors;
-    if (v === undefined || v.length === 0) {
-      isSchemaValidated = true;
-    } else {
-      isSchemaValidated = false;
-    }
+    // const v = patchResult?.contentErrors?.validationErrors;
+    // isSchemaValidated =  (v === undefined || v.length === 0)
   }
 
   let errorContent = null;
@@ -116,7 +113,7 @@
     ]);
   }
 
-  function cleanUpSchema(obj) {
+  function cleanUpSchema(obj : Object) {
     for (let prop in obj) {
       if (prop === "comment") delete obj[prop];
       else if (typeof obj[prop] === "object") cleanUpSchema(obj[prop]);
@@ -129,7 +126,7 @@
         space_name,
         type: QueryType.search,
         subpath: "/schema",
-        filter_shortnames: [entry.payload.schema_shortname],
+        // filter_shortnames: [entry.payload.schema_shortname],
         search: "",
         retrieve_json_payload: true,
       };
@@ -155,10 +152,11 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
+  let new_resource_type : ResourceType = ResourceType.content;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    let response;
+  async function handleSubmit(event : Event) {
+    event.preventDefault();
+    let response : ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }
@@ -168,7 +166,7 @@
         request_type: RequestType.create,
         records: [
           {
-            resource_type: ResourceType.content,
+            resource_type: new_resource_type,
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
@@ -280,7 +278,7 @@
     }
   }
 
-  function beforeUnload(event) {
+  function beforeUnload(event : Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -292,7 +290,7 @@
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        event.returnValue = "";
+        // Deprecated event.returnValue = false;
         return false;
       }
     }
@@ -314,6 +312,12 @@
     <ModalBody>
       <FormGroup>
         {#if modalFlag === "create"}
+          <Label class="mt-3">Resource type</Label>
+          <Input bind:value={new_resource_type} type="select">
+              {#each Object.values(ResourceType) as type }
+                <option value={type}>{type}</option>
+              {/each}
+          </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
             <option value={""}>{"None"}</option>

@@ -1,5 +1,5 @@
-<script>
-  import EmptyWorkingarea from "./_components/EmptyWorkingarea.svelte";
+<script lang="ts">
+  import EmptyWorkingarea from "@/components/management/EmptyWorkingarea.svelte";
 </script>
 
 

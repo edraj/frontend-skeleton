@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { get_spaces, get_children, ResourceType } from "../../../../dmart";
+  import { get_spaces, get_children, ResourceType } from "@/dmart";
   import { ListGroupItem } from "sveltestrap";
-  import Icon from "../../../_components/Icon.svelte";
-  import { _ } from "../../../../i18n";
+  import Icon from "../../Icon.svelte";
+  import { _ } from "@/i18n";
   import Folder from "../Folder.svelte";
 
   let expanded: string;
-  function displayname(space_name): string {
+  function displayname(space_name ): string {
     const lang = JSON.parse(localStorage.getItem("preferred_locale"));
     if (space_name?.attributes?.displayname) {
       return space_name?.attributes?.displayname[lang];

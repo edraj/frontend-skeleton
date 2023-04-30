@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { locale } from "../../i18n";
+  import { locale } from "@/i18n";
 
   export let field : string | object;
   let value: string;

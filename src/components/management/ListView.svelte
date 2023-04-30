@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { status_line } from "../_stores/status_line.js";
+  import { status_line } from "@/stores/management/status_line.js";
   import VirtualList from "svelte-tiny-virtual-list";
   import InfiniteLoading from "svelte-infinite-loading";
-  import { query, QueryType } from "../../../dmart";
+  import { query, QueryType } from "@/dmart";
   import { onDestroy } from "svelte";
-  import cols from "../_stores/list_cols.json";
-  import { refresh, search } from "../_stores/triggers";
-  import { active_section } from "../_stores/active_section.js";
+  import cols from "@/stores/management/list_cols.json";
+  import { search } from "@/stores/management/triggers";
+  import { active_section } from "@/stores/management/active_section.js";
   import { goto } from "@roxi/routify";
 
   let quickPreview = false;

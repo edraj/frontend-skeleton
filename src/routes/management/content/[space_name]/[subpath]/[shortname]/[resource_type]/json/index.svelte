@@ -1,9 +1,9 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
-  import { retrieve_entry, ResourceType } from "../../../../../../../../dmart";
-  import EntryRenderer from "../../../../../../_components/EntryRenderer.svelte";
-  import UserEntryRenderer from "../../../../../../_components/UserEntryRenderer.svelte";
-  import TicketEntryRenderer from "../../../../../../_components/TicketEntryRenderer.svelte";
+  import { retrieve_entry, ResourceType } from "@/dmart";
+  import EntryRenderer from "@/components/management/EntryRenderer.svelte";
+  import UserEntryRenderer from "@/components/management/UserEntryRenderer.svelte";
+  import TicketEntryRenderer from "@/components/management/TicketEntryRenderer.svelte";
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 

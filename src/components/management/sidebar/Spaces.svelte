@@ -118,27 +118,28 @@
   size={"lg"}
 >
   <ModalHeader />
-  <Form on:submit={(e) => handleCreateSpace(e)}>
-    <ModalBody>
-      {#if modeFlag === "create"}
-        <FormGroup>
-          <Label class="mt-3">Subpath Shortname</Label>
-          <Input bind:value={subpath_shortname} type="text" />
-        </FormGroup>
-      {/if}
-      {#if modeFlag === "update"}
-        <JSONEditor bind:content />
-      {/if}
-    </ModalBody>
-    <ModalFooter>
-      <Button
-        type="button"
-        color="secondary"
-        on:click={() => (isSpaceModalOpen = false)}>cancel</Button
-      >
-      <Button type="submit" color="primary">Submit</Button>
-    </ModalFooter>
-  </Form>
+
+  <ModalBody>
+    {#if modeFlag === "create"}
+      <FormGroup>
+        <Label class="mt-3">Subpath Shortname</Label>
+        <Input bind:value={subpath_shortname} type="text" />
+      </FormGroup>
+    {/if}
+    {#if modeFlag === "update"}
+      <JSONEditor bind:content />
+    {/if}
+  </ModalBody>
+  <ModalFooter>
+    <Button
+      type="button"
+      color="secondary"
+      on:click={() => (isSpaceModalOpen = false)}>cancel</Button
+    >
+    <Button type="button" color="primary" on:click={(e) => handleCreateSpace(e)}
+      >Submit</Button
+    >
+  </ModalFooter>
 </Modal>
 
 {#await get_spaces()}

@@ -1,7 +1,7 @@
 <script>
   import JsonSchemaChild from "@/components/management/JsonSchemaChild.svelte";
   import { RequestType, ResourceType, get_spaces, request } from "@/dmart";
-  import JsonEditor from "svelte-jsoneditor/components/JSONEditor.svelte";
+  import { JSONEditor } from "svelte-jsoneditor";
   import {
     Col,
     Container,
@@ -109,7 +109,7 @@
 </Row>
 <Row>
   <Col sm={4}>
-    <JsonEditor bind:this={self} bind:content />
+    <JSONEditor bind:this={self} bind:content />
   </Col>
   <Col sm={8}>
     {#key items}

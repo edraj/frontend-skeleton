@@ -3,13 +3,26 @@
   import Icon from "../Icon.svelte";
   import { _ } from "@/i18n";
   import { status_line } from "@/stores/management/status_line";
-  import { ListGroup, ListGroupItem } from "sveltestrap";
   import Spaces from "./sidebar/Spaces.svelte";
   import Profile from "./sidebar/Profile.svelte";
   import Folder from "./Folder.svelte";
   import { isActive } from "@roxi/routify";
-  import { ResourceType } from "@/dmart";
+  import { RequestType, ResourceType, space } from "@/dmart";
   import SimpleSpaces from "./sidebar/SimpleSpaces.svelte";
+  import {
+    Form,
+    FormGroup,
+    Button,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Label,
+    Input,
+    ListGroupItem,
+    ListGroup,
+  } from "sveltestrap";
+  import { Level, showToast } from "@/utils/toast";
 
   const components = {
     spaces: Spaces,
@@ -19,7 +32,60 @@
   let head_height: number;
   let foot_height: number;
   const withSpaces = ["events", "qatool"];
+
+  let isSpaceModalOpen = false;
+  let space_name_shortname = "";
+  async function handleCreateSpace(e) {
+    e.preventDefault();
+
+    const request_body = {
+      space_name: space_name_shortname,
+      request_type: RequestType.create,
+      records: [
+        {
+          resource_type: ResourceType.space,
+          subpath: "/",
+          shortname: space_name_shortname,
+          attributes: {},
+        },
+      ],
+    };
+    const response = await space(request_body);
+    if (response.status === "success") {
+      showToast(Level.info);
+      isSpaceModalOpen = false;
+      location.reload();
+    } else {
+      showToast(Level.warn);
+    }
+  }
 </script>
+
+<Modal
+  isOpen={isSpaceModalOpen}
+  toggle={() => {
+    isSpaceModalOpen = !isSpaceModalOpen;
+  }}
+  size={"lg"}
+>
+  <ModalHeader />
+  <Form on:submit={(e) => handleCreateSpace(e)}>
+    <ModalBody>
+      <FormGroup>
+        <Label class="mt-3">Space name</Label>
+        <Input bind:value={space_name_shortname} type="text" />
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter>
+      <Button
+        type="button"
+        color="secondary"
+        on:click={() => (isSpaceModalOpen = false)}>cancel</Button
+      >
+      <Button type="submit" color="primary">Submit</Button>
+    </ModalFooter>
+  </Form>
+</Modal>
 
 <div bind:clientHeight={head_height} class="p-2">
   <h5 class="mt-0 mb-2">
@@ -29,6 +95,14 @@
       />{/if}
     {#if $active_section.name}{$_($active_section.name)}{/if}
   </h5>
+  <hr class="w-100 mt-1 mb-0 py-1" />
+  <Button
+    class="w-100"
+    type="button"
+    on:click={() => {
+      isSpaceModalOpen = true;
+    }}>Create Space</Button
+  >
   <hr class="w-100 mt-1 mb-0 py-1" />
 </div>
 <div

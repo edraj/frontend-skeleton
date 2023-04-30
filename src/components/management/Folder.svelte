@@ -2,11 +2,7 @@
   import Icon from "../Icon.svelte";
   import { _ } from "@/i18n";
   import { goto } from "@roxi/routify";
-  import {
-    ApiResponseRecord,
-    get_children,
-    ResourceType,
-  } from "@/dmart";
+  import { ApiResponseRecord, get_children, ResourceType } from "@/dmart";
 
   let expanded = false;
 

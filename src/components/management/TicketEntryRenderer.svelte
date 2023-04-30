@@ -11,7 +11,7 @@
     progress_ticket,
     query,
     request,
-  } from "../../../dmart";
+  } from "@/dmart";
   import {
     Form,
     FormGroup,
@@ -25,17 +25,17 @@
     Nav,
     ButtonGroup,
   } from "sveltestrap";
-  import Icon from "../../_components/Icon.svelte";
-  import { _ } from "../../../i18n";
-  import ListView from "./ListView.svelte";
-  import Prism from "./Prism.svelte";
+  import Icon from "@/components/Icon.svelte";
+  import { _ } from "../../i18n";
+  import ListView from "@/components/management/ListView.svelte";
+  import Prism from "@/components/Prism.svelte";
   import { JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
-  import { status_line } from "../_stores/status_line";
-  import { timeAgo } from "../../../utils/timeago";
-  import { showToast, Level } from "../../../utils/toast";
+  import { status_line } from "@/stores/management/status_line";
+  import { timeAgo } from "../../utils/timeago";
+  import { showToast, Level } from "../../utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  import { search } from "../_stores/triggers";
-  import history_cols from "../_stores/list_cols_history.json";
+  import { search } from "@/stores/management/triggers";
+  import history_cols from "@/stores/management/list_cols_history.json";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });

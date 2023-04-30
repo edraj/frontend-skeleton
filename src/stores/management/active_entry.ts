@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import {retrieve_entry, ResponseEntry, ResourceType, ContentType} from "../../../dmart";
+import {retrieve_entry, ResponseEntry, ResourceType, ContentType} from "@/dmart";
 
 const default_value : ResponseEntry = {
   uuid: "",

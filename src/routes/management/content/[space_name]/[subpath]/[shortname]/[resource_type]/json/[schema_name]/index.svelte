@@ -6,14 +6,15 @@
   } from "../../../../../../../../../dmart";
   import EntryRenderer from "../../../../../../../_components/EntryRenderer.svelte";
   import UserEntryRenderer from "../../../../../../../_components/UserEntryRenderer.svelte";
+  import TicketEntryRenderer from "../../../../../../../_components/TicketEntryRenderer.svelte";
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 
   function componentsGen() {
     if ($params.resource_type === "user") {
-      console.log("-----------");
-
       return UserEntryRenderer;
+    } else if ($params.resource_type === "ticket") {
+      return TicketEntryRenderer;
     } else {
       return EntryRenderer;
     }

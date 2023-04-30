@@ -100,6 +100,7 @@
     if (response.status === "success") {
       showToast(Level.info);
       openCreateAttachemntModal = false;
+      location.reload();
     } else {
       showToast(Level.warn);
     }
@@ -139,9 +140,7 @@
       color="secondary"
       on:click={() => (openCreateAttachemntModal = false)}>close</Button
     >
-    <Button type="button" color="primary" on:click={async () => upload()}
-      >Upload</Button
-    >
+    <Button type="button" color="primary" on:click={upload}>Upload</Button>
   </ModalFooter>
 </Modal>
 
@@ -173,66 +172,64 @@
   </div>
 </div>
 
-<div class="row mx-auto w-75">
-  <div class="d-flex justify-content-center">
-    {#if attachments}
-      {#each attachments as attachment}
-        <hr />
-        <div class="col">
-          <div class="row mb-2">
-            <a
-              class="col-11"
-              style="font-size: 1.25em;"
-              href={get_attachment_url(
-                attachment.resource_type,
-                space_name,
-                subpath,
-                parent_shortname,
-                attachment.shortname,
-                getFileExtension(attachment.attributes?.payload?.body)
-              )}
+<div class="d-flex justify-content-center flex-column px-5">
+  {#if attachments}
+    {#each attachments as attachment}
+      <hr />
+      <div class="col">
+        <div class="row mb-2">
+          <a
+            class="col-11"
+            style="font-size: 1.25em;"
+            href={get_attachment_url(
+              attachment.resource_type,
+              space_name,
+              subpath,
+              parent_shortname,
+              attachment.shortname,
+              getFileExtension(attachment.attributes?.payload?.body)
+            )}
+          >
+            {attachment.shortname}</a
+          >
+          <div class="col-1 d-flex justify-content-between">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class="mx-1"
+              style="cursor: pointer;"
+              on:click={async () => await handleDelete(attachment)}
             >
-              {attachment.shortname}</a
+              <Icon name="trash" color="red" />
+            </div>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class="mx-1"
+              style="cursor: pointer;"
+              on:click={() => {
+                handleView(attachment.shortname);
+              }}
             >
-            <div class="col-1 d-flex justify-content-between">
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                class="mx-1"
-                style="cursor: pointer;"
-                on:click={async () => await handleDelete(attachment)}
-              >
-                <Icon name="trash" color="red" />
-              </div>
-              <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <div
-                class="mx-1"
-                style="cursor: pointer;"
-                on:click={() => {
-                  handleView(attachment.shortname);
-                }}
-              >
-                <Icon name="eyeglasses" color="grey" />
-              </div>
+              <Icon name="eyeglasses" color="grey" />
             </div>
           </div>
-          <div class="d-flex col justify-content-center">
-            <Media
-              content_type={attachment.attributes?.payload?.content_type}
-              displayname={attachment.shortname}
-              body={attachment.attributes?.payload?.body}
-              url={get_attachment_url(
-                attachment.resource_type,
-                space_name,
-                subpath,
-                parent_shortname,
-                attachment.shortname,
-                getFileExtension(attachment.attributes?.payload?.body)
-              )}
-            />
-          </div>
         </div>
-        <hr />
-      {/each}
-    {/if}
-  </div>
+        <div class="d-flex col justify-content-center">
+          <Media
+            content_type={attachment.attributes?.payload?.content_type}
+            displayname={attachment.shortname}
+            body={attachment.attributes?.payload?.body}
+            url={get_attachment_url(
+              attachment.resource_type,
+              space_name,
+              subpath,
+              parent_shortname,
+              attachment.shortname,
+              getFileExtension(attachment.attributes?.payload?.body)
+            )}
+          />
+        </div>
+      </div>
+      <hr />
+    {/each}
+  {/if}
 </div>

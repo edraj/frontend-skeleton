@@ -1,18 +1,20 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
-  import { retrieve_entry, ResourceType } from "../../../../../../../dmart";
-  import EntryRenderer from "../../../../../_components/EntryRenderer.svelte";
-  import UserEntryRenderer from "../../../../../_components/UserEntryRenderer.svelte";
+  import { retrieve_entry, ResourceType } from "../../../../../../../../dmart";
+  import EntryRenderer from "../../../../../../_components/EntryRenderer.svelte";
+  import UserEntryRenderer from "../../../../../../_components/UserEntryRenderer.svelte";
+  import TicketEntryRenderer from "../../../../../../_components/TicketEntryRenderer.svelte";
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 
   function componentsGen() {
-    console.log($params.resource_type);
-
-    if ($params.resource_type === "user") {
-      return UserEntryRenderer;
-    } else {
-      return EntryRenderer;
+    switch ($params.resource_type) {
+      case "user":
+        return UserEntryRenderer;
+      case "ticket":
+        return TicketEntryRenderer;
+      default:
+        return EntryRenderer;
     }
   }
 </script>

@@ -133,14 +133,8 @@
         }
         const shortname = record.shortname;
         const schema_shortname = record.attributes?.payload?.schema_shortname;
-        // window.history.replaceState(
-        //   history.state,
-        //   "",
-        //   `/management/content/${space_name}/${record.subpath.replaceAll( "/", "-")}/${shortname}/${record.resource_type}${ schema_shortname ? "/" + schema_shortname : "" }`
-        // );
-        console.log({ r: record.attributes?.payload });
 
-        if (schema_shortname)
+        if (schema_shortname) {
           $goto(
             "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[payload_type]/[schema_name]",
             {
@@ -152,7 +146,7 @@
               schema_name: schema_shortname,
             }
           );
-        else
+        } else {
           $goto(
             "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]",
             {
@@ -162,6 +156,7 @@
               resource_type: record.resource_type,
             }
           );
+        }
       }}
       class:current={currentItem == index}
     >

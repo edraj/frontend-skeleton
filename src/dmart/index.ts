@@ -189,7 +189,7 @@ export enum ContentType {
   python = "python",
   pdf = "pdf",
   audio = "audio",
-  video = "video"
+  video = "video",
 }
 
 type Payload = {
@@ -214,6 +214,8 @@ export type ResponseEntry = {
   owner_shortname: string;
   payload?: Payload;
   attachments?: Object;
+  workflow_shortname?: string;
+  state?: string;
 };
 
 export type ResponseRecord = {
@@ -314,7 +316,7 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
   return data;
 }
 
-export async function request(action: ActionRequest) : Promise<ActionResponse>{
+export async function request(action: ActionRequest): Promise<ActionResponse> {
   try {
     const { data } = await axios.post<ActionResponse>(
       website.backend + "/managed/request",
@@ -337,10 +339,11 @@ export async function retrieve_entry(
 ): Promise<ResponseEntry> {
   if (!subpath || subpath == "/") subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(
-    website.backend + `/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
-      /\/+/g,
-      "/"
-    ),
+    website.backend +
+      `/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
+        /\/+/g,
+        "/"
+      ),
     { headers }
   );
   return data;
@@ -418,10 +421,56 @@ export function get_attachment_url(
   shortname: string,
   ext: string
 ) {
-  return website.backend + `/managed/payload/${resource_type}/${space_name}/${subpath.replace(/\/+$/, "")}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".");
+  return (
+    website.backend +
+    `/managed/payload/${resource_type}/${space_name}/${subpath.replace(
+      /\/+$/,
+      ""
+    )}/${parent_shortname}/${shortname}.${ext}`.replaceAll("..", ".")
+  );
 }
 
 export async function get_space_health(space_name: string) {
-  const { data } = await axios.get<ApiQueryResponse & { attributes: { folders_report: Object } }>(website.backend+`/managed/health/${space_name}`, { headers });
+  const { data } = await axios.get<
+    ApiQueryResponse & { attributes: { folders_report: Object } }
+  >(website.backend + `/managed/health/${space_name}`, { headers });
   return data;
+}
+
+export async function get_payload(
+  resource_type: string,
+  space_name: string,
+  subpath: string,
+  shortname: string,
+  ext: string = ".json"
+) {
+  const { data } = await axios.get<any>(
+    website.backend +
+      `/managed/payload/${resource_type}/${space_name}/${subpath}/${shortname}${ext}`,
+    { headers }
+  );
+  return data;
+}
+
+export async function progress_ticket(
+  space_name: string,
+  subpath: string,
+  shortname: string,
+  action: string,
+  resolution: string,
+  comment: string
+) {
+  try {
+    const { data } = await axios.put<
+      ApiQueryResponse & { attributes: { folders_report: Object } }
+    >(
+      website.backend +
+        `/managed/progress-ticket/${space_name}/${subpath}/${shortname}/${action}`,
+      { resolution, comment },
+      { headers }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data;
+  }
 }

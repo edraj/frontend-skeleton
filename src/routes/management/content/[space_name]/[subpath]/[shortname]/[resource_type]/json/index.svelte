@@ -3,16 +3,18 @@
   import { retrieve_entry, ResourceType } from "@/dmart";
   import EntryRenderer from "@/components/management/EntryRenderer.svelte";
   import UserEntryRenderer from "@/components/management/UserEntryRenderer.svelte";
+  import TicketEntryRenderer from "@/components/management/TicketEntryRenderer.svelte";
 
   const resource_type: ResourceType = ResourceType[$params.resource_type];
 
   function componentsGen() {
-    console.log($params.resource_type);
-
-    if ($params.resource_type === "user") {
-      return UserEntryRenderer;
-    } else {
-      return EntryRenderer;
+    switch ($params.resource_type) {
+      case "user":
+        return UserEntryRenderer;
+      case "ticket":
+        return TicketEntryRenderer;
+      default:
+        return EntryRenderer;
     }
   }
 </script>

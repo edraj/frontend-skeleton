@@ -7,7 +7,6 @@
     request,
   } from "@/dmart";
   import {
-    Form,
     FormGroup,
     Button,
     Modal,
@@ -39,6 +38,7 @@
   let selected_space_name;
   let subpath_shortname;
   let content = { json: {}, text: undefined };
+  let refresh;
   async function handleCreateSpace(e: any) {
     e.preventDefault();
     let response;
@@ -103,7 +103,8 @@
 
     if (response.status === "success") {
       showToast(Level.info);
-      location.reload();
+      refresh = {};
+      isSpaceModalOpen = false;
     } else {
       showToast(Level.warn);
     }
@@ -142,68 +143,70 @@
   </ModalFooter>
 </Modal>
 
-{#await get_spaces()}
-  <!--h3 transition:fade >Loading spaces list</h3-->
-{:then spaces_data}
-  {#each spaces_data.records as space}
-    <ListGroupItem class="ps-2 pe-0 py-0">
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        class="mb-2"
-        style="cursor: pointer;"
-        on:click={() => (expanded = space.shortname)}
-      >
-        <Icon name="diagram-3" class="me-1" /> <b>{displayname(space)}</b>
-        <span class="toolbar top-0 end-0 position-absolute px-0">
-          <span
-            class="px-0"
-            title={$_("edit")}
-            on:click|stopPropagation={() => {
-              selected_space_name = space.shortname;
-              isSpaceModalOpen = true;
-              modeFlag = "create";
-            }}
-          >
-            <Icon name="plus-lg" />
+{#key refresh}
+  {#await get_spaces()}
+    <!--h3 transition:fade >Loading spaces list</h3-->
+  {:then spaces_data}
+    {#each spaces_data.records as space}
+      <ListGroupItem class="ps-2 pe-0 py-0">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div
+          class="mb-2"
+          style="cursor: pointer;"
+          on:click={() => (expanded = space.shortname)}
+        >
+          <Icon name="diagram-3" class="me-1" /> <b>{displayname(space)}</b>
+          <span class="toolbar top-0 end-0 position-absolute px-0">
+            <span
+              class="px-0"
+              title={$_("edit")}
+              on:click|stopPropagation={() => {
+                selected_space_name = space.shortname;
+                isSpaceModalOpen = true;
+                modeFlag = "create";
+              }}
+            >
+              <Icon name="plus-lg" />
+            </span>
+            <span
+              class="px-0"
+              title={$_("edit")}
+              on:click|stopPropagation={() => {
+                selected_space_name = space.shortname;
+                isSpaceModalOpen = true;
+                modeFlag = "update";
+                content.json = space;
+              }}
+            >
+              <Icon name="pencil" />
+            </span>
           </span>
-          <span
-            class="px-0"
-            title={$_("edit")}
-            on:click|stopPropagation={() => {
-              selected_space_name = space.shortname;
-              isSpaceModalOpen = true;
-              modeFlag = "update";
-              content.json = space;
-            }}
-          >
-            <Icon name="pencil" />
-          </span>
-        </span>
-        <style>
-          .toolbar {
-            /* display: none; */
-            color: brown;
-          }
+          <style>
+            .toolbar {
+              /* display: none; */
+              color: brown;
+            }
 
-          .toolbar span:hover {
-            color: green;
-          }
-        </style>
-      </div>
+            .toolbar span:hover {
+              color: green;
+            }
+          </style>
+        </div>
 
-      {#if expanded === space.shortname}
-        {#await get_children( space.shortname, "/", 10, 0, [ResourceType.folder] )}
-          <!--h4> Loading {space.shortname} </h4-->
-        {:then children_data}
-          {#each children_data.records as folder}
-            <Folder {folder} space_name={space.shortname} />
-          {/each}
-        {:catch error}
-          <p style="color: red">{error.message}</p>
-        {/await}
-      {/if}
-    </ListGroupItem>
-  {/each}
-{:catch error}
-  <p style="color: red">{error.message}</p>
-{/await}
+        {#if expanded === space.shortname}
+          {#await get_children( space.shortname, "/", 10, 0, [ResourceType.folder] )}
+            <!--h4> Loading {space.shortname} </h4-->
+          {:then children_data}
+            {#each children_data.records as folder}
+              <Folder {folder} space_name={space.shortname} />
+            {/each}
+          {:catch error}
+            <p style="color: red">{error.message}</p>
+          {/await}
+        {/if}
+      </ListGroupItem>
+    {/each}
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
+{/key}

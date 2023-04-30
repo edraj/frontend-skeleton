@@ -35,6 +35,7 @@
 
   let isSpaceModalOpen = false;
   let space_name_shortname = "";
+  let refresh;
   async function handleCreateSpace(e) {
     e.preventDefault();
 
@@ -54,7 +55,7 @@
     if (response.status === "success") {
       showToast(Level.info);
       isSpaceModalOpen = false;
-      location.reload();
+      refresh = {};
     } else {
       showToast(Level.warn);
     }
@@ -110,43 +111,45 @@
   style="height: calc(100% - {head_height +
     foot_height}px); overflow: hidden auto;"
 >
-  <ListGroup flush class="w-100">
-    {#each $active_section.children as child ($active_section.name + child.name)}
-      {#if child.type == "component" && child.name in components}
-        <svelte:component this={components[child.name]} />
-      {:else if child.type == "link"}
-        <!--p class="my-0 font-monospace"><small>{JSON.stringify(child, undefined,1)}</small></p-->
-        <ListGroupItem
-          color="light"
-          action
-          href={`/management/${$active_section.name}/${child.name}`}
-          active={$isActive(
-            `/management/${$active_section.name}/${child.name}`
-          )}
-        >
-          {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
-          {$_(child.name)}
-          {#if withSpaces.includes(child.name) && $active_section.name === "tools"}
-            <SimpleSpaces />
-          {/if}
-        </ListGroupItem>
-      {:else if child.type == "folder"}
-        <ListGroupItem class="px-0">
-          {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
-          {$_(child.name)}
-          <Folder
-            space_name={child.space_name}
-            folder={{
-              shortname: child.name,
-              subpath: child.subpath,
-              resource_type: ResourceType.folder,
-              attributes: {},
-            }}
-          />
-        </ListGroupItem>
-      {/if}
-    {/each}
-  </ListGroup>
+  {#key refresh}
+    <ListGroup flush class="w-100">
+      {#each $active_section.children as child ($active_section.name + child.name)}
+        {#if child.type == "component" && child.name in components}
+          <svelte:component this={components[child.name]} />
+        {:else if child.type == "link"}
+          <!--p class="my-0 font-monospace"><small>{JSON.stringify(child, undefined,1)}</small></p-->
+          <ListGroupItem
+            color="light"
+            action
+            href={`/management/${$active_section.name}/${child.name}`}
+            active={$isActive(
+              `/management/${$active_section.name}/${child.name}`
+            )}
+          >
+            {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
+            {$_(child.name)}
+            {#if withSpaces.includes(child.name) && $active_section.name === "tools"}
+              <SimpleSpaces />
+            {/if}
+          </ListGroupItem>
+        {:else if child.type == "folder"}
+          <ListGroupItem class="px-0">
+            {#if child.icon}<Icon name={child.icon} class="pe-1" />{/if}
+            {$_(child.name)}
+            <Folder
+              space_name={child.space_name}
+              folder={{
+                shortname: child.name,
+                subpath: child.subpath,
+                resource_type: ResourceType.folder,
+                attributes: {},
+              }}
+            />
+          </ListGroupItem>
+        {/if}
+      {/each}
+    </ListGroup>
+  {/key}
 </div>
 <div class="w-100" bind:clientHeight={foot_height}>
   {#if $status_line}

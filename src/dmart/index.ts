@@ -316,6 +316,19 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
   return data;
 }
 
+export async function space(action: ActionRequest): Promise<ActionResponse> {
+  try {
+    const { data } = await axios.post<ActionResponse>(
+      website.backend + "/managed/space",
+      action,
+      { headers }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data;
+  }
+}
+
 export async function request(action: ActionRequest): Promise<ActionResponse> {
   try {
     const { data } = await axios.post<ActionResponse>(

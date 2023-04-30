@@ -189,7 +189,7 @@ export enum ContentType {
   python = "python",
   pdf = "pdf",
   audio = "audio",
-  video = "video"
+  video = "video",
 }
 
 type Payload = {
@@ -214,6 +214,8 @@ export type ResponseEntry = {
   owner_shortname: string;
   payload?: Payload;
   attachments?: Object;
+  workflow_shortname?: string;
+  state?: string;
 };
 
 export type ResponseRecord = {
@@ -314,7 +316,7 @@ export async function query(query: QueryRequest): Promise<ApiQueryResponse> {
   return data;
 }
 
-export async function request(action: ActionRequest) : Promise<ActionResponse>{
+export async function request(action: ActionRequest): Promise<ActionResponse> {
   try {
     const { data } = await axios.post<ActionResponse>(
       website.backend + "/managed/request",
@@ -442,9 +444,7 @@ export async function get_payload(
   shortname: string,
   ext: string = ".json"
 ) {
-  const { data } = await axios.get<
-    ApiQueryResponse & { attributes: { folders_report: Object } }
-  >(
+  const { data } = await axios.get<any>(
     website.backend +
       `/managed/payload/${resource_type}/${space_name}/${subpath}/${shortname}${ext}`,
     { headers }

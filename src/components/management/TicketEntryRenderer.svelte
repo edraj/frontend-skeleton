@@ -132,11 +132,6 @@
       "workflows",
       entry.workflow_shortname
     );
-    console.log(
-      payload.states
-        .filter((e) => e.name === entry.state)[0]
-        ?.next.map((e) => e.action)
-    );
 
     if (entry.payload && entry.payload.schema_shortname) {
       const query_schema = {

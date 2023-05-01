@@ -204,40 +204,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
-              is_active: true,
-              payload: {
-                content_type: "json",
-                schema_shortname: "folder_rendering",
-                body: {
-                  shortname_title: "Unique ID",
-                  content_schema_shortnames: [
-                    selectedSchema ? selectedSchema : "",
-                  ],
-                  index_attributes: [
-                    {
-                      key: "shortname",
-                      name: "Unique ID",
-                    },
-                    {
-                      key: "created_at",
-                      name: "Created At",
-                    },
-                    {
-                      key: "owner_shortname",
-                      name: "Created By",
-                    },
-                  ],
-                  allow_create: true,
-                  allow_update: true,
-                  allow_delete: true,
-                  use_media: true,
-                  expand_children: false,
-                  content_resource_types: ["content"],
-                  allow_upload_csv: true,
-                  allow_csv: true,
-                  filter: [],
-                },
-              },
+              is_active: true
             },
           },
         ],

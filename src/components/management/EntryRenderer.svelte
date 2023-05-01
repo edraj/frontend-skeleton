@@ -35,6 +35,8 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   // import { search } from "../_stores/triggers";
   import history_cols from "@/stores/management/list_cols_history.json";
+  import refresh_spaces from "@/stores/management/refresh_spaces";
+
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -198,40 +200,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
-              is_active: true,
-              payload: {
-                content_type: "json",
-                schema_shortname: "folder_rendering",
-                body: {
-                  shortname_title: "Unique ID",
-                  content_schema_shortnames: [
-                    selectedSchema ? selectedSchema : "",
-                  ],
-                  index_attributes: [
-                    {
-                      key: "shortname",
-                      name: "Unique ID",
-                    },
-                    {
-                      key: "created_at",
-                      name: "Created At",
-                    },
-                    {
-                      key: "owner_shortname",
-                      name: "Created By",
-                    },
-                  ],
-                  allow_create: true,
-                  allow_update: true,
-                  allow_delete: true,
-                  use_media: true,
-                  expand_children: false,
-                  content_resource_types: ["content"],
-                  allow_upload_csv: true,
-                  allow_csv: true,
-                  filter: [],
-                },
-              },
+              is_active: true
             },
           },
         ],
@@ -284,7 +253,7 @@
     if (response.status === "success") {
       showToast(Level.info);
       // await spaces.refresh();
-      // TBD FIXME refresh spaces sidebar
+      refresh_spaces.refresh();
       history.go(-1);
     } else {
       showToast(Level.warn);

@@ -32,6 +32,7 @@
   // import { timeAgo } from "@/utils/timeago";
   import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
+  import refresh_spaces from "@/stores/management/refresh_spaces";
   // import { search } from "../_stores/triggers";
 
   let header_height: number;
@@ -147,40 +148,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath: "/",
             attributes: {
-              is_active: true,
-              payload: {
-                content_type: "json",
-                schema_shortname: "folder_rendering",
-                body: {
-                  shortname_title: "Unique ID",
-                  content_schema_shortnames: [
-                    selectedSchema ? selectedSchema : "",
-                  ],
-                  index_attributes: [
-                    {
-                      key: "shortname",
-                      name: "Unique ID",
-                    },
-                    {
-                      key: "created_at",
-                      name: "Created At",
-                    },
-                    {
-                      key: "owner_shortname",
-                      name: "Created By",
-                    },
-                  ],
-                  allow_create: true,
-                  allow_update: true,
-                  allow_delete: true,
-                  use_media: true,
-                  expand_children: false,
-                  content_resource_types: ["content"],
-                  allow_upload_csv: true,
-                  allow_csv: true,
-                  filter: [],
-                },
-              },
+              is_active: true
             },
           },
         ],
@@ -191,7 +159,7 @@
       showToast(Level.info);
       contentShortname = "";
       isModalOpen = false;
-      // TBD FIXME refresh spaces list in the sidebar
+      refresh_spaces.refresh();
     } else {
       showToast(Level.warn);
     }
@@ -221,7 +189,7 @@
     const response = await request(request_body);
     if (response.status === "success") {
       showToast(Level.info);
-      // TBD updated list of spaces in sidebar FIXME
+      refresh_spaces.refresh();
       history.go(-1);
     } else {
       showToast(Level.warn);

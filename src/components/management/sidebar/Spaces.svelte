@@ -27,6 +27,7 @@
   import { _ } from "@/i18n";
   import Folder from "../Folder.svelte";
   import { Level, showToast } from "@/utils/toast";
+  import refresh_spaces from "@/stores/management/refresh_spaces";
   // import { JSONEditor } from "svelte-jsoneditor";
 
   let expanded: string;
@@ -131,7 +132,7 @@
 
   let isSpaceModalOpen = false;
   let space_name_shortname = "";
-  let refresh : boolean = false;
+  // let refresh : boolean = false;
   async function handleCreateSpace(e : Event) {
     e.preventDefault();
 
@@ -152,7 +153,8 @@
       showToast(Level.info);
       isSpaceModalOpen = false;
       // await spaces.refresh();
-      refresh = !refresh;
+      // refresh = !refresh;
+      refresh_spaces.refresh();
     } else {
       showToast(Level.warn);
     }
@@ -188,7 +190,7 @@
   </ModalFooter>
 </Modal-->
 
-{#key refresh}
+{#key $refresh_spaces}
   {#await get_spaces()}
     <!--h3 transition:fade >Loading spaces list</h3-->
   {:then loaded_spaces}

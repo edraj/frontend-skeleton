@@ -171,17 +171,23 @@
             resource_type: new_resource_type,
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
-            attributes: {
-              is_active: true,
-              payload: {
-                content_type: "json",
-                schema_shortname: selectedSchema ? selectedSchema : "",
-                body,
-              },
-            },
+            attributes: {},
           },
         ],
       };
+      if (new_resource_type === "user") {
+        request_body.records[0].attributes = body;
+      } else {
+        request_body.records[0].attributes = {
+          is_active: true,
+          payload: {
+            content_type: "json",
+            schema_shortname: selectedSchema ? selectedSchema : "",
+            body,
+          },
+        };
+      }
+
       response = await request(request_body);
     } else if (entryType === "folder") {
       const request_body = {

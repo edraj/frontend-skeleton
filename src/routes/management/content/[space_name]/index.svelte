@@ -1,15 +1,19 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
+  import { retrieve_entry, ResourceType } from "@/dmart";
   import SpaceRenderer from "@/components/management/SpaceRenderer.svelte";
-  import spaces from "@/stores/management/spaces";
 </script>
 
-{#key $params.space_name}
-  {#if $params.space_name && spaces.is_loaded()}
-    <SpaceRenderer bind:space_name={$params.space_name} />
-    <!--pre>{JSON.stringify(spaces.get($params.space_name), null, 2)}</pre-->
-  {:else}
-    <h4>For some reason ... params doesn't have the needed info</h4>
-    <pre>{JSON.stringify($params, null, 2)}</pre>
-  {/if}
-{/key}
+{#if $params.space_name}
+  {#await retrieve_entry(ResourceType.space, $params.space_name, '__root__', $params.space_name, false, false)}
+  <!-- -->
+  {:then entry}
+  <SpaceRenderer bind:space_name={$params.space_name} current_space={entry}/>
+  <!--pre>{JSON.stringify(spaces.get($params.space_name), null, 2)}</pre-->
+  {:catch error}
+  <p style="color: red">{error.message}</p>
+  {/await}
+{:else}
+  <h4>For some reason ... params doesn't have the needed info</h4>
+  <pre>{JSON.stringify($params, null, 2)}</pre>
+{/if}

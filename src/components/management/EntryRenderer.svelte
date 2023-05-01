@@ -35,7 +35,6 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   // import { search } from "../_stores/triggers";
   import history_cols from "@/stores/management/list_cols_history.json";
-  import spaces from "@/stores/management/spaces";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -284,7 +283,8 @@
     const response = await request(request_body);
     if (response.status === "success") {
       showToast(Level.info);
-      await spaces.refresh();
+      // await spaces.refresh();
+      // TBD FIXME refresh spaces sidebar
       history.go(-1);
     } else {
       showToast(Level.warn);

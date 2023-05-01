@@ -8,7 +8,7 @@
     Status,
     query,
     request,
-    ApiResponseRecord,
+    ResponseEntry,
   } from "@/dmart";
   import {
     Form,
@@ -29,7 +29,6 @@
   import Prism from "../Prism.svelte";
   import { JSONEditor } from "svelte-jsoneditor";
   import { status_line } from "@/stores/management/status_line";
-  import spaces from "@/stores/management/spaces";
   // import { timeAgo } from "@/utils/timeago";
   import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
@@ -38,7 +37,7 @@
   let header_height: number;
   export let space_name: string;
 
-  let current_space: ApiResponseRecord = spaces.get(space_name);
+  export let current_space : ResponseEntry;
   let content = { json: current_space || {}, text: undefined };
   let oldContent = { json: current_space || {}, text: undefined };
   let entryContent = { json: current_space || {}, text: undefined };
@@ -192,7 +191,7 @@
       showToast(Level.info);
       contentShortname = "";
       isModalOpen = false;
-      await spaces.refresh();
+      // TBD FIXME refresh spaces list in the sidebar
     } else {
       showToast(Level.warn);
     }
@@ -222,14 +221,14 @@
     const response = await request(request_body);
     if (response.status === "success") {
       showToast(Level.info);
-      await spaces.refresh();
+      // TBD updated list of spaces in sidebar FIXME
       history.go(-1);
     } else {
       showToast(Level.warn);
     }
   }
 
-  function beforeUnload(event) {
+  function beforeUnload(event : Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -241,7 +240,7 @@
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        event.returnValue = "";
+        // Deprecated? event.returnValue = false;
         return false;
       }
     }

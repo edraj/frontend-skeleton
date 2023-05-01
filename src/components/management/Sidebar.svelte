@@ -7,7 +7,7 @@
   import Profile from "./sidebar/Profile.svelte";
   import Folder from "./Folder.svelte";
   import { isActive } from "@roxi/routify";
-  import { RequestType, ResourceType, space } from "@/dmart";
+  import { ResourceType } from "@/dmart";
   import SimpleSpaces from "./sidebar/SimpleSpaces.svelte";
   import {
     // Form,
@@ -22,8 +22,6 @@
     ListGroupItem,
     ListGroup,
   } from "sveltestrap";
-  import { Level, showToast } from "@/utils/toast";
-  import spaces from "@/stores/management/spaces";
 
   const components = {
     spaces: Spaces,

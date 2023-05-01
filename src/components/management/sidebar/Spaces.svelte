@@ -7,6 +7,7 @@
     ApiResponseRecord,
     RequestType,
     ResourceType,
+    get_spaces,
     // request,
     // ApiResponse,
   } from "@/dmart";
@@ -27,7 +28,6 @@
   import Folder from "../Folder.svelte";
   import { Level, showToast } from "@/utils/toast";
   // import { JSONEditor } from "svelte-jsoneditor";
-  import spaces from "@/stores/management/spaces";
 
   let expanded: string;
   function displayname(space_entry: ApiResponseRecord): string {
@@ -131,6 +131,7 @@
 
   let isSpaceModalOpen = false;
   let space_name_shortname = "";
+  let refresh : boolean = false;
   async function handleCreateSpace(e : Event) {
     e.preventDefault();
 
@@ -150,7 +151,8 @@
     if (response.status === "success") {
       showToast(Level.info);
       isSpaceModalOpen = false;
-      await spaces.refresh();
+      // await spaces.refresh();
+      refresh = !refresh;
     } else {
       showToast(Level.warn);
     }
@@ -186,10 +188,11 @@
   </ModalFooter>
 </Modal-->
 
-  {#await spaces.refresh()}
+{#key refresh}
+  {#await get_spaces()}
     <!--h3 transition:fade >Loading spaces list</h3-->
   {:then loaded_spaces}
-    {#each loaded_spaces as space}
+    {#each loaded_spaces.records as space}
       <ListGroupItem class="ps-2 pe-0 py-0">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
@@ -251,6 +254,7 @@
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
+{/key}
   <hr class="w-100 mt-1 mb-0 py-1" />
   <Button class="w-100" type="button" outline color="primary" on:click={() => { isSpaceModalOpen = true; }}>Create new space</Button>
 

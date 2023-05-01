@@ -35,6 +35,7 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   // import { search } from "../_stores/triggers";
   import history_cols from "@/stores/management/list_cols_history.json";
+  import spaces from "@/stores/management/spaces";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -257,6 +258,10 @@
     ) {
       return;
     }
+
+    const arr = subpath.split("/");
+    arr[arr.length - 1] = "";
+    const parentSubpath = arr.join("/");
     const request_body = {
       space_name,
       request_type: RequestType.delete,
@@ -264,7 +269,7 @@
         {
           resource_type,
           shortname: entry.shortname,
-          subpath,
+          subpath: parentSubpath || "/",
           branch_name: "master",
           attributes: {},
         },
@@ -273,6 +278,7 @@
     const response = await request(request_body);
     if (response.status === "success") {
       showToast(Level.info);
+      await spaces.refresh();
       history.go(-1);
     } else {
       showToast(Level.warn);

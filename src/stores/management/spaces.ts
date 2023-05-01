@@ -1,12 +1,17 @@
 import { writable, get } from 'svelte/store';
 import {
   get_spaces,
+  ApiResponse,
   ApiResponseRecord,
 } from '@/dmart';
 
-let loaded = await get_spaces();
-let spaces = writable<Array<ApiResponseRecord>>(loaded.records);
+let loaded: ApiResponse;
+let spaces = writable<Array<ApiResponseRecord>>();
 
+get_spaces().then( (data) => {
+  loaded = data
+  spaces.set(loaded.records);
+} );
 export default {
   subscribe: spaces.subscribe,
   update: (shortname: string, value: ApiResponseRecord) => {

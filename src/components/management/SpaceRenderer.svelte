@@ -38,14 +38,12 @@
   let header_height: number;
   export let space_name: string;
 
-  let current_space: ApiResponseRecord;
-
-  $: current_space = spaces.get(space_name);
-
-  let tab_option = "list";
+  let current_space: ApiResponseRecord = spaces.get(space_name);
   let content = { json: current_space || {}, text: undefined };
   let oldContent = { json: current_space || {}, text: undefined };
   let entryContent = { json: current_space || {}, text: undefined };
+
+  let tab_option = "list";
 
   onDestroy(() => status_line.set(""));
   status_line.set("none FIXME");
@@ -78,6 +76,7 @@
     });
     if (response.status == Status.success) {
       showToast(Level.info);
+      oldContent = { ...content };
     } else {
       errorContent = response;
       showToast(Level.warn);
@@ -193,6 +192,7 @@
       showToast(Level.info);
       contentShortname = "";
       isModalOpen = false;
+      await spaces.refresh();
     } else {
       showToast(Level.warn);
     }
@@ -222,13 +222,14 @@
     const response = await request(request_body);
     if (response.status === "success") {
       showToast(Level.info);
+      await spaces.refresh();
       history.go(-1);
     } else {
       showToast(Level.warn);
     }
   }
 
-  function beforeUnload(event: Event) {
+  function beforeUnload(event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -240,7 +241,7 @@
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        // Deprecated event.returnValue = false;
+        event.returnValue = "";
         return false;
       }
     }
@@ -408,11 +409,11 @@
 >
   <div class="h-100 tab-pane" class:active={tab_option === "list"}>
     {#if tab_option === "list"}
-    {#key current_space}
-      <ListView space_name={current_space.shortname} subpath={"/"} />
-    {/key}
+      {#key current_space}
+        <ListView space_name={current_space.shortname} subpath={"/"} />
+      {/key}
     {:else}
-    <h1> This should not be displayed {tab_option} </h1>
+      <h1>This should not be displayed {tab_option}</h1>
     {/if}
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "source"}>
@@ -439,10 +440,12 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <JSONEditor bind:content onRenderMenu={handleRenderMenu} />
-      {#if errorContent}
-        <h3 class="mt-3">Error:</h3>
-        <Prism bind:code={errorContent} />
+      {#if tab_option === "edit"}
+        <JSONEditor bind:content onRenderMenu={handleRenderMenu} />
+        {#if errorContent}
+          <h3 class="mt-3">Error:</h3>
+          <Prism bind:code={errorContent} />
+        {/if}
       {/if}
     </div>
   </div>

@@ -91,6 +91,7 @@
     });
     if (response.status == Status.success) {
       showToast(Level.info);
+      oldContent = { ...content };
     } else {
       errorContent = response;
       showToast(Level.warn);

@@ -28,7 +28,7 @@
   import { _ } from "@/i18n";
   import ListView from "./ListView.svelte";
   import Prism from "../Prism.svelte";
-  import {JSONEditor, createAjvValidator, Validator} from "svelte-jsoneditor";
+  import { JSONEditor, createAjvValidator, Validator } from "svelte-jsoneditor";
   import { status_line } from "@/stores/management/status_line";
   import { timeAgo } from "@/utils/timeago";
   import { showToast, Level } from "@/utils/toast";
@@ -92,6 +92,7 @@
     });
     if (response.status == Status.success) {
       showToast(Level.info);
+      oldContent = { ...content };
     } else {
       errorContent = response;
       showToast(Level.warn);
@@ -159,9 +160,9 @@
   let contentShortname = "";
   let selectedSchema = "";
 
-  async function handleSubmit(e : Event) {
+  async function handleSubmit(e: Event) {
     e.preventDefault();
-    let response : ActionResponse;
+    let response: ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }

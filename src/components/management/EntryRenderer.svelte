@@ -28,7 +28,7 @@
   import { _ } from "@/i18n";
   import ListView from "./ListView.svelte";
   import Prism from "../Prism.svelte";
-  import {JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
+  import { JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
   import { status_line } from "@/stores/management/status_line";
   import { timeAgo } from "@/utils/timeago";
   import { showToast, Level } from "@/utils/toast";
@@ -86,6 +86,7 @@
     });
     if (response.status == Status.success) {
       showToast(Level.info);
+      oldContent = { ...content };
     } else {
       errorContent = response;
       showToast(Level.warn);
@@ -113,7 +114,7 @@
     ]);
   }
 
-  function cleanUpSchema(obj : Object) {
+  function cleanUpSchema(obj: Object) {
     for (let prop in obj) {
       if (prop === "comment") delete obj[prop];
       else if (typeof obj[prop] === "object") cleanUpSchema(obj[prop]);
@@ -152,11 +153,11 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
-  let new_resource_type : ResourceType = ResourceType.content;
+  let new_resource_type: ResourceType = ResourceType.content;
 
-  async function handleSubmit(event : Event) {
+  async function handleSubmit(event: Event) {
     event.preventDefault();
-    let response : ActionResponse;
+    let response: ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }
@@ -278,7 +279,7 @@
     }
   }
 
-  function beforeUnload(event : Event) {
+  function beforeUnload(event: Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -314,9 +315,9 @@
         {#if modalFlag === "create"}
           <Label class="mt-3">Resource type</Label>
           <Input bind:value={new_resource_type} type="select">
-              {#each Object.values(ResourceType) as type }
-                <option value={type}>{type}</option>
-              {/each}
+            {#each Object.values(ResourceType) as type}
+              <option value={type}>{type}</option>
+            {/each}
           </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
@@ -378,8 +379,12 @@
 <div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"><small>
-        {space_name}/{subpath}/<strong>{entry.shortname}</strong> ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small></span>
+      <span class="font-monospace"
+        ><small>
+          {space_name}/{subpath}/<strong>{entry.shortname}</strong>
+          ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
+        ></span
+      >
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>

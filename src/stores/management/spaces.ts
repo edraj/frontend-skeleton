@@ -3,15 +3,18 @@ import {
   get_spaces,
   ApiResponse,
   ApiResponseRecord,
+  // Status,
 } from '@/dmart';
 
-let loaded: ApiResponse;
+let loaded: ApiResponse; //  = {records: [], status: Status.failed};
+
 let spaces = writable<Array<ApiResponseRecord>>();
 
 get_spaces().then( (data) => {
   loaded = data
   spaces.set(loaded.records);
 } );
+
 export default {
   subscribe: spaces.subscribe,
   update: (shortname: string, value: ApiResponseRecord) => {
@@ -29,6 +32,7 @@ export default {
     return get(spaces)
   },
   get: (shortname: string) : ApiResponseRecord => {
-    return get(spaces).find( e => shortname == e.shortname);
+    const loaded_spaces = get(spaces);
+    if (loaded_spaces) return loaded_spaces.find( e => shortname == e.shortname);
   }
 } 

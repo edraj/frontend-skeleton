@@ -24,7 +24,7 @@ export type ApiResponseRecord = {
 
 export type ApiResponse = {
   status: Status;
-  error: Error;
+  error?: Error;
   records: Array<ApiResponseRecord>;
 };
 

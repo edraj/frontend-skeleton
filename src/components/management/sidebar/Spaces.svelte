@@ -1,3 +1,7 @@
+<script context="module">
+  await spaces.refresh();
+</script>
+
 <script lang="ts">
   import { goto } from "@roxi/routify";
   import {

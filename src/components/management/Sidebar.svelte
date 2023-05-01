@@ -23,6 +23,7 @@
     ListGroup,
   } from "sveltestrap";
   import { Level, showToast } from "@/utils/toast";
+  import spaces from "@/stores/management/spaces";
 
   const components = {
     spaces: Spaces,
@@ -35,7 +36,6 @@
 
   let isSpaceModalOpen = false;
   let space_name_shortname = "";
-  let refresh;
   async function handleCreateSpace(e) {
     e.preventDefault();
 
@@ -55,7 +55,7 @@
     if (response.status === "success") {
       showToast(Level.info);
       isSpaceModalOpen = false;
-      refresh = {};
+      spaces.refresh();
     } else {
       showToast(Level.warn);
     }
@@ -103,7 +103,6 @@
   style="height: calc(100% - {head_height +
     foot_height}px); overflow: hidden auto;"
 >
-  {#key refresh}
     <ListGroup flush class="w-100">
       {#each $active_section.children as child ($active_section.name + child.name)}
         {#if child.type == "component" && child.name in components}
@@ -141,7 +140,6 @@
         {/if}
       {/each}
     </ListGroup>
-  {/key}
   <hr class="w-100 mt-1 mb-0 py-1" />
   <Button class="w-100" type="button" outline color="primary" on:click={() => { isSpaceModalOpen = true; }}>Create new space</Button>
 </div>

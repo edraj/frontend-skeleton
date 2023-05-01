@@ -64,7 +64,7 @@
     <Icon class="text-start" name="folder{expanded ? '2-open' : ''}" />
     {displayname()}
   </span>
-  <span class="toolbar top-0 end-0 position-absolute px-0">
+  <!--span class="toolbar top-0 end-0 position-absolute px-0">
     <span
       class="px-0"
       title={$_("edit")}
@@ -72,7 +72,7 @@
     >
       <Icon name="pencil" />
     </span>
-  </span>
+  </span-->
 </span>
 
 {#if expanded}
@@ -116,6 +116,7 @@
     padding: 0;
   }
 
+  /*
   .toolbar {
     display: none;
     color: brown;
@@ -127,5 +128,5 @@
 
   .folder:hover .toolbar {
     display: flex;
-  }
+  }*/
 </style>

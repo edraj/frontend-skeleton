@@ -7,10 +7,14 @@ import {
 } from '@/dmart';
 
 // let loaded: ApiResponse; //  = {records: [], status: Status.failed};
+let loaded : ApiResponse;
 
 let spaces = writable<Array<ApiResponseRecord>>();
 
-get_spaces().then( (loaded) => { spaces.set(loaded.records); } );
+get_spaces().then( (data) => { 
+  loaded = data;
+  spaces.set(loaded.records); 
+} );
 
 export default {
   subscribe: spaces.subscribe,
@@ -28,7 +32,7 @@ export default {
     spaces.set(loaded.records);
     return get(spaces)
   },
-  is_loaded: () => ( get(spaces) !== undefined ),
+  is_loaded: () => ( loaded != undefined ),
   get: (shortname: string) : ApiResponseRecord => {
     let loaded_spaces = get(spaces);
     while (!loaded_spaces) {

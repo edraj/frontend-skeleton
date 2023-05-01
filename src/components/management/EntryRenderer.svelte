@@ -35,6 +35,7 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   // import { search } from "../_stores/triggers";
   import history_cols from "@/stores/management/list_cols_history.json";
+  import spaces from "@/stores/management/spaces";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -170,17 +171,23 @@
             resource_type: new_resource_type,
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
-            attributes: {
-              is_active: true,
-              payload: {
-                content_type: "json",
-                schema_shortname: selectedSchema ? selectedSchema : "",
-                body,
-              },
-            },
+            attributes: {},
           },
         ],
       };
+      if (new_resource_type === "user") {
+        request_body.records[0].attributes = body;
+      } else {
+        request_body.records[0].attributes = {
+          is_active: true,
+          payload: {
+            content_type: "json",
+            schema_shortname: selectedSchema ? selectedSchema : "",
+            body,
+          },
+        };
+      }
+
       response = await request(request_body);
     } else if (entryType === "folder") {
       const request_body = {
@@ -257,6 +264,10 @@
     ) {
       return;
     }
+
+    const arr = subpath.split("/");
+    arr[arr.length - 1] = "";
+    const parentSubpath = arr.join("/");
     const request_body = {
       space_name,
       request_type: RequestType.delete,
@@ -264,7 +275,7 @@
         {
           resource_type,
           shortname: entry.shortname,
-          subpath,
+          subpath: parentSubpath || "/",
           branch_name: "master",
           attributes: {},
         },
@@ -273,6 +284,7 @@
     const response = await request(request_body);
     if (response.status === "success") {
       showToast(Level.info);
+      await spaces.refresh();
       history.go(-1);
     } else {
       showToast(Level.warn);

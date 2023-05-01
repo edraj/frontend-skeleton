@@ -39,7 +39,6 @@
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
   export let entry: ResponseEntry;
-  console.log({ entry });
 
   export let space_name: string;
   export let subpath: string;
@@ -78,6 +77,11 @@
     // }
     errorContent = null;
     const data = content.json ? { ...content.json } : JSON.parse(content.text);
+    console.log({ data }, data.password.startsWith("$2b$12$"));
+
+    if (data.password.startsWith("$2b$12$")) {
+      delete data.password;
+    }
     const response = await request({
       space_name: space_name,
       request_type: RequestType.replace,
@@ -167,6 +171,9 @@
       const body = entryContent.json
         ? { ...entryContent.json }
         : JSON.parse(entryContent.text);
+      if (body.password.startsWith("$2b$12$")) {
+        delete body.password;
+      }
       const request_body = {
         space_name,
         request_type: RequestType.create,
@@ -577,7 +584,7 @@
       <!-- <Form class="px-5" on:submit={handleUserSubmit}> -->
       <!--   <FormGroup> -->
       <!--     <Label>Email</Label> -->
-      <!--     <!-- on:change={handleInputChange} --> -->
+      <!--     <!-- on:change={handleInputChange} -->
       <!--     <Input -->
       <!--       bind:value={user.email} -->
       <!--       class="w-25" -->

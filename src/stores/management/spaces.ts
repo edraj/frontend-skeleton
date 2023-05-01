@@ -28,14 +28,16 @@ export default {
     spaces.set(loaded.records);
     return get(spaces)
   },
+  is_loaded: () => ( get(spaces) !== undefined ),
   get: (shortname: string) : ApiResponseRecord => {
     let loaded_spaces = get(spaces);
     while (!loaded_spaces) {
       // FIXME this approach is an ugly workaround for a race condition
-      get_spaces().then( (loaded) => {
-        spaces.set(loaded.records);
-      });
-      loaded_spaces = get(spaces);
+      console.error("Spaces are not loaded!!");
+      // get_spaces().then( (loaded) => {
+      //   spaces.set(loaded.records);
+      // });
+      // loaded_spaces = get(spaces);
     }
     if (loaded_spaces) return loaded_spaces.find( e => shortname == e.shortname);
   }

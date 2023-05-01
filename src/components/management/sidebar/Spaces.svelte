@@ -2,28 +2,30 @@
   import { goto } from "@roxi/routify";
   import {
     // get_spaces,
+    space,
     get_children,
     ApiResponseRecord,
-    // RequestType,
+    RequestType,
     ResourceType,
     // request,
     // ApiResponse,
   } from "@/dmart";
   import {
-    // FormGroup,
-    // Button,
-    // Modal,
-    // ModalBody,
-    // ModalFooter,
-    // ModalHeader,
-    // Label,
-    // Input,
+    Form,
+    FormGroup,
+    Button,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Label,
+    Input,
     ListGroupItem,
   } from "sveltestrap";
   import Icon from "../../Icon.svelte";
   import { _ } from "@/i18n";
   import Folder from "../Folder.svelte";
-  // import { Level, showToast } from "@/utils/toast";
+  import { Level, showToast } from "@/utils/toast";
   // import { JSONEditor } from "svelte-jsoneditor";
   import spaces from "@/stores/management/spaces";
 
@@ -126,6 +128,33 @@
       expanded = undefined;
     }
   }
+
+  let isSpaceModalOpen = false;
+  let space_name_shortname = "";
+  async function handleCreateSpace(e : Event) {
+    e.preventDefault();
+
+    const request_body = {
+      space_name: space_name_shortname,
+      request_type: RequestType.create,
+      records: [
+        {
+          resource_type: ResourceType.space,
+          subpath: "/",
+          shortname: space_name_shortname,
+          attributes: {},
+        },
+      ],
+    };
+    const response = await space(request_body);
+    if (response.status === "success") {
+      showToast(Level.info);
+      isSpaceModalOpen = false;
+      spaces.refresh();
+    } else {
+      showToast(Level.warn);
+    }
+  }
 </script>
 
 <!--Modal
@@ -222,3 +251,33 @@
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
+  <hr class="w-100 mt-1 mb-0 py-1" />
+  <Button class="w-100" type="button" outline color="primary" on:click={() => { isSpaceModalOpen = true; }}>Create new space</Button>
+
+
+<Modal
+  isOpen={isSpaceModalOpen}
+  toggle={() => {
+    isSpaceModalOpen = !isSpaceModalOpen;
+  }}
+  size={"lg"}
+>
+  <ModalHeader />
+  <Form on:submit={(e) => handleCreateSpace(e)}>
+    <ModalBody>
+      <FormGroup>
+        <Label class="mt-3">Space name</Label>
+        <Input bind:value={space_name_shortname} type="text" />
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter>
+      <Button
+        type="button"
+        color="secondary"
+        on:click={() => (isSpaceModalOpen = false)}>cancel</Button
+      >
+      <Button type="submit" color="primary">Submit</Button>
+    </ModalFooter>
+  </Form>
+</Modal>
+

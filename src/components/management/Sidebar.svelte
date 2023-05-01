@@ -10,15 +10,15 @@
   import { RequestType, ResourceType, space } from "@/dmart";
   import SimpleSpaces from "./sidebar/SimpleSpaces.svelte";
   import {
-    Form,
-    FormGroup,
-    Button,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Label,
-    Input,
+    // Form,
+    // FormGroup,
+    // Button,
+    // Modal,
+    // ModalBody,
+    // ModalFooter,
+    // ModalHeader,
+    // Label,
+    // Input,
     ListGroupItem,
     ListGroup,
   } from "sveltestrap";
@@ -34,59 +34,7 @@
   let foot_height: number;
   const withSpaces = ["events", "qatool"];
 
-  let isSpaceModalOpen = false;
-  let space_name_shortname = "";
-  async function handleCreateSpace(e) {
-    e.preventDefault();
-
-    const request_body = {
-      space_name: space_name_shortname,
-      request_type: RequestType.create,
-      records: [
-        {
-          resource_type: ResourceType.space,
-          subpath: "/",
-          shortname: space_name_shortname,
-          attributes: {},
-        },
-      ],
-    };
-    const response = await space(request_body);
-    if (response.status === "success") {
-      showToast(Level.info);
-      isSpaceModalOpen = false;
-      spaces.refresh();
-    } else {
-      showToast(Level.warn);
-    }
-  }
 </script>
-
-<Modal
-  isOpen={isSpaceModalOpen}
-  toggle={() => {
-    isSpaceModalOpen = !isSpaceModalOpen;
-  }}
-  size={"lg"}
->
-  <ModalHeader />
-  <Form on:submit={(e) => handleCreateSpace(e)}>
-    <ModalBody>
-      <FormGroup>
-        <Label class="mt-3">Space name</Label>
-        <Input bind:value={space_name_shortname} type="text" />
-      </FormGroup>
-    </ModalBody>
-    <ModalFooter>
-      <Button
-        type="button"
-        color="secondary"
-        on:click={() => (isSpaceModalOpen = false)}>cancel</Button
-      >
-      <Button type="submit" color="primary">Submit</Button>
-    </ModalFooter>
-  </Form>
-</Modal>
 
 <div bind:clientHeight={head_height} class="p-2">
   <h5 class="mt-0 mb-2">
@@ -141,7 +89,6 @@
       {/each}
     </ListGroup>
   <hr class="w-100 mt-1 mb-0 py-1" />
-  <Button class="w-100" type="button" outline color="primary" on:click={() => { isSpaceModalOpen = true; }}>Create new space</Button>
 </div>
 <div class="w-100" bind:clientHeight={foot_height}>
   {#if $status_line}

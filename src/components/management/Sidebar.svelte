@@ -97,14 +97,6 @@
     {#if $active_section.name}{$_($active_section.name)}{/if}
   </h5>
   <hr class="w-100 mt-1 mb-0 py-1" />
-  <Button
-    class="w-100"
-    type="button"
-    on:click={() => {
-      isSpaceModalOpen = true;
-    }}>Create Space</Button
-  >
-  <hr class="w-100 mt-1 mb-0 py-1" />
 </div>
 <div
   class="no-bullets scroller pe-0 w-100"
@@ -150,6 +142,8 @@
       {/each}
     </ListGroup>
   {/key}
+  <hr class="w-100 mt-1 mb-0 py-1" />
+  <Button class="w-100" type="button" outline color="primary" on:click={() => { isSpaceModalOpen = true; }}>Create new space</Button>
 </div>
 <div class="w-100" bind:clientHeight={foot_height}>
   {#if $status_line}

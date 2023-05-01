@@ -2,19 +2,23 @@
   import Form from "../Form.svelte";
   import Input from "../Input.svelte";
   import { _ } from "@/i18n";
-  import { QueryType, ResourceType, get_spaces, query } from "@/dmart";
+  import { QueryRequest, QueryType, ResourceType, get_spaces, query } from "@/dmart";
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
   async function handleResponse(event : CustomEvent) {
-    const { type, space_name, subpath, shortname, search, offset, limit } =
+    const { type, space_name, subpath, resource_type, resource_shortnames, search, offset, limit } =
       event.detail;
-    const query_request = {
+    const query_request : QueryRequest = {
       type,
       space_name,
       subpath,
-      shortname,
+      filter_types: (resource_type)? [resource_type]: [],
+      filter_shortnames: (resource_shortnames)? resource_shortnames.split(",") : [],
+      retrieve_attachments: true,
+      retrieve_json_payload: true,
+      exact_subpath: true,
       search,
       offset,
       limit,
@@ -33,20 +37,20 @@
   }
 </script>
 
-<Form title="_________" on:response={handleResponse}>
-  <Input id="type" type="select" title={$_("query_type")}>
+<Form  on:response={handleResponse}>
+  <Input id="type" type="select" title={$_("query_type")} value="search">
     {#each Object.keys(QueryType) as queryType}
       <option value={queryType}>{queryType}</option>
     {/each}
   </Input>
-  <Input id="space_name" type="select" title={$_("space_name")}>
+  <Input id="space_name" type="select" title={$_("space_name")} >
     {#each spaces as space}
       <option value={space.shortname}>{space.shortname}</option>
     {/each}
   </Input>
   <Input id="subpath" type="text" title={$_("subpath")} value="/" />
-  <Input id="search" type="text" title={$_("search")} value="*" />
-  <Input id="resource_types" type="select" title={$_("resource_types")}>
+  <Input id="search" type="text" title={$_("search")} value="" />
+  <Input id="resource_type" type="select" title={$_("resource_types")}>
     {#each Object.keys(ResourceType) as resourceType}
       <option value={resourceType}>{resourceType}</option>
     {/each}

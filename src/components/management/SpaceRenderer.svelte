@@ -1,0 +1,450 @@
+<script lang="ts">
+  import { onDestroy } from "svelte";
+  import {
+    QueryType,
+    RequestType,
+    ResourceType,
+    ActionResponse,
+    Status,
+    query,
+    request,
+    ApiResponseRecord,
+  } from "@/dmart";
+  import {
+    Form,
+    FormGroup,
+    Button,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Label,
+    Input,
+    Nav,
+    ButtonGroup,
+  } from "sveltestrap";
+  import Icon from "../Icon.svelte";
+  import { _ } from "@/i18n";
+  import ListView from "./ListView.svelte";
+  import Prism from "../Prism.svelte";
+  import {JSONEditor} from "svelte-jsoneditor";
+  import { status_line } from "@/stores/management/status_line";
+  import spaces from "@/stores/management/spaces";
+  // import { timeAgo } from "@/utils/timeago";
+  import { showToast, Level } from "@/utils/toast";
+  import { faSave } from "@fortawesome/free-regular-svg-icons";
+  // import { search } from "../_stores/triggers";
+
+  let header_height: number;
+  export let space_name : string;
+
+  let current_space : ApiResponseRecord;
+
+  $: current_space = spaces.get(space_name);
+
+
+  let tab_option = "view"; // TBD reconsider lsit view
+  let content = { json: current_space || {}, text: undefined };
+  let oldContent = { json: current_space || {}, text: undefined };
+  let entryContent = { json: current_space || {}, text: undefined };
+
+  onDestroy(() => status_line.set(""));
+  status_line.set("none FIXME");
+
+  // let isSchemaValidated: boolean;
+  // function handleChange(updatedContent, previousContent, patchResult) {
+    // const v = patchResult?.contentErrors?.validationErrors;
+    // isSchemaValidated =  (v === undefined || v.length === 0)
+  //}
+
+  let errorContent = null;
+  async function handleSave() {
+    // if (!isSchemaValidated) {
+    //   alert("The content does is not validated agains the schema");
+    //   return;
+    // }
+    errorContent = null;
+    const data = content.json ? { ...content.json } : JSON.parse(content.text);
+    const response = await request({
+      space_name: current_space.shortname,
+      request_type: RequestType.replace,
+      records: [
+        {
+          resource_type: ResourceType.space,
+          shortname: current_space.shortname,
+          subpath: "/",
+          attributes: data,
+        },
+      ],
+    });
+    if (response.status == Status.success) {
+      showToast(Level.info);
+    } else {
+      errorContent = response;
+      showToast(Level.warn);
+    }
+  }
+
+  function handleRenderMenu(items: Array<any>, context) {
+    const separator = {
+      separator: true,
+    };
+
+    const saveButton = {
+      onClick: handleSave,
+      icon: faSave,
+      title: "Save",
+    };
+
+    const itemsWithoutSpace = items.slice(0, items.length - 2);
+    return itemsWithoutSpace.concat([
+      separator,
+      saveButton,
+      {
+        space: true,
+      },
+    ]);
+  }
+
+  let isModalOpen = false;
+  let modalFlag = "create";
+  let entryType = "folder";
+  let contentShortname = "";
+  let selectedSchema = "";
+  let new_resource_type : ResourceType = ResourceType.content;
+
+  async function handleSubmit(event : Event) {
+    event.preventDefault();
+    let response : ActionResponse;
+    if (entryType === "content") {
+      const body = entryContent.json
+        ? { ...entryContent.json }
+        : JSON.parse(entryContent.text);
+      const request_body = {
+        space_name: current_space.shortname,
+        request_type: RequestType.create,
+        records: [
+          {
+            resource_type: new_resource_type,
+            shortname: contentShortname === "" ? "auto" : contentShortname,
+            subpath: "/",
+            attributes: {
+              is_active: true,
+              payload: {
+                content_type: "json",
+                schema_shortname: selectedSchema ? selectedSchema : "",
+                body,
+              },
+            },
+          },
+        ],
+      };
+      response = await request(request_body);
+    } else if (entryType === "folder") {
+      const request_body = {
+        space_name: current_space.shortname,
+        request_type: RequestType.create,
+        records: [
+          {
+            resource_type: ResourceType.folder,
+            shortname: contentShortname === "" ? "auto" : contentShortname,
+            subpath: "/",
+            attributes: {
+              is_active: true,
+              payload: {
+                content_type: "json",
+                schema_shortname: "folder_rendering",
+                body: {
+                  shortname_title: "Unique ID",
+                  content_schema_shortnames: [
+                    selectedSchema ? selectedSchema : "",
+                  ],
+                  index_attributes: [
+                    {
+                      key: "shortname",
+                      name: "Unique ID",
+                    },
+                    {
+                      key: "created_at",
+                      name: "Created At",
+                    },
+                    {
+                      key: "owner_shortname",
+                      name: "Created By",
+                    },
+                  ],
+                  allow_create: true,
+                  allow_update: true,
+                  allow_delete: true,
+                  use_media: true,
+                  expand_children: false,
+                  content_resource_types: ["content"],
+                  allow_upload_csv: true,
+                  allow_csv: true,
+                  filter: [],
+                },
+              },
+            },
+          },
+        ],
+      };
+      response = await request(request_body);
+    }
+    if (response.status === "success") {
+      showToast(Level.info);
+      contentShortname = "";
+      isModalOpen = false;
+    } else {
+      showToast(Level.warn);
+    }
+  }
+
+  async function handleDelete() {
+    if (
+      confirm(`Are you sure want to delete ${current_space.shortname} space`) === false
+    ) {
+      return;
+    }
+    const request_body = {
+      space_name: current_space.shortname,
+      request_type: RequestType.delete,
+      records: [
+        {
+          resource_type: ResourceType.space,
+          shortname: current_space.shortname,
+          subpath: "/",
+          branch_name: "master",
+          attributes: {},
+        },
+      ],
+    };
+    const response = await request(request_body);
+    if (response.status === "success") {
+      showToast(Level.info);
+      history.go(-1);
+    } else {
+      showToast(Level.warn);
+    }
+  }
+
+  function beforeUnload(event : Event) {
+    event.preventDefault();
+
+    const x = content.json ? { ...content.json } : JSON.parse(content.text);
+    const y = oldContent.json
+      ? { ...oldContent.json }
+      : JSON.parse(oldContent.text);
+
+    if (JSON.stringify(x) !== JSON.stringify(y)) {
+      if (
+        confirm("You have unsaved changes, do you want to leave ?") === false
+      ) {
+        // Deprecated event.returnValue = false;
+        return false;
+      }
+    }
+  }
+</script>
+
+<svelte:window on:beforeunload={beforeUnload} />
+
+<Modal
+  isOpen={isModalOpen}
+  toggle={() => {
+    isModalOpen = !isModalOpen;
+    contentShortname = "";
+  }}
+  size={"lg"}
+>
+  <ModalHeader />
+  <Form on:submit={async (e) => await handleSubmit(e)}>
+    <ModalBody>
+      <FormGroup>
+        {#if modalFlag === "create"}
+          <Label class="mt-3">Resource type</Label>
+          <Input bind:value={new_resource_type} type="select">
+              {#each Object.values(ResourceType) as type }
+                <option value={type}>{type}</option>
+              {/each}
+          </Input>
+          <Label class="mt-3">Schema</Label>
+          <Input bind:value={selectedSchema} type="select">
+            <option value={""}>{"None"}</option>
+            {#await query( { space_name: current_space.shortname, type: QueryType.search, subpath: "/schema", search: "", retrieve_json_payload: true, limit: 99 } ) then schemas}
+              {#each schemas.records.map((e) => e.shortname) as schema}
+                <option value={schema}>{schema}</option>
+              {/each}
+            {/await}
+          </Input>
+        {/if}
+        {#if entryType === "content" && modalFlag === "create"}
+          <Label class="mt-3">Shortname</Label>
+          <Input placeholder="Shortname..." bind:value={contentShortname} />
+          <hr />
+
+          <Label class="mt-3">Content</Label>
+          <JSONEditor bind:content={entryContent} />
+          <!-- onChange={handleChange}
+              {validator} -->
+
+          <hr />
+
+          <!-- <Label>Schema</Label>
+            <ContentJsonEditor
+              bind:self={refJsonEditor}
+              content={contentSchema}
+              readOnly={true}
+              mode={Mode.tree}
+            /> -->
+        {/if}
+        {#if entryType === "folder"}
+          <Label class="mt-3">Shortname</Label>
+          <Input
+            placeholder="Shortname..."
+            bind:value={contentShortname}
+            required
+          />
+          {#if modalFlag === "update"}
+            <Label class="mt-3">Content</Label>
+          {/if}
+        {/if}
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter>
+      <Button
+        type="button"
+        color="secondary"
+        on:click={() => {
+          isModalOpen = false;
+          contentShortname = "";
+        }}>cancel</Button
+      >
+      <Button type="submit" color="primary">Submit</Button>
+    </ModalFooter>
+  </Form>
+</Modal>
+
+<div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
+  <Nav class="w-100">
+    <ButtonGroup size="sm" class="align-items-center">
+      <span class="font-monospace">
+      <small>
+        <strong>{current_space.shortname}</strong>
+        ({ResourceType.space})
+      </small>
+      </span>
+    </ButtonGroup>
+    <ButtonGroup size="sm" class="ms-auto align-items-center">
+      <span class="ps-2 pe-1"> {$_("views")} </span>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        class="justify-content-center text-center py-0 px-1"
+        active={"list" == tab_option}
+        title={$_("list")}
+        on:click={() => (tab_option = "list")}
+      >
+        <Icon name="card-list" />
+      </Button>
+
+      <Button
+        outline
+        color="success"
+        size="sm"
+        class="justify-content-center text-center py-0 px-1"
+        active={"view" == tab_option}
+        title={$_("view")}
+        on:click={() => (tab_option = "view")}
+      >
+        <Icon name="binoculars" />
+      </Button>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        class="justify-content-center text-center py-0 px-1"
+        active={"edit" == tab_option}
+        title={$_("edit")}
+        on:click={() => (tab_option = "edit")}
+      >
+        <Icon name="pencil" />
+      </Button>
+    </ButtonGroup>
+    <ButtonGroup size="sm" class="align-items-center">
+      <span class="ps-2 pe-1"> {$_("actions")} </span>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        title={$_("delete")}
+        on:click={handleDelete}
+        class="justify-content-center text-center py-0 px-1"
+      >
+        <Icon name="trash" />
+      </Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        title={$_("create")}
+        class="justify-contnet-center text-center py-0 px-1"
+        on:click={() => {
+          isModalOpen = true;
+          entryType = "folder";
+        }}>
+        <Icon name="folder-plus" />
+      </Button>
+    </ButtonGroup>
+  </Nav>
+</div>
+<div
+  class="px-1 pb-1 tab-content"
+  style="height: calc(100% - {header_height}px); overflow: hidden auto;"
+>
+  <div class="h-100 tab-pane" class:active={tab_option === "list"}>
+    <ListView space_name={current_space.shortname} subpath={"/"} />
+  </div>
+  <div class="h-100 tab-pane" class:active={tab_option === "source"}>
+    <!--JSONEditor json={entry} /-->
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
+      <pre>
+        {JSON.stringify(current_space, undefined, 1)}
+      </pre>
+    </div>
+  </div>
+  <div class="h-100 tab-pane" class:active={tab_option === "view"}>
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
+      <Prism code={current_space} />
+    </div>
+  </div>
+  <div class="h-100 tab-pane" class:active={tab_option === "edit"}>
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
+      <JSONEditor
+        bind:content
+        onRenderMenu={handleRenderMenu}
+      />
+      {#if errorContent}
+        <h3 class="mt-3">Error:</h3>
+        <Prism bind:code={errorContent} />
+      {/if}
+    </div>
+  </div>
+</div>
+
+<style>
+  span {
+    color: dimgrey;
+  }
+</style>

@@ -1,47 +1,52 @@
 <script lang="ts">
+  import { goto } from "@roxi/routify";
   import {
-    get_spaces,
+    // get_spaces,
     get_children,
-    RequestType,
+    ApiResponseRecord,
+    // RequestType,
     ResourceType,
-    request,
+    // request,
+    // ApiResponse,
   } from "@/dmart";
   import {
-    FormGroup,
-    Button,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Label,
-    Input,
+    // FormGroup,
+    // Button,
+    // Modal,
+    // ModalBody,
+    // ModalFooter,
+    // ModalHeader,
+    // Label,
+    // Input,
     ListGroupItem,
   } from "sveltestrap";
   import Icon from "../../Icon.svelte";
   import { _ } from "@/i18n";
   import Folder from "../Folder.svelte";
-  import { Level, showToast } from "@/utils/toast";
-  import { JSONEditor } from "svelte-jsoneditor";
+  // import { Level, showToast } from "@/utils/toast";
+  // import { JSONEditor } from "svelte-jsoneditor";
+  import spaces from "@/stores/management/spaces";
 
   let expanded: string;
-  function displayname(space_name): string {
+  function displayname(space_entry: ApiResponseRecord): string {
     const lang = JSON.parse(localStorage.getItem("preferred_locale"));
-    if (space_name?.attributes?.displayname) {
-      return space_name?.attributes?.displayname[lang];
+    if (space_entry?.attributes?.displayname) {
+      return space_entry?.attributes?.displayname[lang];
     } else {
-      return space_name.shortname;
+      return space_entry.shortname;
     }
   }
 
-  let isSpaceModalOpen = false;
-  let modeFlag = "create";
-  let selected_space_name;
-  let subpath_shortname;
-  let content = { json: {}, text: undefined };
-  let refresh;
+  // let isSpaceModalOpen = false;
+  // let modeFlag = "create";
+  // let selected_space_name : string;
+  // let subpath_shortname : string;
+  // let content = { json: {}, text: undefined };
+  // let refresh = false;
+  /*
   async function handleCreateSpace(e: any) {
     e.preventDefault();
-    let response;
+    let response : ApiResponse;
     if (modeFlag === "create") {
       const request_body = {
         space_name: selected_space_name,
@@ -103,15 +108,27 @@
 
     if (response.status === "success") {
       showToast(Level.info);
-      refresh = {};
+      refresh = !refresh;
       isSpaceModalOpen = false;
     } else {
       showToast(Level.warn);
     }
   }
+  */
+
+  async function expandSpace(current_space : ApiResponseRecord) {
+    if(expanded != current_space.shortname) {
+      expanded = current_space.shortname;
+      $goto("/management/content/[space_name]", {
+        space_name: current_space.shortname
+      });
+    } else {
+      expanded = undefined;
+    }
+  }
 </script>
 
-<Modal
+<!--Modal
   isOpen={isSpaceModalOpen}
   toggle={() => {
     isSpaceModalOpen = !isSpaceModalOpen;
@@ -135,29 +152,25 @@
     <Button
       type="button"
       color="secondary"
-      on:click={() => (isSpaceModalOpen = false)}>cancel</Button
-    >
-    <Button type="button" color="primary" on:click={(e) => handleCreateSpace(e)}
-      >Submit</Button
-    >
+      on:click={(e) => {e.preventDefault();  isSpaceModalOpen = false;}}>cancel</Button>
+    <Button type="button" color="primary" on:click={(e) => {e.preventDefault();handleCreateSpace(e)}}>Submit</Button>
   </ModalFooter>
-</Modal>
+</Modal-->
 
-{#key refresh}
-  {#await get_spaces()}
+  {#await spaces.refresh()}
     <!--h3 transition:fade >Loading spaces list</h3-->
-  {:then spaces_data}
-    {#each spaces_data.records as space}
+  {:then loaded_spaces}
+    {#each loaded_spaces as space}
       <ListGroupItem class="ps-2 pe-0 py-0">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div
           class="mb-2"
           style="cursor: pointer;"
-          on:click={() => (expanded = space.shortname)}
+          on:click={async () => (await expandSpace(space))}
         >
           <Icon name="diagram-3" class="me-1" /> <b>{displayname(space)}</b>
           <span class="toolbar top-0 end-0 position-absolute px-0">
-            <span
+            <!--span
               class="px-0"
               title={$_("edit")}
               on:click|stopPropagation={() => {
@@ -179,7 +192,7 @@
               }}
             >
               <Icon name="pencil" />
-            </span>
+            </span-->
           </span>
           <style>
             .toolbar {
@@ -209,4 +222,3 @@
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
-{/key}

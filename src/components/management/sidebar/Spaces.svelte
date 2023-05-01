@@ -150,7 +150,7 @@
     if (response.status === "success") {
       showToast(Level.info);
       isSpaceModalOpen = false;
-      spaces.refresh();
+      await spaces.refresh();
     } else {
       showToast(Level.warn);
     }

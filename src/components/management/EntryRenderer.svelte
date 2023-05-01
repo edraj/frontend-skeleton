@@ -324,6 +324,7 @@
   <Form on:submit={async (e) => await handleSubmit(e)}>
     <ModalBody>
       <FormGroup>
+<h4>Creating an entry under <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span></h4>
         {#if modalFlag === "create"}
           <Label class="mt-3">Resource type</Label>
           <Input bind:value={new_resource_type} type="select">
@@ -393,7 +394,7 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace"
         ><small>
-          {space_name}/{subpath}/<strong>{entry.shortname}</strong>
+          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span>/<strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
         ></span
       >

@@ -331,7 +331,7 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
         <small>
-          <strong>{current_space.shortname}</strong>
+          <span class="text-success">{space_name}</span>/<span class="text-primary">__root__</span>/<strong>{current_space.shortname}</strong>
           ({ResourceType.space})
         </small>
       </span>

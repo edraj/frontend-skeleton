@@ -6,14 +6,11 @@ import {
   // Status,
 } from '@/dmart';
 
-let loaded: ApiResponse; //  = {records: [], status: Status.failed};
+// let loaded: ApiResponse; //  = {records: [], status: Status.failed};
 
 let spaces = writable<Array<ApiResponseRecord>>();
 
-get_spaces().then( (data) => {
-  loaded = data
-  spaces.set(loaded.records);
-} );
+get_spaces().then( (loaded) => { spaces.set(loaded.records); } );
 
 export default {
   subscribe: spaces.subscribe,
@@ -27,12 +24,19 @@ export default {
     });
   },
   refresh: async () : Promise<Array<ApiResponseRecord>> => {
-    loaded = await get_spaces();
+    const loaded = await get_spaces();
     spaces.set(loaded.records);
     return get(spaces)
   },
   get: (shortname: string) : ApiResponseRecord => {
-    const loaded_spaces = get(spaces);
+    let loaded_spaces = get(spaces);
+    while (!loaded_spaces) {
+      // FIXME this approach is an ugly workaround for a race condition
+      get_spaces().then( (loaded) => {
+        spaces.set(loaded.records);
+      });
+      loaded_spaces = get(spaces);
+    }
     if (loaded_spaces) return loaded_spaces.find( e => shortname == e.shortname);
   }
 } 

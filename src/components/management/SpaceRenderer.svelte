@@ -1,8 +1,3 @@
-<script context="module">
-  await spaces.refresh();
-</script>
-
-
 <script lang="ts">
   import { onDestroy } from "svelte";
   import {

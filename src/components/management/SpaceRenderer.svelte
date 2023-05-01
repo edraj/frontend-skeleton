@@ -42,7 +42,7 @@
 
   $: current_space = spaces.get(space_name);
 
-  let tab_option = "view"; // TBD reconsider lsit view
+  let tab_option = "list";
   let content = { json: current_space || {}, text: undefined };
   let oldContent = { json: current_space || {}, text: undefined };
   let entryContent = { json: current_space || {}, text: undefined };
@@ -408,7 +408,11 @@
 >
   <div class="h-100 tab-pane" class:active={tab_option === "list"}>
     {#if tab_option === "list"}
+    {#key current_space}
       <ListView space_name={current_space.shortname} subpath={"/"} />
+    {/key}
+    {:else}
+    <h1> This should not be displayed {tab_option} </h1>
     {/if}
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "source"}>

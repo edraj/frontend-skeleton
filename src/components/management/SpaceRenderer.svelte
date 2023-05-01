@@ -27,7 +27,7 @@
   import { _ } from "@/i18n";
   import ListView from "./ListView.svelte";
   import Prism from "../Prism.svelte";
-  import {JSONEditor} from "svelte-jsoneditor";
+  import { JSONEditor } from "svelte-jsoneditor";
   import { status_line } from "@/stores/management/status_line";
   import spaces from "@/stores/management/spaces";
   // import { timeAgo } from "@/utils/timeago";
@@ -36,12 +36,11 @@
   // import { search } from "../_stores/triggers";
 
   let header_height: number;
-  export let space_name : string;
+  export let space_name: string;
 
-  let current_space : ApiResponseRecord;
+  let current_space: ApiResponseRecord;
 
   $: current_space = spaces.get(space_name);
-
 
   let tab_option = "view"; // TBD reconsider lsit view
   let content = { json: current_space || {}, text: undefined };
@@ -53,8 +52,8 @@
 
   // let isSchemaValidated: boolean;
   // function handleChange(updatedContent, previousContent, patchResult) {
-    // const v = patchResult?.contentErrors?.validationErrors;
-    // isSchemaValidated =  (v === undefined || v.length === 0)
+  // const v = patchResult?.contentErrors?.validationErrors;
+  // isSchemaValidated =  (v === undefined || v.length === 0)
   //}
 
   let errorContent = null;
@@ -111,11 +110,11 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
-  let new_resource_type : ResourceType = ResourceType.content;
+  let new_resource_type: ResourceType = ResourceType.content;
 
-  async function handleSubmit(event : Event) {
+  async function handleSubmit(event: Event) {
     event.preventDefault();
-    let response : ActionResponse;
+    let response: ActionResponse;
     if (entryType === "content") {
       const body = entryContent.json
         ? { ...entryContent.json }
@@ -201,7 +200,9 @@
 
   async function handleDelete() {
     if (
-      confirm(`Are you sure want to delete ${current_space.shortname} space`) === false
+      confirm(
+        `Are you sure want to delete ${current_space.shortname} space`
+      ) === false
     ) {
       return;
     }
@@ -227,7 +228,7 @@
     }
   }
 
-  function beforeUnload(event : Event) {
+  function beforeUnload(event: Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -263,9 +264,9 @@
         {#if modalFlag === "create"}
           <Label class="mt-3">Resource type</Label>
           <Input bind:value={new_resource_type} type="select">
-              {#each Object.values(ResourceType) as type }
-                <option value={type}>{type}</option>
-              {/each}
+            {#each Object.values(ResourceType) as type}
+              <option value={type}>{type}</option>
+            {/each}
           </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
@@ -328,10 +329,10 @@
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
-      <small>
-        <strong>{current_space.shortname}</strong>
-        ({ResourceType.space})
-      </small>
+        <small>
+          <strong>{current_space.shortname}</strong>
+          ({ResourceType.space})
+        </small>
       </span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
@@ -394,7 +395,8 @@
         on:click={() => {
           isModalOpen = true;
           entryType = "folder";
-        }}>
+        }}
+      >
         <Icon name="folder-plus" />
       </Button>
     </ButtonGroup>
@@ -405,7 +407,9 @@
   style="height: calc(100% - {header_height}px); overflow: hidden auto;"
 >
   <div class="h-100 tab-pane" class:active={tab_option === "list"}>
-    <ListView space_name={current_space.shortname} subpath={"/"} />
+    {#if tab_option === "list"}
+      <ListView space_name={current_space.shortname} subpath={"/"} />
+    {/if}
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "source"}>
     <!--JSONEditor json={entry} /-->
@@ -431,10 +435,7 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <JSONEditor
-        bind:content
-        onRenderMenu={handleRenderMenu}
-      />
+      <JSONEditor bind:content onRenderMenu={handleRenderMenu} />
       {#if errorContent}
         <h3 class="mt-3">Error:</h3>
         <Prism bind:code={errorContent} />

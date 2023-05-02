@@ -75,18 +75,20 @@
     // }
     errorContent = null;
     const data = content.json ? { ...content.json } : JSON.parse(content.text);
-    const response = await request({
+    const request_data = {
       space_name: space_name,
       request_type: RequestType.replace,
       records: [
         {
           resource_type,
           shortname: entry.shortname,
-          subpath,
+          subpath: subpath == "__root__" ? "/" : subpath,
           attributes: data,
         },
       ],
-    });
+    };
+    // console.log({request_data});
+    const response = await request(request_data);
     if (response.status == Status.success) {
       showToast(Level.info);
       oldContent = { ...content };

@@ -3,9 +3,18 @@
   import { ListGroupItem } from "sveltestrap";
   import Icon from "../../Icon.svelte";
   import { _ } from "@/i18n";
+  import { goto } from "@roxi/routify";
   // import { fade } from 'svelte/transition';
+  export let name;
 
   // let expanded: string;
+
+  function handleClick(e, space) {
+    e.preventDefault();
+    $goto(`/management/tools/${name}/[space_name]`, {
+      space_name: space.shortname,
+    });
+  }
 </script>
 
 {#await get_spaces()}
@@ -17,7 +26,9 @@
       <div
         class="mb-2"
         style="cursor: pointer;"
-        on:click={() => {/*expanded = space.shortname*/}}
+        on:click={(e) => {
+          handleClick(e, space);
+        }}
       >
         <Icon name="diagram-3" class="me-1" /> <b>{space.shortname}</b>
       </div>

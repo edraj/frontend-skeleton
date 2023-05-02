@@ -10,6 +10,7 @@
     Status,
     query,
     request,
+    retrieve_entry,
   } from "@/dmart";
   import {
     Form,
@@ -125,25 +126,37 @@
   let schema = null;
   async function get_schema() {
     if (entry.payload && entry.payload.schema_shortname) {
-      const query_schema = {
-        space_name,
-        type: QueryType.search,
-        subpath: "/schema",
-        // filter_shortnames: [entry.payload.schema_shortname],
-        search: "",
-        retrieve_json_payload: true,
-      };
+      // const query_schema = {
+      //   space_name,
+      //   type: QueryType.search,
+      //   subpath: "/schema",
+      //   filter_shortnames: [entry.payload.schema_shortname],
+      //   filter_types: [ResourceType.schema],
+      //   search: "",
+      //   retrieve_json_payload: true,
+      // };
+      //
+      // const schema_data = await query(query_schema);
+      try {
 
-      const schema_data = await query(query_schema);
-      if (schema_data.status == "success" && schema_data.records.length > 0) {
-        schema = schema_data.records[0].attributes["payload"].body;
-        cleanUpSchema(schema.properties);
-        validator = createAjvValidator({ schema });
-      } else {
-        console.log("Schema loading failed for ", {
-          query_schema,
-          schema_data,
-        });
+        const schema_data : ResponseEntry= await retrieve_entry(ResourceType.schema,space_name,"/schema",entry.payload.schema_shortname,true,false);
+        if ( schema_data.payload && schema_data.payload.body/*schema_data.status == "success" && schema_data.records.length > 0*/) {
+          //schema = schema_data.records[0].attributes["payload"].body;
+          schema = schema_data.payload.body;
+          cleanUpSchema(schema.properties);
+          validator = createAjvValidator({ schema });
+        } else {
+          schema = null;
+          console.log("Schema loading failed for ", {
+            //query_schema,
+            entry,
+            schema_data,
+          });
+        }
+      } catch (x) {
+        console.log("Failed to load schema", {entry})
+        schema = null;
+
       }
     } else {
       schema = null;

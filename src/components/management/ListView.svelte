@@ -134,10 +134,25 @@
         }
         const shortname = record.shortname;
         const schema_shortname = record.attributes?.payload?.schema_shortname;
+        let tmp_subpath = record.subpath.replaceAll("/", "-");
+        if (record.resource_type === "folder") {
+          let _subpath = `${record.subpath}/${record.shortname}`.replace(
+            /\/+/g,
+            "/"
+          );
 
-        let tmp_subpath  = record.subpath.replaceAll("/","-");
-        if(tmp_subpath == "-")
-          tmp_subpath = "__root__";
+          // Trim leading or traling '/'
+          if (_subpath.length > 0 && subpath[0] === "/")
+            _subpath = _subpath.substring(1);
+          if (_subpath.length > 0 && _subpath[_subpath.length - 1] === "/")
+            _subpath = _subpath.slice(0, -1);
+
+          $goto("/management/content/[space_name]/[subpath]", {
+            space_name: space_name,
+            subpath: _subpath,
+          });
+          return;
+        }
         if (schema_shortname) {
           $goto(
             "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[payload_type]/[schema_name]",

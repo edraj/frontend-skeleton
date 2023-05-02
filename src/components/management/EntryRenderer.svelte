@@ -56,9 +56,11 @@
 
   onMount(async () => {
     const cpy = { ...entry };
-    contentContent.json = cpy?.payload?.body;
+    contentContent.json = cpy?.payload?.body ?? {};
+    contentContent = { ...contentContent };
     delete cpy?.payload?.body;
     contentMeta.json = cpy;
+    contentMeta = { ...contentMeta };
   });
 
   // separating the content by 2 calls
@@ -112,7 +114,16 @@
       : JSON.parse(contentContent.text);
 
     const data = { ...x };
-    data.payload.body = y;
+    if (data.payload) {
+      data.payload.body = y;
+    }
+
+    if (resource_type === ResourceType.folder) {
+      const arr = subpath.split("/");
+      arr[arr.length - 1] = "";
+      subpath = arr.join("/");
+    }
+    subpath = subpath == "__root__" || subpath == "" ? "/" : subpath;
 
     const request_data = {
       space_name: space_name,
@@ -121,12 +132,12 @@
         {
           resource_type,
           shortname: entry.shortname,
-          subpath: subpath == "__root__" ? "/" : subpath,
+          subpath,
           attributes: data,
         },
       ],
     };
-    // console.log({request_data});
+
     const response = await request(request_data);
     if (response.status == Status.success) {
       showToast(Level.info);
@@ -187,11 +198,8 @@
           true,
           false
         );
-        if (
-          schema_data.payload &&
-          schema_data.payload
-            .body /*schema_data.status == "success" && schema_data.records.length > 0*/
-        ) {
+
+        if (schema_data?.payload?.body) {
           //schema = schema_data.records[0].attributes["payload"].body;
           schema = schema_data.payload.body;
           cleanUpSchema(schema.properties);
@@ -205,7 +213,7 @@
           });
         }
       } catch (x) {
-        console.log("Failed to load schema", { entry });
+        console.log("Failed to load schema", x);
         schema = {};
       }
     } else {
@@ -469,17 +477,19 @@
       >
         <Icon name="pencil" />
       </Button>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1"
-        active={"edit_content" == tab_option}
-        title={$_("edit")}
-        on:click={() => (tab_option = "edit_content")}
-      >
-        <Icon name="pencil-square" />
-      </Button>
+      {#if entry.payload}
+        <Button
+          outline
+          color="success"
+          size="sm"
+          class="justify-content-center text-center py-0 px-1"
+          active={"edit_content" == tab_option}
+          title={$_("edit")}
+          on:click={() => (tab_option = "edit_content")}
+        >
+          <Icon name="pencil-square" />
+        </Button>
+      {/if}
       <Button
         outline
         color="success"
@@ -594,23 +604,26 @@
       {/if}
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
-    <div
-      class="px-1 pb-1 h-100"
-      style="text-align: left; direction: ltr; overflow: hidden auto;"
-    >
-      <JSONEditor
-        bind:content={contentContent}
-        bind:validator
-        onChange={handleChange}
-        onRenderMenu={handleRenderMenu}
-      />
-      {#if errorContent}
-        <h3 class="mt-3">Error:</h3>
-        <Prism bind:code={errorContent} />
-      {/if}
+  {#if entry.payload}
+    <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
+      <div
+        class="px-1 pb-1 h-100"
+        style="text-align: left; direction: ltr; overflow: hidden auto;"
+      >
+        <JSONEditor
+          bind:content={contentContent}
+          bind:validator
+          onChange={handleChange}
+          onRenderMenu={handleRenderMenu}
+        />
+        {#if errorContent}
+          <h3 class="mt-3">Error:</h3>
+          <Prism bind:code={errorContent} />
+        {/if}
+      </div>
     </div>
-  </div>
+  {/if}
+
   <div class="h-100 tab-pane" class:active={tab_option === "history"}>
     {#key tab_option}
       <ListView

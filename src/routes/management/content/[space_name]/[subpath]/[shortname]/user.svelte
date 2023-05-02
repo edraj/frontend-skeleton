@@ -1,18 +1,16 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
   import { retrieve_entry, ResourceType } from "@/dmart";
-  import EntryRenderer from "@/components/management/EntryRenderer.svelte";
-
-  const resource_type: ResourceType = ResourceType[$params.resource_type];
+  import UserEntryRenderer from "@/components/management/UserEntryRenderer.svelte";
 </script>
 
 {#if $params.space_name && $params.subpath && $params.shortname}
-  {#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true)}
+  {#await retrieve_entry(ResourceType.user, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true)}
     <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
   {:then entry}
-    <EntryRenderer
+    <UserEntryRenderer
       {entry}
-      {resource_type}
+      resource_type={ResourceType.user}
       space_name={$params.space_name}
       subpath={$params.subpath?.replaceAll("-", "/")}
       schema_name={$params.schema_name}

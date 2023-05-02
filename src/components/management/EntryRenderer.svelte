@@ -103,26 +103,31 @@
     //   return;
     // }
     errorContent = null;
+
     const x = contentMeta.json
       ? { ...contentMeta.json }
       : JSON.parse(contentMeta.text);
     const y = contentContent.json
       ? { ...contentContent.json }
       : JSON.parse(contentContent.text);
+
     const data = { ...x };
     data.payload.body = y;
-    const response = await request({
+
+    const request_data = {
       space_name: space_name,
       request_type: RequestType.replace,
       records: [
         {
           resource_type,
           shortname: entry.shortname,
-          subpath,
+          subpath: subpath == "__root__" ? "/" : subpath,
           attributes: data,
         },
       ],
-    });
+    };
+    // console.log({request_data});
+    const response = await request(request_data);
     if (response.status == Status.success) {
       showToast(Level.info);
       oldContent = { ...content };

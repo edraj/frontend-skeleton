@@ -1,6 +1,6 @@
 <script lang="ts">
   import Attachments from "./Attachments.svelte";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import {
     QueryType,
     RequestType,
@@ -11,6 +11,7 @@
     query,
     request,
     retrieve_entry,
+    get_payload,
   } from "@/dmart";
   import {
     Form,
@@ -38,7 +39,6 @@
   import history_cols from "@/stores/management/list_cols_history.json";
   import refresh_spaces from "@/stores/management/refresh_spaces";
 
-
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
   export let entry: ResponseEntry;
@@ -48,9 +48,38 @@
   export let schema_name: string | undefined = null;
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
-  let content = { json: entry || {}, text: undefined };
-  let oldContent = { json: entry || {}, text: undefined };
+  let content = { json: entry, text: undefined };
+  let contentMeta = { json: {}, text: undefined };
+  let contentContent = { json: {}, text: undefined };
+  let oldContent = { json: {}, text: undefined };
   let entryContent = { json: {} || {}, text: undefined };
+
+  onMount(async () => {
+    const cpy = { ...entry };
+    contentContent.json = cpy?.payload?.body;
+    delete cpy?.payload?.body;
+    contentMeta.json = cpy;
+  });
+
+  // separating the content by 2 calls
+  // onMount(async () => {
+  //   contentMeta.json = await retrieve_entry(
+  //     resource_type,
+  //     space_name,
+  //     subpath,
+  //     entry.shortname,
+  //     false,
+  //     false
+  //   );
+  //   contentContent.json = await get_payload(
+  //     resource_type,
+  //     space_name,
+  //     subpath,
+  //     entry.shortname
+  //   );
+  //   content.json = contentMeta.json;
+  //   content.json["patload"]["body"] = contentContent.json;
+  // });
 
   onDestroy(() => status_line.set(""));
   status_line.set(
@@ -74,7 +103,14 @@
     //   return;
     // }
     errorContent = null;
-    const data = content.json ? { ...content.json } : JSON.parse(content.text);
+    const x = contentMeta.json
+      ? { ...contentMeta.json }
+      : JSON.parse(contentMeta.text);
+    const y = contentContent.json
+      ? { ...contentContent.json }
+      : JSON.parse(contentContent.text);
+    const data = { ...x };
+    data.payload.body = y;
     const response = await request({
       space_name: space_name,
       request_type: RequestType.replace,
@@ -138,15 +174,25 @@
       //
       // const schema_data = await query(query_schema);
       try {
-
-        const schema_data : ResponseEntry= await retrieve_entry(ResourceType.schema,space_name,"/schema",entry.payload.schema_shortname,true,false);
-        if ( schema_data.payload && schema_data.payload.body/*schema_data.status == "success" && schema_data.records.length > 0*/) {
+        const schema_data: ResponseEntry = await retrieve_entry(
+          ResourceType.schema,
+          space_name,
+          "/schema",
+          entry.payload.schema_shortname,
+          true,
+          false
+        );
+        if (
+          schema_data.payload &&
+          schema_data.payload
+            .body /*schema_data.status == "success" && schema_data.records.length > 0*/
+        ) {
           //schema = schema_data.records[0].attributes["payload"].body;
           schema = schema_data.payload.body;
           cleanUpSchema(schema.properties);
           validator = createAjvValidator({ schema });
         } else {
-          schema = null;
+          schema = {};
           console.log("Schema loading failed for ", {
             //query_schema,
             entry,
@@ -154,12 +200,11 @@
           });
         }
       } catch (x) {
-        console.log("Failed to load schema", {entry})
-        schema = null;
-
+        console.log("Failed to load schema", { entry });
+        schema = {};
       }
     } else {
-      schema = null;
+      schema = {};
     }
   }
 
@@ -213,7 +258,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
-              is_active: true
+              is_active: true,
             },
           },
         ],
@@ -229,12 +274,7 @@
     }
   }
   $: {
-    if (
-      schema === null &&
-      entry &&
-      entry.payload &&
-      entry.payload.schema_shortname
-    ) {
+    if (schema === null && entry?.payload?.schema_shortname) {
       get_schema();
     }
   }
@@ -306,7 +346,10 @@
   <Form on:submit={async (e) => await handleSubmit(e)}>
     <ModalBody>
       <FormGroup>
-<h4>Creating an entry under <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span></h4>
+        <h4>
+          Creating an entry under <span class="text-success">{space_name}</span
+          >/<span class="text-primary">{subpath}</span>
+        </h4>
         {#if modalFlag === "create"}
           <Label class="mt-3">Resource type</Label>
           <Input bind:value={new_resource_type} type="select">
@@ -376,7 +419,9 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace"
         ><small>
-          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span>/<strong>{entry.shortname}</strong>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >/<strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
         ></span
       >
@@ -413,11 +458,22 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active={"edit" == tab_option}
+        active={"edit_meta" == tab_option}
         title={$_("edit")}
-        on:click={() => (tab_option = "edit")}
+        on:click={() => (tab_option = "edit_meta")}
       >
         <Icon name="pencil" />
+      </Button>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        class="justify-content-center text-center py-0 px-1"
+        active={"edit_content" == tab_option}
+        title={$_("edit")}
+        on:click={() => (tab_option = "edit_content")}
+      >
+        <Icon name="pencil-square" />
       </Button>
       <Button
         outline
@@ -521,13 +577,25 @@
       <Prism code={entry} />
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active={tab_option === "edit"}>
+  <div class="h-100 tab-pane" class:active={tab_option === "edit_meta"}>
+    <div
+      class="px-1 pb-1 h-100"
+      style="text-align: left; direction: ltr; overflow: hidden auto;"
+    >
+      <JSONEditor bind:content={contentMeta} onRenderMenu={handleRenderMenu} />
+      {#if errorContent}
+        <h3 class="mt-3">Error:</h3>
+        <Prism bind:code={errorContent} />
+      {/if}
+    </div>
+  </div>
+  <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
     <div
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
       <JSONEditor
-        bind:content
+        bind:content={contentContent}
         bind:validator
         onChange={handleChange}
         onRenderMenu={handleRenderMenu}

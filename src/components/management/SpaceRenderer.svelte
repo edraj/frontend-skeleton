@@ -9,6 +9,7 @@
     query,
     request,
     ResponseEntry,
+    space,
   } from "@/dmart";
   import {
     Form,
@@ -38,7 +39,7 @@
   let header_height: number;
   export let space_name: string;
 
-  export let current_space : ResponseEntry;
+  export let current_space: ResponseEntry;
   let content = { json: current_space || {}, text: undefined };
   let oldContent = { json: current_space || {}, text: undefined };
   let entryContent = { json: current_space || {}, text: undefined };
@@ -62,7 +63,7 @@
     // }
     errorContent = null;
     const data = content.json ? { ...content.json } : JSON.parse(content.text);
-    const response = await request({
+    const response = await space({
       space_name: current_space.shortname,
       request_type: RequestType.replace,
       records: [
@@ -148,7 +149,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath: "/",
             attributes: {
-              is_active: true
+              is_active: true,
             },
           },
         ],
@@ -186,7 +187,7 @@
         },
       ],
     };
-    const response = await request(request_body);
+    const response = await space(request_body);
     if (response.status === "success") {
       showToast(Level.info);
       refresh_spaces.refresh();
@@ -196,7 +197,7 @@
     }
   }
 
-  function beforeUnload(event : Event) {
+  function beforeUnload(event: Event) {
     event.preventDefault();
 
     const x = content.json ? { ...content.json } : JSON.parse(content.text);
@@ -298,7 +299,9 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
         <small>
-          <span class="text-success">{space_name}</span>/<span class="text-primary">__root__</span>/<strong>{current_space.shortname}</strong>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">__root__</span
+          >/<strong>{current_space.shortname}</strong>
           ({ResourceType.space})
         </small>
       </span>

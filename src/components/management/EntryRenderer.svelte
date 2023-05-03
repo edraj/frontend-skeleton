@@ -97,10 +97,10 @@
   );
 
   // let isSchemaValidated: boolean;
-  function handleChange(updatedContent, previousContent, patchResult) {
+  // function handleChange(updatedContent, previousContent, patchResult) {
     // const v = patchResult?.contentErrors?.validationErrors;
     // isSchemaValidated =  (v === undefined || v.length === 0)
-  }
+  // }
 
   let errorContent = null;
   async function handleSave() {
@@ -685,10 +685,10 @@
         class="px-1 pb-1 h-100"
         style="text-align: left; direction: ltr; overflow: hidden auto;"
       >
+          <!-- onChange={handleChange} -->
         <JSONEditor
           bind:content={contentContent}
           bind:validator
-          onChange={handleChange}
           onRenderMenu={handleRenderMenu}
         />
         {#if errorContent}

@@ -28,7 +28,7 @@
 
 {#if !$user || !$user.signedin}
   <div
-    class="container-fluid d-flex align-items-start py-3"
+    class="container-fluid d-flex align-items-start py-3 h-100"
     id="login-container"
   >
     <Login />

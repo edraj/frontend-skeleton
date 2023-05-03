@@ -50,6 +50,7 @@
   export let subpath: string;
   export let resource_type: ResourceType;
   export let schema_name: string | undefined = null;
+  export let refresh = {};
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry, text: undefined };
@@ -230,7 +231,7 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
-  let selectedContentType = "";
+  let selectedContentType = ContentType.json;
   let new_resource_type: ResourceType = ResourceType.content;
   let payloadFiles: FileList;
 
@@ -306,6 +307,7 @@
       showToast(Level.info);
       contentShortname = "";
       isModalOpen = false;
+      refresh = !refresh;
     } else {
       showToast(Level.warn);
     }

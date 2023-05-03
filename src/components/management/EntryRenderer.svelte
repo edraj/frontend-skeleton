@@ -12,6 +12,8 @@
     request,
     retrieve_entry,
     get_payload,
+    ContentType,
+    upload_with_payload,
   } from "@/dmart";
   import {
     Form,
@@ -35,9 +37,11 @@
   import { timeAgo } from "@/utils/timeago";
   import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  // import { search } from "../_stores/triggers";
   import history_cols from "@/stores/management/list_cols_history.json";
   import refresh_spaces from "@/stores/management/refresh_spaces";
+  // import { search } from "../_stores/triggers";
+  // import HtmlEditor from "./HtmlEditor.svelte";
+  // import MarkdownEditor from "./MarkdownEditor.svelte";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -52,7 +56,7 @@
   let contentMeta = { json: {}, text: undefined };
   let contentContent = { json: {}, text: undefined };
   let oldContent = { json: {}, text: undefined };
-  let entryContent = { json: {} || {}, text: undefined };
+  let entryContent;
 
   onMount(async () => {
     const cpy = { ...entry };
@@ -226,41 +230,61 @@
   let entryType = "folder";
   let contentShortname = "";
   let selectedSchema = "";
+  let selectedContentType = "";
   let new_resource_type: ResourceType = ResourceType.content;
+  let payloadFiles: FileList;
 
   async function handleSubmit(event: Event) {
     event.preventDefault();
-    let response: ActionResponse;
+    let response: any;
     if (entryType === "content") {
-      const body = entryContent.json
-        ? { ...entryContent.json }
-        : JSON.parse(entryContent.text);
-      const request_body = {
-        space_name,
-        request_type: RequestType.create,
-        records: [
-          {
-            resource_type: new_resource_type,
-            shortname: contentShortname === "" ? "auto" : contentShortname,
-            subpath,
-            attributes: {},
-          },
-        ],
-      };
-      if (new_resource_type === "user") {
-        request_body.records[0].attributes = body;
-      } else {
-        request_body.records[0].attributes = {
-          is_active: true,
-          payload: {
-            content_type: "json",
-            schema_shortname: selectedSchema ? selectedSchema : "",
-            body,
-          },
-        };
-      }
+      if (
+        ["", "json", "text", "html", "markdown"].includes(selectedContentType)
+      ) {
+        let body: any;
+        if (selectedContentType === "json") {
+          body = entryContent.json
+            ? { ...entryContent.json }
+            : JSON.parse(entryContent.text);
+        } else {
+          body = entryContent;
+        }
 
-      response = await request(request_body);
+        const request_body = {
+          space_name,
+          request_type: RequestType.create,
+          records: [
+            {
+              resource_type: new_resource_type,
+              shortname: contentShortname === "" ? "auto" : contentShortname,
+              subpath,
+              attributes: {
+                is_active: true,
+                payload: {
+                  content_type: selectedContentType
+                    ? selectedContentType
+                    : "json",
+                  schema_shortname: selectedSchema ? selectedSchema : "",
+                  body,
+                },
+              },
+            },
+          ],
+        };
+        response = await request(request_body);
+      } else if (
+        ["image", "python", "pdf", "audio", "video"].includes(
+          selectedContentType
+        )
+      ) {
+        response = await upload_with_payload(
+          space_name,
+          subpath,
+          ResourceType[new_resource_type],
+          contentShortname === "" ? "auto" : contentShortname,
+          payloadFiles[0]
+        );
+      }
     } else if (entryType === "folder") {
       const request_body = {
         space_name,
@@ -343,6 +367,26 @@
       }
     }
   }
+
+  function hasChanged() {
+    // let _has_changed =
+    //   data && data.attributes && data.attributes.payload && !(content === data.attributes.payload.embedded);
+    // //console.log("Entry", $active_entry);
+    // //console.log("hasChanged called: ", _has_changed, $has_changed);
+    // //console.log("content vs embedded", content, "|", $active_entry.data.attributes.payload.embedded);
+    // if (_has_changed != $has_changed) {
+    //   $has_changed = _has_changed;
+    //   //console.log("Has *actually* changed: ", $has_changed);
+    // }
+  }
+
+  $: {
+    if (selectedContentType === "json") {
+      entryContent = { json: {} || {}, text: undefined };
+    } else {
+      entryContent = "";
+    }
+  }
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />
@@ -370,6 +414,13 @@
               <option value={type}>{type}</option>
             {/each}
           </Input>
+          <Label class="mt-3">Content type</Label>
+          <Input bind:value={selectedContentType} type="select">
+            <option value={""}>{"None"}</option>
+            {#each Object.values(ContentType) as type}
+              <option value={type}>{type}</option>
+            {/each}
+          </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
             <option value={""}>{"None"}</option>
@@ -385,11 +436,35 @@
           <Input placeholder="Shortname..." bind:value={contentShortname} />
           <hr />
 
-          <Label class="mt-3">Content</Label>
-          <JSONEditor bind:content={entryContent} />
-          <!-- onChange={handleChange}
-              {validator} -->
-
+          {#if selectedContentType}
+            <Label class="mt-3">Content</Label>
+            {#if ["image", "python", "pdf", "audio", "video"].includes(selectedContentType)}
+              <Input
+                accept="image/png, image/jpeg"
+                bind:files={payloadFiles}
+                type="file"
+              />
+            {/if}
+            {#if selectedContentType === "json"}
+              <JSONEditor bind:content={entryContent} />
+              <!-- onChange={handleChange}
+                {validator} -->
+            {/if}
+            {#if selectedContentType === "text"}
+              <Input type="textarea" bind:value={entryContent} />
+            {/if}
+            {#if selectedContentType === "html"}
+              <Input type="textarea" bind:value={entryContent} />
+              <!-- <HtmlEditor bind:content={entryContent} on:changed={hasChanged} /> -->
+            {/if}
+            {#if selectedContentType === "markdown"}
+              <Input type="textarea" bind:value={entryContent} />
+              <!-- <MarkdownEditor
+              bind:content={entryContent}
+              on:changed={hasChanged}
+            /> -->
+            {/if}
+          {/if}
           <hr />
 
           <!-- <Label>Schema</Label>

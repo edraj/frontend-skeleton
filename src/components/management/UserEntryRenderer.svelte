@@ -75,8 +75,13 @@
     //   alert("The content does is not validated agains the schema");
     //   return;
     // }
+
     errorContent = null;
     const data = content.json ? { ...content.json } : JSON.parse(content.text);
+    if (!data.password) {
+      alert("A user must have a password");
+      return;
+    }
     console.log({ data }, data.password.startsWith("$2b$12$"));
 
     if (data.password.startsWith("$2b$12$")) {
@@ -204,7 +209,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
-              is_active: true
+              is_active: true,
             },
           },
         ],
@@ -396,8 +401,11 @@
 <div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"><small>
-<span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span>/<strong>{entry.shortname}</strong>
+      <span class="font-monospace"
+        ><small>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >/<strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
         ></span
       >

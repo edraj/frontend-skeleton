@@ -393,6 +393,11 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.4.tgz#e913e8175db8307d78b4e8fa690408ba6b65dee4"
   integrity sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==
 
+"@types/marked@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-4.3.0.tgz#5cd14a190b0a4d212781cfee7093f611ec74a111"
+  integrity sha512-zK4gSFMjgslsv5Lyvr3O1yCjgmnE4pr8jbG8qVn4QglMwtpvPCf4YT2Wma7Nk95OxUUJI8Z+kzdXohbM7mVpGw==
+
 "@types/node@*":
   version "18.16.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.16.2.tgz#2f610ea71034b3971c312192377f8a7178eb57f1"
@@ -725,6 +730,11 @@ cheerio@^1.0.0-rc.10:
     readdirp "~3.6.0"
   optionalDependencies:
     fsevents "~2.3.2"
+
+cl-editor@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/cl-editor/-/cl-editor-2.3.0.tgz#010403ed49e64caf4c0f36614663a391cefe1440"
+  integrity sha512-TxTzuL3529Cmnxy4Q9djcKkZUZJLxuFvFomh6pfbAv72nTB4FCZUE7JhEF5PXeAWRstU+u6BD9ZTif9w0hGQfw==
 
 cli-color@^2.0.3:
   version "2.0.3"
@@ -1560,6 +1570,11 @@ magic-string@^0.30.0:
   integrity sha512-LA+31JYDJLs82r2ScLrlz1GjSgu66ZV518eyWT+S8VhyQn/JL0u9MeBOvQMGYiPk1DBiSN9DDMOcXvigJZaViQ==
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.13"
+
+marked@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-5.0.0.tgz#bab5df970d1f6f748ccac0d20c54b598277f2002"
+  integrity sha512-YQ6+L9l/NSBDjFgCQQebmTCc62EUdZ5RpIZ7A/FmC8IYMB5s7Cz8sT7imuMAkbIL4CvXpQLdW45fpK5UwiU7DA==
 
 md5-hex@^3.0.1:
   version "3.0.1"

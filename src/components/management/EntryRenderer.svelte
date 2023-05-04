@@ -251,10 +251,11 @@
 
   async function handleSubmit(event: Event) {
     event.preventDefault();
+
     let response: any;
     if (entryType === "content") {
       if (
-        ["", "json", "text", "html", "markdown"].includes(selectedContentType)
+        [null, "json", "text", "html", "markdown"].includes(selectedContentType)
       ) {
         let body: any;
         if (selectedContentType === "json") {
@@ -280,7 +281,7 @@
                     ? selectedContentType
                     : "json",
                   schema_shortname: selectedSchema ? selectedSchema : "",
-                  body,
+                  body: selectedContentType === null ? null : body,
                 },
               },
             },
@@ -339,9 +340,15 @@
       return;
     }
 
-    const arr = subpath.split("/");
-    arr[arr.length - 1] = "";
-    const parentSubpath = arr.join("/");
+    let targetSubpath;
+    if (resource_type === ResourceType.folder) {
+      const arr = subpath.split("/");
+      arr[arr.length - 1] = "";
+      targetSubpath = arr.join("/");
+    } else {
+      targetSubpath = subpath;
+    }
+
     const request_body = {
       space_name,
       request_type: RequestType.delete,
@@ -349,7 +356,7 @@
         {
           resource_type,
           shortname: entry.shortname,
-          subpath: parentSubpath || "/",
+          subpath: targetSubpath || "/",
           branch_name: "master",
           attributes: {},
         },
@@ -422,14 +429,14 @@
           </Input>
           <Label class="mt-3">Content type</Label>
           <Input bind:value={selectedContentType} type="select">
-            <option value={""}>{"None"}</option>
+            <option value={null}>{"None"}</option>
             {#each Object.values(ContentType) as type}
               <option value={type}>{type}</option>
             {/each}
           </Input>
           <Label class="mt-3">Schema</Label>
           <Input bind:value={selectedSchema} type="select">
-            <option value={""}>{"None"}</option>
+            <option value={null}>{"None"}</option>
             {#await query( { space_name, type: QueryType.search, subpath: "/schema", search: "", retrieve_json_payload: true, limit: 99 } ) then schemas}
               {#each schemas.records.map((e) => e.shortname) as schema}
                 <option value={schema}>{schema}</option>
@@ -737,6 +744,12 @@
             <Button on:click={handleSave}>Save</Button>
           </div>
           <HtmlEditor bind:content={contentContent} on:changed={hasChanged} />
+        {/if}
+        {#if entry.payload.content_type === "text"}
+          <div class="d-flex justify-content-end">
+            <Button on:click={handleSave}>Save</Button>
+          </div>
+          <textarea bind:value={contentContent} />
         {/if}
         {#if entry.payload.content_type === "json"}
           <JSONEditor

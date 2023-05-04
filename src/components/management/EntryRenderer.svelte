@@ -549,10 +549,10 @@
         size="sm"
         class="justify-content-center text-center py-0 px-1"
         active={"edit_meta" == tab_option}
-        title={$_("edit")}
+        title={$_("edit") + " meta"}
         on:click={() => (tab_option = "edit_meta")}
       >
-        <Icon name="pencil" />
+        <Icon name="code-slash" />
       </Button>
       {#if entry.payload}
         <Button
@@ -561,10 +561,10 @@
           size="sm"
           class="justify-content-center text-center py-0 px-1"
           active={"edit_content" == tab_option}
-          title={$_("edit")}
+          title={$_("edit") + " payload"}
           on:click={() => (tab_option = "edit_content")}
         >
-          <Icon name="pencil-square" />
+          <Icon name="pencil" />
         </Button>
       {/if}
       <Button

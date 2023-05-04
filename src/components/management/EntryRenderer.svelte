@@ -39,9 +39,10 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import history_cols from "@/stores/management/list_cols_history.json";
   import refresh_spaces from "@/stores/management/refresh_spaces";
+  import { website } from "@/config";
   // import { search } from "../_stores/triggers";
-  // import HtmlEditor from "./HtmlEditor.svelte";
-  // import MarkdownEditor from "./MarkdownEditor.svelte";
+  import HtmlEditor from "./HtmlEditor.svelte";
+  import MarkdownEditor from "./MarkdownEditor.svelte";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -55,14 +56,19 @@
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry, text: undefined };
   let contentMeta = { json: {}, text: undefined };
-  let contentContent = { json: {}, text: undefined };
+  let contentContent: any = "";
   let oldContent = { json: {}, text: undefined };
   let entryContent;
 
   onMount(async () => {
-    const cpy = { ...entry };
-    contentContent.json = cpy?.payload?.body ?? {};
-    contentContent = { ...contentContent };
+    const cpy = JSON.parse(JSON.stringify(entry));
+    if (entry.payload.content_type === "json") {
+      contentContent.json = cpy?.payload?.body ?? {};
+      contentContent = { ...contentContent };
+    } else {
+      console.log(cpy?.payload?.body);
+      contentContent = cpy?.payload?.body;
+    }
     delete cpy?.payload?.body;
     contentMeta.json = cpy;
     contentMeta = { ...contentMeta };
@@ -99,12 +105,13 @@
 
   // let isSchemaValidated: boolean;
   // function handleChange(updatedContent, previousContent, patchResult) {
-    // const v = patchResult?.contentErrors?.validationErrors;
-    // isSchemaValidated =  (v === undefined || v.length === 0)
+  // const v = patchResult?.contentErrors?.validationErrors;
+  // isSchemaValidated =  (v === undefined || v.length === 0)
   // }
 
   let errorContent = null;
-  async function handleSave() {
+  async function handleSave(e) {
+    e.preventDefault();
     // if (!isSchemaValidated) {
     //   alert("The content does is not validated agains the schema");
     //   return;
@@ -114,13 +121,20 @@
     const x = contentMeta.json
       ? { ...contentMeta.json }
       : JSON.parse(contentMeta.text);
-    const y = contentContent.json
-      ? { ...contentContent.json }
-      : JSON.parse(contentContent.text);
 
-    const data = { ...x };
-    if (data.payload) {
-      data.payload.body = y;
+    let data;
+    if (entry.payload.content_type === "json") {
+      const y = contentContent.json
+        ? { ...contentContent.json }
+        : JSON.parse(contentContent.text);
+
+      data = { ...x };
+      if (data.payload) {
+        data.payload.body = y;
+      }
+    } else {
+      data = { ...x };
+      data.payload.body = contentContent;
     }
 
     if (resource_type === ResourceType.folder) {
@@ -370,17 +384,7 @@
     }
   }
 
-  function hasChanged() {
-    // let _has_changed =
-    //   data && data.attributes && data.attributes.payload && !(content === data.attributes.payload.embedded);
-    // //console.log("Entry", $active_entry);
-    // //console.log("hasChanged called: ", _has_changed, $has_changed);
-    // //console.log("content vs embedded", content, "|", $active_entry.data.attributes.payload.embedded);
-    // if (_has_changed != $has_changed) {
-    //   $has_changed = _has_changed;
-    //   //console.log("Has *actually* changed: ", $has_changed);
-    // }
-  }
+  function hasChanged() {}
 
   $: {
     if (selectedContentType === "json") {
@@ -456,15 +460,13 @@
               <Input type="textarea" bind:value={entryContent} />
             {/if}
             {#if selectedContentType === "html"}
-              <Input type="textarea" bind:value={entryContent} />
-              <!-- <HtmlEditor bind:content={entryContent} on:changed={hasChanged} /> -->
+              <HtmlEditor bind:content={entryContent} on:changed={hasChanged} />
             {/if}
             {#if selectedContentType === "markdown"}
-              <Input type="textarea" bind:value={entryContent} />
-              <!-- <MarkdownEditor
-              bind:content={entryContent}
-              on:changed={hasChanged}
-            /> -->
+              <MarkdownEditor
+                bind:content={entryContent}
+                on:changed={hasChanged}
+              />
             {/if}
           {/if}
           <hr />
@@ -687,12 +689,64 @@
         class="px-1 pb-1 h-100"
         style="text-align: left; direction: ltr; overflow: hidden auto;"
       >
-          <!-- onChange={handleChange} -->
-        <JSONEditor
-          bind:content={contentContent}
-          bind:validator
-          onRenderMenu={handleRenderMenu}
-        />
+        {#if entry.payload.content_type === "image"}
+          <img
+            src={`${website.backend}/managed/payload/content/${space_name}/${subpath}/${entry?.payload?.body}`}
+            alt=""
+            class="mw-100 border"
+          />
+        {/if}
+        {#if entry.payload.content_type === "audio"}
+          <audio
+            controls
+            src={`${website.backend}/managed/payload/content/${space_name}/${subpath}/${entry?.payload?.body}`}
+          >
+            <track kind="captions" />
+          </audio>
+        {/if}
+        {#if entry.payload.content_type === "video"}
+          <video
+            controls
+            src={`${website.backend}/managed/payload/content/${space_name}/${subpath}/${entry?.payload?.body}`}
+          >
+            <track kind="captions" />
+          </video>
+        {/if}
+        {#if entry.payload.content_type === "pdf"}
+          <object
+            title=""
+            class="h-100 w-100 embed-responsive-item"
+            type="application/pdf"
+            style="height: 100vh;"
+            data={`${website.backend}/managed/payload/content/${space_name}/${subpath}/${entry?.payload?.body}`}
+          >
+            <p>For some reason PDF is not rendered here properly.</p>
+          </object>
+        {/if}
+        {#if entry.payload.content_type === "markdown"}
+          <div class="d-flex justify-content-end">
+            <Button on:click={handleSave}>Save</Button>
+          </div>
+          <MarkdownEditor
+            bind:content={contentContent}
+            on:changed={hasChanged}
+          />
+        {/if}
+        {#if entry.payload.content_type === "html"}
+          <div class="d-flex justify-content-end">
+            <Button on:click={handleSave}>Save</Button>
+          </div>
+          <HtmlEditor bind:content={contentContent} on:changed={hasChanged} />
+        {/if}
+        {#if entry.payload.content_type === "json"}
+          <JSONEditor
+            bind:content={contentContent}
+            bind:validator
+            onChange={handleChange}
+            onRenderMenu={handleRenderMenu}
+          />
+        {/if}
+
         {#if errorContent}
           <h3 class="mt-3">Error:</h3>
           <Prism bind:code={errorContent} />

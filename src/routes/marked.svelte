@@ -11,6 +11,6 @@ Here are the steps to set up svelte-marked plugin
 
 </script>
 
-{@html marked(md)}
+{@html marked.parse(md)}
 
 

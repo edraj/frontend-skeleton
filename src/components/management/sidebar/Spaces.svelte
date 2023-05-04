@@ -245,7 +245,7 @@
             <!--h4> Loading {space.shortname} </h4-->
           {:then children_data}
             {#each children_data.records as folder}
-              <Folder {folder} space_name={space.shortname} />
+              <Folder {folder} space_name={space.shortname}/>
             {/each}
           {:catch error}
             <p style="color: red">{error.message}</p>

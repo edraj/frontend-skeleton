@@ -82,7 +82,7 @@
       alert("A user must have a password");
       return;
     }
-    console.log({ data }, data.password.startsWith("$2b$12$"));
+    // console.log({ data }, data.password.startsWith("$2b$12$"));
 
     if (data.password.startsWith("$2b$12$")) {
       delete data.password;

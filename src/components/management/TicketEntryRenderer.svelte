@@ -227,7 +227,7 @@
     ) {
       get_schema();
     }
-    console.log({ entry });
+    // console.log({ entry });
   }
 
   async function handleDelete() {
@@ -289,7 +289,7 @@
       resolution,
       comment
     );
-    console.log({ r: response.status });
+    // console.log({ r: response.status });
 
     if (response.status === "success") {
       showToast(Level.info);

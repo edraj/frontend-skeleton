@@ -1,13 +1,20 @@
+<script context="module" lang="ts">
+import {writable} from "svelte/store";
+const active_path = writable("notassigned");
+</script>
+
 <script lang="ts">
   import Icon from "../Icon.svelte";
   import { _ } from "@/i18n";
   import { goto } from "@roxi/routify";
   import { ApiResponseRecord, get_children, ResourceType } from "@/dmart";
-
-  let expanded = false;
+  // import active_path from "@/stores/management/active_path";
 
   export let space_name: string;
   export let folder: ApiResponseRecord;
+  let expanded = false;
+  let fullpath = `${space_name}/${(folder.subpath=="/")?"":folder.subpath+"/"}${folder.shortname}`;
+
 
   let children = [];
 
@@ -20,8 +27,24 @@
     }
   }
 
+  $: {
+    // Let's collapse if we are already expanded but we are not on the active path any more
+    if(expanded && ! $active_path.startsWith(fullpath)) {
+      expanded = false;
+    }
+  }
+
   async function toggle() {
-    expanded = !expanded;
+    // expanded = !expanded;
+    if (!expanded) {
+      $active_path = fullpath;
+      expanded = true;
+    } else {
+      expanded = false;
+      if(folder.subpath != "/") {
+        $active_path = `${space_name}/${folder.subpath}`;
+      } 
+    }
     if (expanded) {
       const data = await get_children(
         space_name,
@@ -76,15 +99,15 @@
 </span>
 
 {#if expanded}
-  <ul class="py-1 ps-1 ms-2 border-start">
-    {#if children.length > 0}
-      {#each children as child}
-        <li>
-          <svelte:self folder={child} {space_name} />
-        </li>
-      {/each}
-    {/if}
-  </ul>
+    <ul class="py-1 ps-1 ms-2 border-start">
+      {#if children.length > 0}
+        {#each children as child}
+          <li>
+            <svelte:self folder={child} {space_name} />
+          </li>
+        {/each}
+      {/if}
+    </ul>
 {/if}
 
 <style>

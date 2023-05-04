@@ -104,10 +104,10 @@
   );
 
   // let isSchemaValidated: boolean;
-  function handleChange(updatedContent, previousContent, patchResult) {
-    // const v = patchResult?.contentErrors?.validationErrors;
-    // isSchemaValidated =  (v === undefined || v.length === 0)
-  }
+  // function handleChange(updatedContent, previousContent, patchResult) {
+  // const v = patchResult?.contentErrors?.validationErrors;
+  // isSchemaValidated =  (v === undefined || v.length === 0)
+  // }
 
   let errorContent = null;
   async function handleSave(e) {

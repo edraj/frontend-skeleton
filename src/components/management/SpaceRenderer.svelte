@@ -65,7 +65,7 @@
     const data = content.json ? { ...content.json } : JSON.parse(content.text);
     const response = await space({
       space_name: current_space.shortname,
-      request_type: RequestType.replace,
+      request_type: RequestType.update,
       records: [
         {
           resource_type: ResourceType.space,

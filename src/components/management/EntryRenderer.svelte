@@ -742,7 +742,6 @@
           <JSONEditor
             bind:content={contentContent}
             bind:validator
-            onChange={handleChange}
             onRenderMenu={handleRenderMenu}
           />
         {/if}

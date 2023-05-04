@@ -203,7 +203,7 @@
             shortname: contentShortname === "" ? "auto" : contentShortname,
             subpath,
             attributes: {
-              is_active: true
+              is_active: true,
             },
           },
         ],
@@ -376,8 +376,10 @@
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
-      <small>
-      <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span>/<strong>{entry.shortname}</strong>
+        <small>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >/<strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
         ></span
       >
@@ -539,7 +541,7 @@
               placeholder="Status..."
               bind:value={ticket_status}
             >
-              <option>Select Resolution</option>
+              <option value={null}>Select next state</option>
               {#each payload.states
                 .filter((e) => e.name === entry.state)[0]
                 ?.next.map((e) => e.action) as state}
@@ -558,7 +560,7 @@
               placeholder="Resolution..."
               bind:value={resolution}
             >
-              <option>Select next state</option>
+              <option value={null}>Select resolution</option>
               {#each payload.states.filter((e) => e.name === entry.state)[0]?.resolutions ?? [] as resolution}
                 <option value={resolution}>{resolution}</option>
               {/each}

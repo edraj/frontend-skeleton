@@ -266,7 +266,7 @@
           body = entryContent;
         }
 
-        const request_body = {
+        const request_body: any = {
           space_name,
           request_type: RequestType.create,
           records: [
@@ -276,17 +276,17 @@
               subpath,
               attributes: {
                 is_active: true,
-                payload: {
-                  content_type: selectedContentType
-                    ? selectedContentType
-                    : "json",
-                  schema_shortname: selectedSchema ? selectedSchema : "",
-                  body: selectedContentType === null ? null : body,
-                },
               },
             },
           ],
         };
+        if (selectedContentType !== null) {
+          request_body.records[0].attributes.payload = {
+            content_type: selectedContentType ? selectedContentType : "json",
+            schema_shortname: selectedSchema ? selectedSchema : "",
+            body,
+          };
+        }
         response = await request(request_body);
       } else if (
         ["image", "python", "pdf", "audio", "video"].includes(

@@ -11,14 +11,17 @@
   } from "sveltestrap";
   import "bootstrap";
   import {
-    query,
-    QueryRequest,
-    QueryType,
+    // query,
+    // QueryRequest,
+    // QueryType,
+
     ResourceType,
     retrieve_entry,
   } from "@/dmart";
 
-  let modalData = {};
+  type ModalData = {subpath: string, shortname: string, resource_type: ResourceType, uuid: string, issues: [], exception: string};
+  let modalData : ModalData;
+
   function handleEdit() {
     $goto(
       "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]",
@@ -30,7 +33,7 @@
       }
     );
   }
-  function handleErrorEntryClick(err_entry, extra) {
+  function handleErrorEntryClick(err_entry : ModalData, extra : any) {
     modalData = { ...err_entry, ...extra };
     open = true;
   }
@@ -62,29 +65,29 @@
     {/if} -->
   <ListGroup>
     <ListGroupItem active>
-      {`Invalid folders (${response.payload.body.health.invalid_folders.length} invalid entires)`}
+      {`Invalid folders (${response.payload.body["invalid_folders"].length} invalid entires)`}
     </ListGroupItem>
-    {#if response.payload.body.health.invalid_folders.length}
-      {#each response.payload.body.health.invalid_folders as entry}
+    {#if response.payload.body["invalid_folders"].length}
+      {#each response.payload.body["invalid_folders"] as entry}
         <ListGroupItem>{entry}</ListGroupItem>
       {/each}
     {/if}
     <ListGroupItem active>
       {`Folders report`}
     </ListGroupItem>
-    {#each Object.keys(response.payload.body.health.folders_report) as key_entry}
+    {#each Object.keys(response.payload.body["folders_report"]) as key_entry}
       <ListGroupItem color={"secondary"}>{key_entry}</ListGroupItem>
-      <!-- {#each response.payload.body.health.folders_report[key_entry] as entry} -->
-      {#if response.payload.body.health.folders_report[key_entry].valid_entries}
+      <!-- {#each response.payload.body.folders_report[key_entry] as entry} -->
+      {#if response.payload.body["folders_report"][key_entry].valid_entries}
         <ListGroupItem color={"success"}
-          >{`Valid entries ${response.payload.body.health.folders_report[key_entry].valid_entries}`}</ListGroupItem
+          >{`Valid entries ${response.payload.body["folders_report"][key_entry].valid_entries}`}</ListGroupItem
         >
       {/if}
-      {#if response.payload.body.health.folders_report[key_entry].invalid_entries}
+      {#if response.payload.body["folders_report"][key_entry].invalid_entries}
         <ListGroupItem color={"danger"}
-          >{`Invalid entries ${response.payload.body.health.folders_report[key_entry].invalid_entries.length}`}</ListGroupItem
+          >{`Invalid entries ${response.payload.body["folders_report"][key_entry].invalid_entries.length}`}</ListGroupItem
         >
-        {#each response.payload.body.health.folders_report[key_entry].invalid_entries as err_entry}
+        {#each response.payload.body["folders_report"][key_entry].invalid_entries as err_entry}
           <ListGroupItem
             on:click={() => {
               handleErrorEntryClick(err_entry, { subpath: key_entry });
@@ -95,16 +98,16 @@
       <!-- {/each} -->
     {/each}
     <ListGroupItem active>
-      {`Invalid meta folders (${response.payload.body.health.invalid_meta_folders.length} invalid entires)`}
+      {`Invalid meta folders (${response.payload.body["invalid_meta_folders"].length} invalid entires)`}
     </ListGroupItem>
-    {#if response.payload.body.health.invalid_meta_folders.length}
-      {#each response.payload.body.health.invalid_meta_folders as entry}
+    {#if response.payload.body["invalid_meta_folders"].length}
+      {#each response.payload.body["invalid_meta_folders"] as entry}
         <ListGroupItem>{entry}</ListGroupItem>
       {/each}
     {/if}
   </ListGroup>
 
-  <!-- {#each Object.keys(response.payload.body.health) as subpath}
+  <!-- {#each Object.keys(response.payload.body) as subpath}
       <ListGroup>
         <ListGroupItem active>
           {subpath} ({response.attributes.folders_report[subpath]

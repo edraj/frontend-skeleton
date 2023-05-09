@@ -19,13 +19,21 @@
     retrieve_entry,
   } from "@/dmart";
 
-  type ModalData = {subpath: string, shortname: string, resource_type: ResourceType, uuid: string, issues: [], exception: string};
-  let modalData : ModalData;
+  type ModalData = {
+    subpath: string;
+    shortname: string;
+    resource_type: ResourceType;
+    uuid: string;
+    issues: [];
+    exception: string;
+  };
+  let modalData: ModalData;
 
   function handleEdit() {
     $goto(
-      "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]",
+      `/management/content/[space_name]/[subpath]/[shortname]/[resource_type]`,
       {
+        validate_schema: "false",
         space_name: $params.space_name,
         subpath: modalData.subpath,
         shortname: modalData.shortname,
@@ -33,7 +41,7 @@
       }
     );
   }
-  function handleErrorEntryClick(err_entry : ModalData, extra : any) {
+  function handleErrorEntryClick(err_entry: ModalData, extra: any) {
     modalData = { ...err_entry, ...extra };
     open = true;
   }
@@ -55,79 +63,59 @@
 </Modal>
 
 <div class="mx-2 mt-3 mb-3" />
-{#await retrieve_entry(ResourceType.content, "management", "health_check/", $params.space_name, true, true)}
-  <p>Fetching...</p>
-{:then response}
-  <!-- {#if Object.keys(response.attributes.folders_report).length === 0}
-      <ListGroupItem color="dark" class="mx-2 px-3 py-3 text-center"
-        >Nothing to display</ListGroupItem
-      >
-    {/if} -->
-  <ListGroup>
-    <ListGroupItem active>
-      {`Invalid folders (${response.payload.body["invalid_folders"].length} invalid entires)`}
-    </ListGroupItem>
-    {#if response.payload.body["invalid_folders"].length}
-      {#each response.payload.body["invalid_folders"] as entry}
-        <ListGroupItem>{entry}</ListGroupItem>
-      {/each}
-    {/if}
-    <ListGroupItem active>
-      {`Folders report`}
-    </ListGroupItem>
-    {#each Object.keys(response.payload.body["folders_report"]) as key_entry}
-      <ListGroupItem color={"secondary"}>{key_entry}</ListGroupItem>
-      <!-- {#each response.payload.body.folders_report[key_entry] as entry} -->
-      {#if response.payload.body["folders_report"][key_entry].valid_entries}
-        <ListGroupItem color={"success"}
-          >{`Valid entries ${response.payload.body["folders_report"][key_entry].valid_entries}`}</ListGroupItem
-        >
-      {/if}
-      {#if response.payload.body["folders_report"][key_entry].invalid_entries}
-        <ListGroupItem color={"danger"}
-          >{`Invalid entries ${response.payload.body["folders_report"][key_entry].invalid_entries.length}`}</ListGroupItem
-        >
-        {#each response.payload.body["folders_report"][key_entry].invalid_entries as err_entry}
-          <ListGroupItem
-            on:click={() => {
-              handleErrorEntryClick(err_entry, { subpath: key_entry });
-            }}>{err_entry.shortname}</ListGroupItem
-          >
-        {/each}
-      {/if}
-      <!-- {/each} -->
-    {/each}
-    <ListGroupItem active>
-      {`Invalid meta folders (${response.payload.body["invalid_meta_folders"].length} invalid entires)`}
-    </ListGroupItem>
-    {#if response.payload.body["invalid_meta_folders"].length}
-      {#each response.payload.body["invalid_meta_folders"] as entry}
-        <ListGroupItem>{entry}</ListGroupItem>
-      {/each}
-    {/if}
-  </ListGroup>
-
-  <!-- {#each Object.keys(response.payload.body) as subpath}
-      <ListGroup>
+{#if $params.shortname}
+  {#await retrieve_entry(ResourceType.content, "management", "health_check/", $params.shortname, true, true)}
+    <p>Fetching...</p>
+  {:then response}
+    <ListGroup>
+      {#if response.payload.body["invalid_folders"]}
         <ListGroupItem active>
-          {subpath} ({response.attributes.folders_report[subpath]
-            ?.valid_entries ??
-            response.attributes.folders_report[
-              subpath
-            ].invalid_entries.length.toString() + " corrupted"} entry)</ListGroupItem
-        >
-        {#if response.attributes.folders_report[subpath].invalid_entries}
-          {#each response.attributes.folders_report[subpath].invalid_entries as entry}
-            <ListGroupItem
-              href={`/management/dashboard/${
-                $params.space_name
-              }/${subpath.replaceAll("/", "-")}/${entry}`}
-              action>{entry}</ListGroupItem
-            >
+          {`Invalid folders (${response.payload.body["invalid_folders"].length} invalid entires)`}
+        </ListGroupItem>
+        {#if response.payload.body["invalid_folders"].length}
+          {#each response.payload.body["invalid_folders"] as entry}
+            <ListGroupItem>{entry}</ListGroupItem>
           {/each}
         {/if}
-      </ListGroup>
-    {/each} -->
-{:catch error}
-  <p style="color: red">{error.message}</p>
-{/await}
+      {/if}
+
+      <ListGroupItem active>
+        {`Folders report`}
+      </ListGroupItem>
+      {#if response.payload.body["folders_report"]}
+        {#each Object.keys(response.payload.body["folders_report"]) as key_entry}
+          <ListGroupItem color={"secondary"}>{key_entry}</ListGroupItem>
+          {#if response.payload.body["folders_report"][key_entry].valid_entries}
+            <ListGroupItem color={"success"}
+              >{`Valid entries ${response.payload.body["folders_report"][key_entry].valid_entries}`}</ListGroupItem
+            >
+          {/if}
+          {#if response.payload.body["folders_report"][key_entry].invalid_entries}
+            <ListGroupItem color={"danger"}
+              >{`Invalid entries ${response.payload.body["folders_report"][key_entry].invalid_entries.length}`}</ListGroupItem
+            >
+            {#each response.payload.body["folders_report"][key_entry].invalid_entries as err_entry}
+              <ListGroupItem
+                on:click={() => {
+                  handleErrorEntryClick(err_entry, { subpath: key_entry });
+                }}>{err_entry.shortname}</ListGroupItem
+              >
+            {/each}
+          {/if}
+        {/each}
+      {/if}
+      {#if response.payload.body["invalid_meta_folders"]}
+        <ListGroupItem active>
+          {`Invalid meta folders (${response.payload.body["invalid_meta_folders"].length} invalid entires)`}
+        </ListGroupItem>
+        {#if response.payload.body["invalid_meta_folders"].length}
+          {#each response.payload.body["invalid_meta_folders"] as entry}
+            <ListGroupItem>{entry}</ListGroupItem>
+          {/each}
+        {/if}
+      {/if}
+    </ListGroup>
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
+{/if}

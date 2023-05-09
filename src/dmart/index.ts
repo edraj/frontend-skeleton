@@ -348,12 +348,13 @@ export async function retrieve_entry(
   subpath: string,
   shortname: string,
   retrieve_json_payload: boolean = false,
-  retrieve_attachments: boolean = false
+  retrieve_attachments: boolean = false,
+  validate_schema: boolean = true
 ): Promise<ResponseEntry> {
   if (!subpath || subpath == "/") subpath = "__root__";
   const { data } = await axios.get<ResponseEntry>(
     website.backend +
-      `/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}`.replace(
+      `/managed/entry/${resource_type}/${space_name}/${subpath}/${shortname}?retrieve_json_payload=${retrieve_json_payload}&retrieve_attachments=${retrieve_attachments}&validate_schema=${validate_schema}`.replace(
         /\/+/g,
         "/"
       ),

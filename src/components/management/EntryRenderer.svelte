@@ -56,13 +56,16 @@
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry, text: undefined };
   let contentMeta = { json: {}, text: undefined };
-  let contentContent: any = "";
+  let contentContent: any = null;
   let oldContent = { json: {}, text: undefined };
   let entryContent;
 
   onMount(async () => {
     const cpy = JSON.parse(JSON.stringify(entry));
     if (entry?.payload?.content_type === "json") {
+      if (contentContent === null) {
+        contentContent = { json: {}, text: undefined };
+      }
       contentContent.json = cpy?.payload?.body ?? {};
       contentContent = { ...contentContent };
     } else {
@@ -282,8 +285,9 @@
             },
           ],
         };
-        if(new_resource_type === "ticket"){
-          request_body.records[0].attributes.workflow_shortname = workflowShortname;
+        if (new_resource_type === "ticket") {
+          request_body.records[0].attributes.workflow_shortname =
+            workflowShortname;
         }
         if (selectedContentType !== null) {
           request_body.records[0].attributes.payload = {
@@ -761,7 +765,7 @@
           </div>
           <textarea bind:value={contentContent} />
         {/if}
-        {#if entry.payload.content_type === "json"}
+        {#if entry.payload.content_type === "json" && typeof contentContent === "object" && contentContent !== null}
           <JSONEditor
             bind:content={contentContent}
             bind:validator

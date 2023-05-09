@@ -135,6 +135,7 @@
         const shortname = record.shortname;
         const schema_shortname = record.attributes?.payload?.schema_shortname;
         let tmp_subpath = record.subpath.replaceAll("/", "-");
+
         if (record.resource_type === "folder") {
           let _subpath = `${record.subpath}/${record.shortname}`.replace(
             /\/+/g,
@@ -149,7 +150,7 @@
 
           $goto("/management/content/[space_name]/[subpath]", {
             space_name: space_name,
-            subpath: _subpath,
+            subpath: _subpath.replaceAll("/", "-"),
           });
           return;
         }

@@ -73,11 +73,6 @@
       },
       {
         "type": "link",
-        "name": "qatool",
-        "icon": "receipt-cutoff"
-      },
-      {
-        "type": "link",
         "name": "logs",
         "icon": "receipt-cutoff"
       },

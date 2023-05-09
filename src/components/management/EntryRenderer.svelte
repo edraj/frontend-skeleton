@@ -62,7 +62,7 @@
 
   onMount(async () => {
     const cpy = JSON.parse(JSON.stringify(entry));
-    if (entry.payload.content_type === "json") {
+    if (entry?.payload?.content_type === "json") {
       contentContent.json = cpy?.payload?.body ?? {};
       contentContent = { ...contentContent };
     } else {
@@ -244,6 +244,7 @@
   let modalFlag = "create";
   let entryType = "folder";
   let contentShortname = "";
+  let workflowShortname = "";
   let selectedSchema = "";
   let selectedContentType = ContentType.json;
   let new_resource_type: ResourceType = ResourceType.content;
@@ -275,11 +276,15 @@
               shortname: contentShortname === "" ? "auto" : contentShortname,
               subpath,
               attributes: {
+                workflow_shortname: workflowShortname,
                 is_active: true,
               },
             },
           ],
         };
+        if(new_resource_type === "ticket"){
+          request_body.records[0].attributes.workflow_shortname = workflowShortname;
+        }
         if (selectedContentType !== null) {
           request_body.records[0].attributes.payload = {
             content_type: selectedContentType ? selectedContentType : "json",
@@ -327,6 +332,7 @@
       showToast(Level.warn);
     }
   }
+
   $: {
     if (schema === null && entry?.payload?.schema_shortname) {
       get_schema();
@@ -443,6 +449,10 @@
               {/each}
             {/await}
           </Input>
+          {#if new_resource_type === "ticket"}
+            <Label class="mt-3">Workflow Shortname</Label>
+            <Input placeholder="Shortname..." bind:value={workflowShortname} />
+          {/if}
         {/if}
         {#if entryType === "content" && modalFlag === "create"}
           <Label class="mt-3">Shortname</Label>

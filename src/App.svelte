@@ -26,16 +26,13 @@
   $: {
     try {
       document.dir = $dir;
-		const rtl = (<HTMLLinkElement>document.querySelector('link#rtl'));
-		const ltr = (<HTMLLinkElement>document.querySelector('link#ltr'));
       if ($dir == "rtl") {
-			// activate id "rtl", and deactivate ltr
-			rtl.disabled = false;
-			ltr.disabled = true;
-   
+        document.head.children["bootstrap"].href =
+          "/assets/bootstrap.rtl.min.css";
       } else {
-			rtl.disabled = true;
-			ltr.disabled = false;
+        if (document && document.head && document.head.children["bootstrap"])
+          document.head.children["bootstrap"].href =
+            "/assets/bootstrap.min.css";
       }
     } catch (error) {
       console.log("Error in App:", error);

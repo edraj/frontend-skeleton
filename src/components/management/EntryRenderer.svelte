@@ -67,8 +67,8 @@
       contentContent.json = cpy?.payload?.body ?? {};
       contentContent = { ...contentContent };
     } else {
-      console.log(cpy?.payload);
-      console.log(cpy?.payload?.body);
+      // console.log(cpy?.payload);
+      // console.log(cpy?.payload?.body);
       contentContent = cpy?.payload?.body;
     }
     delete cpy?.payload?.body;

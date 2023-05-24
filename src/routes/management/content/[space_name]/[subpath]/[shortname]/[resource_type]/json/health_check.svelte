@@ -64,6 +64,7 @@
 
 <div class="mx-2 mt-3 mb-3" />
 {#if $params.shortname}
+{#key $params.shortname}
   {#await retrieve_entry(ResourceType.content, "management", "health_check/", $params.shortname, true, true)}
     <p>Fetching...</p>
   {:then response}
@@ -118,4 +119,5 @@
   {:catch error}
     <p style="color: red">{error.message}</p>
   {/await}
+  {/key}
 {/if}

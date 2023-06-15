@@ -2,6 +2,8 @@
   import { params } from "@roxi/routify";
   import { retrieve_entry, ResourceType } from "@/dmart";
   import TicketEntryRenderer from "@/components/management/TicketEntryRenderer.svelte";
+
+  let refresh = {};
 </script>
 
 {#if $params.space_name && $params.subpath && $params.shortname}
@@ -9,6 +11,7 @@
     <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
   {:then entry}
     <TicketEntryRenderer
+      bind:refresh
       {entry}
       resource_type={ResourceType.ticket}
       space_name={$params.space_name}

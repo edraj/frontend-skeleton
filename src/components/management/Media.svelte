@@ -3,7 +3,7 @@
 
   export let attributes: any = {};
   export let resource_type: string;
-  let content_type: string = attributes?.payload?.content_type;
+  let content_type: string = attributes?.payload?.content_type || "";
   let body: any = attributes?.payload?.body;
 
   export let url: string;

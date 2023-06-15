@@ -6,12 +6,10 @@
     RequestType,
     ResourceType,
     ResponseEntry,
-    ActionResponse,
     Status,
     query,
     request,
     retrieve_entry,
-    get_payload,
     ContentType,
     upload_with_payload,
   } from "@/dmart";
@@ -58,7 +56,7 @@
   let contentMeta = { json: {}, text: undefined };
   let contentContent: any = null;
   let oldContent = { json: {}, text: undefined };
-  let entryContent;
+  let entryContent : any;
 
   onMount(async () => {
     const cpy = JSON.parse(JSON.stringify(entry));
@@ -69,7 +67,8 @@
       contentContent.json = cpy?.payload?.body ?? {};
       contentContent = { ...contentContent };
     } else {
-      console.log(cpy?.payload?.body);
+      // console.log(cpy?.payload);
+      // console.log(cpy?.payload?.body);
       contentContent = cpy?.payload?.body;
     }
     delete cpy?.payload?.body;
@@ -106,14 +105,14 @@
     }</strong></small>`
   );
 
-  let isSchemaValidated: boolean;
-  function handleChange(updatedContent, previousContent, patchResult) {
-    const v = patchResult?.contentErrors?.validationErrors;
-    isSchemaValidated = v === undefined || v.length === 0;
-  }
+  // let isSchemaValidated: boolean;
+  // function handleChange(updatedContent, previousContent, patchResult) {
+  //  const v = patchResult?.contentErrors?.validationErrors;
+    // isSchemaValidated = v === undefined || v.length === 0;
+  //}
 
   let errorContent = null;
-  async function handleSave(e) {
+  async function handleSave(e : Event) {
     e.preventDefault();
     // if (!isSchemaValidated) {
     //   alert("The content does is not validated agains the schema");
@@ -125,7 +124,7 @@
       ? { ...contentMeta.json }
       : JSON.parse(contentMeta.text);
 
-    let data;
+    let data : any;
     if (entry.payload.content_type === "json") {
       const y = contentContent.json
         ? { ...contentContent.json }
@@ -170,7 +169,7 @@
     }
   }
 
-  function handleRenderMenu(items, context) {
+  function handleRenderMenu(items: any, _context: any) {
     const separator = {
       separator: true,
     };
@@ -350,7 +349,7 @@
       return;
     }
 
-    let targetSubpath;
+    let targetSubpath : string;
     if (resource_type === ResourceType.folder) {
       const arr = subpath.split("/");
       arr[arr.length - 1] = "";
@@ -530,14 +529,12 @@
 <div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace"
-        ><small>
-          <span class="text-success">{space_name}</span>/<span
-            class="text-primary">{subpath}</span
-          >/<strong>{entry.shortname}</strong>
-          ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})</small
-        ></span
-      >
+      <span class="font-monospace">
+      <small>
+          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span> : <strong>{entry.shortname}</strong>
+          ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
+          </small>
+      </span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>

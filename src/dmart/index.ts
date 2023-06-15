@@ -176,6 +176,7 @@ export enum ResourceType {
   role = "role",
   ticket = "ticket",
   json = "json",
+  post = "post",
   plugin_wrapper = "plugin_wrapper",
   notification = "notification",
 }

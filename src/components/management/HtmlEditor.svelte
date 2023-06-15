@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import Editor from "cl-editor/dist";
+  import Editor from "cl-editor";
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();

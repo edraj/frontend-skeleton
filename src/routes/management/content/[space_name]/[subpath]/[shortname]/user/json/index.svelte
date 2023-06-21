@@ -1,19 +1,16 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
   import { retrieve_entry, ResourceType } from "@/dmart";
-  import TicketEntryRenderer from "@/components/management/TicketEntryRenderer.svelte";
-
-  let refresh = {};
+  import UserEntryRenderer from "@/components/management/UserEntryRenderer.svelte";
 </script>
 
 {#if $params.space_name && $params.subpath && $params.shortname}
-  {#await retrieve_entry(ResourceType.ticket, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true)}
+  {#await retrieve_entry(ResourceType.user, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true)}
     <h6>Loading ... @{$params.space_name}/{$params.subpath}</h6>
   {:then entry}
-    <TicketEntryRenderer
-      bind:refresh
+    <UserEntryRenderer
       {entry}
-      resource_type={ResourceType.ticket}
+      resource_type={ResourceType.user}
       space_name={$params.space_name}
       subpath={$params.subpath?.replaceAll("-", "/")}
       schema_name={$params.schema_name}

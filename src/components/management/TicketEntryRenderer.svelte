@@ -1,6 +1,6 @@
 <script lang="ts">
   import Attachments from "./Attachments.svelte";
-  import { onDestroy } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import {
     QueryType,
     RequestType,
@@ -44,11 +44,28 @@
   export let subpath: string;
   export let resource_type: ResourceType;
   export let schema_name: string | undefined = null;
+  export let refresh;
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
-  let content = { json: entry || {}, text: undefined };
-  let oldContent = { json: entry || {}, text: undefined };
-  let entryContent = { json: {} || {}, text: undefined };
+  let content = { json: entry, text: undefined };
+  let contentMeta = { json: {}, text: undefined };
+  let contentContent = { json: {}, text: undefined };
+  let oldContent = { json: entry, text: undefined };
+  let entryContent;
+
+  onMount(async () => {
+    const cpy = JSON.parse(JSON.stringify(entry));
+
+    if (contentContent === null) {
+      contentContent = { json: {}, text: undefined };
+    }
+    contentContent.json = cpy?.payload?.body ?? {};
+    contentContent = { ...contentContent };
+
+    delete cpy?.payload?.body;
+    contentMeta.json = cpy;
+    contentMeta = { ...contentMeta };
+  });
 
   onDestroy(() => status_line.set(""));
   status_line.set(
@@ -70,13 +87,27 @@
   }
 
   let errorContent = null;
-  async function handleSave() {
+  async function handleSave(e) {
+    e.preventDefault();
     // if (!isSchemaValidated) {
     //   alert("The content does is not validated agains the schema");
     //   return;
     // }
     errorContent = null;
-    const data = content.json ? { ...content.json } : JSON.parse(content.text);
+
+    const x = contentMeta.json
+      ? { ...contentMeta.json }
+      : JSON.parse(contentMeta.text);
+
+    let data;
+
+    const y = contentContent.json
+      ? { ...contentContent.json }
+      : JSON.parse(contentContent.text);
+
+    data = { ...x };
+    data.payload.body = y;
+
     const response = await request({
       space_name: space_name,
       request_type: RequestType.replace,
@@ -266,6 +297,8 @@
       ? { ...oldContent.json }
       : JSON.parse(oldContent.text);
 
+    console.log({ x }, { y });
+
     if (JSON.stringify(x) !== JSON.stringify(y)) {
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
@@ -276,8 +309,8 @@
     }
   }
 
-  let ticket_status;
-  let resolution;
+  let ticket_status = null;
+  let resolution = null;
   let comment;
   async function handleTicketSubmit(e) {
     e.preventDefault();
@@ -293,7 +326,7 @@
 
     if (response.status === "success") {
       showToast(Level.info);
-      location.reload();
+      refresh = {};
     } else {
       showToast(Level.warn, response.error.message);
     }
@@ -377,9 +410,13 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
         <small>
-          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span> : <strong>{entry.shortname}</strong>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >
+          : <strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
-          </small ></span>
+        </small></span
+      >
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>
@@ -413,9 +450,20 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active={"edit" == tab_option}
-        title={$_("edit")}
-        on:click={() => (tab_option = "edit")}
+        active={"edit_meta" == tab_option}
+        title={$_("edit") + " meta"}
+        on:click={() => (tab_option = "edit_meta")}
+      >
+        <Icon name="code-slash" />
+      </Button>
+      <Button
+        outline
+        color="success"
+        size="sm"
+        class="justify-content-center text-center py-0 px-1"
+        active={"edit_content" == tab_option}
+        title={$_("edit") + " payload"}
+        on:click={() => (tab_option = "edit_content")}
       >
         <Icon name="pencil" />
       </Button>
@@ -521,7 +569,7 @@
       <Prism code={entry} />
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active={tab_option === "edit"}>
+  <div class="h-100 tab-pane" class:active={tab_option === "edit_meta"}>
     <div
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
@@ -578,17 +626,23 @@
         <Button type="submit">Save</Button>
       </Form>
 
-      <JSONEditor
-        bind:content
-        bind:validator
-        onChange={handleChange}
-        onRenderMenu={handleRenderMenu}
-      />
+      <JSONEditor bind:content={contentMeta} onRenderMenu={handleRenderMenu} />
       {#if errorContent}
         <h3 class="mt-3">Error:</h3>
         <Prism bind:code={errorContent} />
       {/if}
     </div>
+  </div>
+  <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
+    <JSONEditor
+      bind:content={contentContent}
+      bind:validator
+      onRenderMenu={handleRenderMenu}
+    />
+    {#if errorContent}
+      <h3 class="mt-3">Error:</h3>
+      <Prism bind:code={errorContent} />
+    {/if}
   </div>
   <div class="h-100 tab-pane" class:active={tab_option === "history"}>
     {#key tab_option}

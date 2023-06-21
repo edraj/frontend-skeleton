@@ -1,6 +1,6 @@
 <script lang="ts">
   import Attachments from "./Attachments.svelte";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import {
     ActionResponse,
     QueryType,
@@ -35,9 +35,10 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import history_cols from "@/stores/management/list_cols_history.json";
   import "bootstrap";
+  import { isDeepEqual } from "@/utils/compare";
+  import metaUserSchema from "@/validations/meta.user.json";
 
   let header_height: number;
-  let validator: Validator = createAjvValidator({ schema: {} });
   export let entry: ResponseEntry;
 
   export let space_name: string;
@@ -47,8 +48,15 @@
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry || {}, text: undefined };
-  let oldContent = { json: entry || {}, text: undefined };
   let entryContent = { json: {} || {}, text: undefined };
+
+  let contentMeta = { json: {}, text: undefined };
+  let validatorMeta: Validator = createAjvValidator({ schema: metaUserSchema });
+  let oldContentMeta = { json: entry || {}, text: undefined };
+
+  let contentContent = { json: {}, text: undefined };
+  let oldContentContent = { json: {}, text: undefined };
+  let validatorContent: Validator = createAjvValidator({ schema: {} });
 
   onDestroy(() => status_line.set(""));
   status_line.set(
@@ -58,6 +66,22 @@
       Object.keys(entry.attachments).length
     }</strong></small>`
   );
+
+  onMount(async () => {
+    const cpy = JSON.parse(JSON.stringify(entry));
+
+    if (contentContent === null) {
+      contentContent = { json: {}, text: undefined };
+    }
+    contentContent.json = cpy?.payload?.body ?? {};
+    contentContent = { ...contentContent };
+
+    delete cpy?.payload?.body;
+    delete cpy?.attachments;
+    contentMeta.json = cpy;
+    contentMeta = { ...contentMeta };
+    oldContentMeta = { ...contentMeta };
+  });
 
   let isSchemaValidated: boolean;
   function handleChange(updatedContent, previousContent, patchResult) {
@@ -101,7 +125,8 @@
     });
     if (response.status == Status.success) {
       showToast(Level.info);
-      oldContent = { ...content };
+      oldContentMeta = { ...contentMeta };
+      oldContentContent = { ...contentContent };
     } else {
       errorContent = response;
       showToast(Level.warn);
@@ -151,7 +176,7 @@
       if (schema_data.status == "success" && schema_data.records.length > 0) {
         schema = schema_data.records[0].attributes["payload"].body;
         cleanUpSchema(schema.properties);
-        validator = createAjvValidator({ schema });
+        validatorContent = createAjvValidator({ schema });
       } else {
         console.log("Schema loading failed for ", {
           query_schema,
@@ -224,6 +249,7 @@
       showToast(Level.warn);
     }
   }
+
   $: {
     if (
       schema === null &&
@@ -263,15 +289,19 @@
     }
   }
 
+  onDestroy(() => {
+    console.log("=======================");
+    history.replaceState;
+    return false;
+  });
+
   function beforeUnload(event) {
     event.preventDefault();
 
-    const x = content.json ? { ...content.json } : JSON.parse(content.text);
-    const y = oldContent.json
-      ? { ...oldContent.json }
-      : JSON.parse(oldContent.text);
-
-    if (JSON.stringify(x) !== JSON.stringify(y)) {
+    if (
+      !isDeepEqual(contentMeta, oldContentMeta) &&
+      !isDeepEqual(contentContent, oldContentContent)
+    ) {
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
@@ -279,6 +309,7 @@
         return false;
       }
     }
+    return true;
   }
   // const user = {
   //   email: user_entry.email,
@@ -402,10 +433,13 @@
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
-      <small>
-          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span> : <strong>{entry.shortname}</strong>
+        <small>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >
+          : <strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
-      </small>
+        </small>
       </span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
@@ -440,12 +474,25 @@
         color="success"
         size="sm"
         class="justify-content-center text-center py-0 px-1"
-        active={"edit" == tab_option}
-        title={$_("edit")}
-        on:click={() => (tab_option = "edit")}
+        active={"edit_meta" == tab_option}
+        title={$_("edit") + " meta"}
+        on:click={() => (tab_option = "edit_meta")}
       >
-        <Icon name="pencil" />
+        <Icon name="code-slash" />
       </Button>
+      {#if entry.payload}
+        <Button
+          outline
+          color="success"
+          size="sm"
+          class="justify-content-center text-center py-0 px-1"
+          active={"edit_content" == tab_option}
+          title={$_("edit") + " payload"}
+          on:click={() => (tab_option = "edit_content")}
+        >
+          <Icon name="pencil" />
+        </Button>
+      {/if}
       <Button
         outline
         color="success"
@@ -548,75 +595,15 @@
       <Prism code={entry} />
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active={tab_option === "edit"}>
+  <div class="h-100 tab-pane" class:active={tab_option === "edit_meta"}>
     <div
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <!-- <Form class="px-5" on:submit={handleUserSubmit}> -->
-      <!--   <FormGroup> -->
-      <!--     <Label>Email</Label> -->
-      <!--     <!-- on:change={handleInputChange} -->
-      <!--     <Input -->
-      <!--       bind:value={user.email} -->
-      <!--       class="w-25" -->
-      <!--       type="email" -->
-      <!--       name="email" -->
-      <!--       placeholder="Email..." -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Label>MSISDN</Label> -->
-      <!--     <Input -->
-      <!--       bind:value={user.msisdn} -->
-      <!--       class="w-25" -->
-      <!--       type="text" -->
-      <!--       name="msisdn" -->
-      <!--       placeholder="Email..." -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Label>Password</Label> -->
-      <!--     <Input -->
-      <!--       bind:value={user.password} -->
-      <!--       class="w-25" -->
-      <!--       type="password" -->
-      <!--       name="password" -->
-      <!--       placeholder="password..." -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Input -->
-      <!--       name="is_email_verified" -->
-      <!--       bind:checked={user.is_email_verified} -->
-      <!--       type="checkbox" -->
-      <!--       label="Is Email Verified" -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Input -->
-      <!--       name="is_msisdn_verified" -->
-      <!--       bind:checked={user.is_msisdn_verified} -->
-      <!--       type="checkbox" -->
-      <!--       label="Is MSISDN Verified" -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <FormGroup> -->
-      <!--     <Input -->
-      <!--       name="force_password_change" -->
-      <!--       bind:checked={user.force_password_change} -->
-      <!--       type="checkbox" -->
-      <!--       label="Force Password Change" -->
-      <!--     /> -->
-      <!--   </FormGroup> -->
-      <!--   <Button type="submit">Save</Button> -->
-      <!-- </Form> -->
-
       <JSONEditor
-        bind:content
-        bind:validator
-        onChange={handleChange}
+        bind:content={contentMeta}
         onRenderMenu={handleRenderMenu}
+        bind:validator={validatorMeta}
       />
       {#if errorContent}
         <h3 class="mt-3">Error:</h3>
@@ -624,6 +611,25 @@
       {/if}
     </div>
   </div>
+  {#if entry.payload}
+    <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
+      <div
+        class="px-1 pb-1 h-100"
+        style="text-align: left; direction: ltr; overflow: hidden auto;"
+      >
+        <JSONEditor
+          bind:content={contentContent}
+          bind:validator={validatorContent}
+          onRenderMenu={handleRenderMenu}
+        />
+
+        {#if errorContent}
+          <h3 class="mt-3">Error:</h3>
+          <Prism bind:code={errorContent} />
+        {/if}
+      </div>
+    </div>
+  {/if}
   <div class="h-100 tab-pane" class:active={tab_option === "history"}>
     {#key tab_option}
       <ListView

@@ -41,6 +41,7 @@
   // import { search } from "../_stores/triggers";
   import HtmlEditor from "./HtmlEditor.svelte";
   import MarkdownEditor from "./MarkdownEditor.svelte";
+  import { isDeepEqual } from "@/utils/compare";
 
   let header_height: number;
   let validator: Validator = createAjvValidator({ schema: {} });
@@ -55,8 +56,8 @@
   let content = { json: entry, text: undefined };
   let contentMeta = { json: {}, text: undefined };
   let contentContent: any = null;
-  let oldContent = { json: {}, text: undefined };
-  let entryContent : any;
+  let oldContentMeta = { json: {}, text: undefined };
+  let entryContent: any;
 
   onMount(async () => {
     const cpy = JSON.parse(JSON.stringify(entry));
@@ -74,6 +75,7 @@
     delete cpy?.payload?.body;
     contentMeta.json = cpy;
     contentMeta = { ...contentMeta };
+    oldContentMeta = { ...contentMeta };
   });
 
   // separating the content by 2 calls
@@ -108,11 +110,11 @@
   // let isSchemaValidated: boolean;
   // function handleChange(updatedContent, previousContent, patchResult) {
   //  const v = patchResult?.contentErrors?.validationErrors;
-    // isSchemaValidated = v === undefined || v.length === 0;
+  // isSchemaValidated = v === undefined || v.length === 0;
   //}
 
   let errorContent = null;
-  async function handleSave(e : Event) {
+  async function handleSave(e: Event) {
     e.preventDefault();
     // if (!isSchemaValidated) {
     //   alert("The content does is not validated agains the schema");
@@ -124,7 +126,7 @@
       ? { ...contentMeta.json }
       : JSON.parse(contentMeta.text);
 
-    let data : any;
+    let data: any;
     if (entry.payload.content_type === "json") {
       const y = contentContent.json
         ? { ...contentContent.json }
@@ -162,7 +164,7 @@
     const response = await request(request_data);
     if (response.status == Status.success) {
       showToast(Level.info);
-      oldContent = { ...content };
+      oldContentMeta = { ...content };
     } else {
       errorContent = response;
       showToast(Level.warn);
@@ -349,7 +351,7 @@
       return;
     }
 
-    let targetSubpath : string;
+    let targetSubpath: string;
     if (resource_type === ResourceType.folder) {
       const arr = subpath.split("/");
       arr[arr.length - 1] = "";
@@ -385,12 +387,7 @@
   function beforeUnload(event: Event) {
     event.preventDefault();
 
-    const x = content.json ? { ...content.json } : JSON.parse(content.text);
-    const y = oldContent.json
-      ? { ...oldContent.json }
-      : JSON.parse(oldContent.text);
-
-    if (JSON.stringify(x) !== JSON.stringify(y)) {
+    if (!isDeepEqual(content, oldContentMeta)) {
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
@@ -530,10 +527,13 @@
   <Nav class="w-100">
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
-      <small>
-          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span> : <strong>{entry.shortname}</strong>
+        <small>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >
+          : <strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
-          </small>
+        </small>
       </span>
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
@@ -760,7 +760,7 @@
           <div class="d-flex justify-content-end">
             <Button on:click={handleSave}>Save</Button>
           </div>
-          <textarea bind:value={contentContent} />
+          <Input class="mt-3" type="textarea" bind:value={contentContent} />
         {/if}
         {#if entry.payload.content_type === "json" && typeof contentContent === "object" && contentContent !== null}
           <JSONEditor

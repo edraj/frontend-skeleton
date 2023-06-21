@@ -309,8 +309,8 @@
     }
   }
 
-  let ticket_status;
-  let resolution;
+  let ticket_status = null;
+  let resolution = null;
   let comment;
   async function handleTicketSubmit(e) {
     e.preventDefault();
@@ -410,9 +410,13 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
         <small>
-          <span class="text-success">{space_name}</span>/<span class="text-primary">{subpath}</span> : <strong>{entry.shortname}</strong>
+          <span class="text-success">{space_name}</span>/<span
+            class="text-primary">{subpath}</span
+          >
+          : <strong>{entry.shortname}</strong>
           ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
-          </small ></span>
+        </small></span
+      >
     </ButtonGroup>
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>

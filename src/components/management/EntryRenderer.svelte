@@ -42,9 +42,10 @@
   import HtmlEditor from "./HtmlEditor.svelte";
   import MarkdownEditor from "./MarkdownEditor.svelte";
   import { isDeepEqual } from "@/utils/compare";
+  import metaContentSchema from "@/validations/meta.content.json";
 
   let header_height: number;
-  let validator: Validator = createAjvValidator({ schema: {} });
+
   export let entry: ResponseEntry;
   export let space_name: string;
   export let subpath: string;
@@ -54,9 +55,15 @@
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry, text: undefined };
+
   let contentMeta = { json: {}, text: undefined };
-  let contentContent: any = null;
+  let validatorMeta: Validator = createAjvValidator({
+    schema: metaContentSchema,
+  });
   let oldContentMeta = { json: {}, text: undefined };
+
+  let contentContent: any = null;
+  let validator: Validator = createAjvValidator({ schema: {} });
   let entryContent: any;
 
   onMount(async () => {
@@ -694,7 +701,11 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
-      <JSONEditor bind:content={contentMeta} onRenderMenu={handleRenderMenu} />
+      <JSONEditor
+        bind:content={contentMeta}
+        onRenderMenu={handleRenderMenu}
+        bind:validator={validatorMeta}
+      />
       {#if errorContent}
         <h3 class="mt-3">Error:</h3>
         <Prism bind:code={errorContent} />

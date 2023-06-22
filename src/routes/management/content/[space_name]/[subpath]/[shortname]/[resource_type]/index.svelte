@@ -7,7 +7,7 @@
 </script>
 
 {#if $params.space_name && $params.subpath && $params.shortname}
-  {#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true, $params.validate_schema !== "false")}
+  {#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true, $params.validate_schema === "false" ? false : true)}
     <!--h6 transition:fade >Loading ... @{$params.space_name}/{$params.subpath}</h6-->
   {:then entry}
     <EntryRenderer

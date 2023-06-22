@@ -4,7 +4,6 @@
   import TicketEntryRenderer from "@/components/management/TicketEntryRenderer.svelte";
 
   let refresh = {};
-  console.log({ s: $params.validate_schema });
 </script>
 
 {#if $params.space_name && $params.subpath && $params.shortname}

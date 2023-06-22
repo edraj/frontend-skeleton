@@ -101,6 +101,64 @@
       refreshList();
     }
   }
+
+  async function onListClick(index: number) {
+    if (!is_clickable) {
+      return;
+    }
+
+    const record = { ...records[index - 1] };
+    if ($active_section.name === "events") {
+      content.json = record;
+      quickPreview = true;
+      return;
+    }
+    const shortname = record.shortname;
+    const schema_shortname = record.attributes?.payload?.schema_shortname;
+    let tmp_subpath = record.subpath.replaceAll("/", "-");
+
+    if (record.resource_type === "folder") {
+      let _subpath = `${record.subpath}/${record.shortname}`.replace(
+        /\/+/g,
+        "/"
+      );
+
+      // Trim leading or traling '/'
+      if (_subpath.length > 0 && subpath[0] === "/")
+        _subpath = _subpath.substring(1);
+      if (_subpath.length > 0 && _subpath[_subpath.length - 1] === "/")
+        _subpath = _subpath.slice(0, -1);
+
+      $goto("/management/content/[space_name]/[subpath]", {
+        space_name: space_name,
+        subpath: _subpath.replaceAll("/", "-"),
+      });
+      return;
+    }
+    if (schema_shortname) {
+      $goto(
+        "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[payload_type]/[schema_name]",
+        {
+          space_name: space_name,
+          subpath: tmp_subpath,
+          shortname: shortname,
+          resource_type: record.resource_type,
+          payload_type: record.attributes?.payload?.content_type,
+          schema_name: schema_shortname,
+        }
+      );
+    } else {
+      $goto(
+        "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]",
+        {
+          space_name: space_name,
+          subpath: tmp_subpath,
+          shortname: shortname,
+          resource_type: record.resource_type,
+        }
+      );
+    }
+  }
 </script>
 
 <svelte:window bind:innerHeight={height} />
@@ -121,63 +179,7 @@
       let:style
       style={style.replaceAll("left:0;", "")}
       class="my-row"
-      on:click={async () => {
-        if (!is_clickable) {
-          return;
-        }
-
-        const record = { ...records[index - 1] };
-        if ($active_section.name === "events") {
-          content.json = record;
-          quickPreview = true;
-          return;
-        }
-        const shortname = record.shortname;
-        const schema_shortname = record.attributes?.payload?.schema_shortname;
-        let tmp_subpath = record.subpath.replaceAll("/", "-");
-
-        if (record.resource_type === "folder") {
-          let _subpath = `${record.subpath}/${record.shortname}`.replace(
-            /\/+/g,
-            "/"
-          );
-
-          // Trim leading or traling '/'
-          if (_subpath.length > 0 && subpath[0] === "/")
-            _subpath = _subpath.substring(1);
-          if (_subpath.length > 0 && _subpath[_subpath.length - 1] === "/")
-            _subpath = _subpath.slice(0, -1);
-
-          $goto("/management/content/[space_name]/[subpath]", {
-            space_name: space_name,
-            subpath: _subpath.replaceAll("/", "-"),
-          });
-          return;
-        }
-        if (schema_shortname) {
-          $goto(
-            "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]/[payload_type]/[schema_name]",
-            {
-              space_name: space_name,
-              subpath: tmp_subpath,
-              shortname: shortname,
-              resource_type: record.resource_type,
-              payload_type: record.attributes?.payload?.content_type,
-              schema_name: schema_shortname,
-            }
-          );
-        } else {
-          $goto(
-            "/management/content/[space_name]/[subpath]/[shortname]/[resource_type]",
-            {
-              space_name: space_name,
-              subpath: tmp_subpath,
-              shortname: shortname,
-              resource_type: record.resource_type,
-            }
-          );
-        }
-      }}
+      on:click={() => onListClick(index)}
       class:current={currentItem == index}
     >
       {#if index == 0}

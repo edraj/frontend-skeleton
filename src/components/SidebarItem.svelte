@@ -3,9 +3,9 @@
   import { _ } from "@/i18n";
   // import { active_subsection } from "../_stores/active_subsection";
   import Icon from "./Icon.svelte";
-  import {Item} from "./types";
+  import { Item } from "./types";
 
-  export let item : Item ;
+  export let item: Item;
   // export let path : Array<string>;
   // export let id : string;
   // export let type;
@@ -28,9 +28,10 @@
   }
   // type = type; // Silence the warning
 </script>
+
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<span on:click="{show_item}" class=" " title="{item.description}">
-  <Icon name="{item.icon}" class="" />
+<span on:click={show_item} class=" " title={item.description}>
+  <Icon name={item.icon} class="" />
   {displayname}
 </span>
 

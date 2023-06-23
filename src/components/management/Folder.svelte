@@ -1,6 +1,6 @@
 <script context="module" lang="ts">
-import {writable} from "svelte/store";
-const active_path = writable("notassigned");
+  import { writable } from "svelte/store";
+  const active_path = writable("notassigned");
 </script>
 
 <script lang="ts">
@@ -13,15 +13,16 @@ const active_path = writable("notassigned");
   export let space_name: string;
   export let folder: ApiResponseRecord;
   let expanded = false;
-  let fullpath = `${space_name}/${(folder.subpath=="/")?"":folder.subpath+"/"}${folder.shortname}`;
-
+  let fullpath = `${space_name}/${
+    folder.subpath == "/" ? "" : folder.subpath + "/"
+  }${folder.shortname}`;
 
   let children = [];
 
   function displayname(): string {
     const lang = JSON.parse(localStorage.getItem("preferred_locale"));
     if (folder?.attributes?.displayname) {
-      return folder?.attributes?.displayname[lang];
+      return folder?.attributes?.displayname[lang] ?? folder.shortname;
     } else {
       return folder.shortname;
     }
@@ -29,7 +30,7 @@ const active_path = writable("notassigned");
 
   $: {
     // Let's collapse if we are already expanded but we are not on the active path any more
-    if(expanded && ! $active_path.startsWith(fullpath)) {
+    if (expanded && !$active_path.startsWith(fullpath)) {
       expanded = false;
     }
   }
@@ -41,9 +42,9 @@ const active_path = writable("notassigned");
       expanded = true;
     } else {
       expanded = false;
-      if(folder.subpath != "/") {
+      if (folder.subpath != "/") {
         $active_path = `${space_name}/${folder.subpath}`;
-      } 
+      }
     }
     if (expanded) {
       const data = await get_children(
@@ -99,15 +100,15 @@ const active_path = writable("notassigned");
 </span>
 
 {#if expanded}
-    <ul class="py-1 ps-1 ms-2 border-start">
-      {#if children.length > 0}
-        {#each children as child}
-          <li>
-            <svelte:self folder={child} {space_name} />
-          </li>
-        {/each}
-      {/if}
-    </ul>
+  <ul class="py-1 ps-1 ms-2 border-start">
+    {#if children.length > 0}
+      {#each children as child}
+        <li>
+          <svelte:self folder={child} {space_name} />
+        </li>
+      {/each}
+    {/if}
+  </ul>
 {/if}
 
 <style>

@@ -63,12 +63,52 @@
       self.set(content);
     }
   }
+
+  function transformToProperBodyRequest(obj) {
+    delete obj.id;
+    if (typeof obj !== "object" || obj === null) {
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(transformToProperBodyRequest);
+    }
+
+    for (const key in obj) {
+      if (key !== "id") {
+        obj[key] = transformToProperBodyRequest(obj[key]);
+      }
+      if (key === "properties") {
+        obj.properties = convertArrayToObject(obj.properties);
+      }
+    }
+
+    return obj;
+  }
+
+  function convertArrayToObject(arr) {
+    if (!Array.isArray(arr)) {
+      return arr;
+    }
+    const obj = {};
+
+    for (const item of arr) {
+      const key = item["name"];
+      delete item.name;
+      obj[key] = item;
+    }
+    return obj;
+  }
+
   let selected_space;
   let schema_shortname;
   function handleSave(e) {
     e.preventDefault();
 
-    const body = content.json ? { ...content.json } : JSON.parse(content.text);
+    let body = content.json ? { ...content.json } : JSON.parse(content.text);
+    body = transformToProperBodyRequest(body);
+    body = body[0];
+    delete body.name;
 
     const request_body = {
       space_name: selected_space,
@@ -108,10 +148,10 @@
   </InputGroup>
 </Row>
 <Row>
-  <Col sm={4}>
+  <Col sm={5}>
     <JSONEditor bind:this={self} bind:content />
   </Col>
-  <Col sm={8}>
+  <Col sm={7}>
     {#key items}
       {#each items as item}
         <JsonSchemaChild {item} parent={items} refresh={handleRefresh} />

@@ -34,7 +34,9 @@
   function displayname(space_entry: ApiResponseRecord): string {
     const lang = JSON.parse(localStorage.getItem("preferred_locale"));
     if (space_entry?.attributes?.displayname) {
-      return space_entry?.attributes?.displayname[lang];
+      return (
+        space_entry?.attributes?.displayname[lang] ?? space_entry.shortname
+      );
     } else {
       return space_entry.shortname;
     }
@@ -119,11 +121,11 @@
   }
   */
 
-  async function expandSpace(current_space : ApiResponseRecord) {
-    if(expanded != current_space.shortname) {
+  async function expandSpace(current_space: ApiResponseRecord) {
+    if (expanded != current_space.shortname) {
       expanded = current_space.shortname;
       $goto("/management/content/[space_name]", {
-        space_name: current_space.shortname
+        space_name: current_space.shortname,
       });
     } else {
       expanded = undefined;
@@ -133,7 +135,7 @@
   let isSpaceModalOpen = false;
   let space_name_shortname = "";
   // let refresh : boolean = false;
-  async function handleCreateSpace(e : Event) {
+  async function handleCreateSpace(e: Event) {
     e.preventDefault();
 
     const request_body = {
@@ -200,7 +202,7 @@
         <div
           class="mb-2"
           style="cursor: pointer;"
-          on:click={async () => (await expandSpace(space))}
+          on:click={async () => await expandSpace(space)}
         >
           <Icon name="diagram-3" class="me-1" /> <b>{displayname(space)}</b>
           <span class="toolbar top-0 end-0 position-absolute px-0">
@@ -245,7 +247,7 @@
             <!--h4> Loading {space.shortname} </h4-->
           {:then children_data}
             {#each children_data.records as folder}
-              <Folder {folder} space_name={space.shortname}/>
+              <Folder {folder} space_name={space.shortname} />
             {/each}
           {:catch error}
             <p style="color: red">{error.message}</p>
@@ -257,9 +259,16 @@
     <p style="color: red">{error.message}</p>
   {/await}
 {/key}
-  <hr class="w-100 mt-1 mb-0 py-1" />
-  <Button class="w-100" type="button" outline color="primary" on:click={() => { isSpaceModalOpen = true; }}>Create new space</Button>
-
+<hr class="w-100 mt-1 mb-0 py-1" />
+<Button
+  class="w-100"
+  type="button"
+  outline
+  color="primary"
+  on:click={() => {
+    isSpaceModalOpen = true;
+  }}>Create new space</Button
+>
 
 <Modal
   isOpen={isSpaceModalOpen}
@@ -286,4 +295,3 @@
     </ModalFooter>
   </Form>
 </Modal>
-

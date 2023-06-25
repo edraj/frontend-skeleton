@@ -34,11 +34,11 @@
   import { timeAgo } from "../../utils/timeago";
   import { showToast, Level } from "../../utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
-  import { search } from "@/stores/management/triggers";
   import history_cols from "@/stores/management/list_cols_history.json";
+  import metaTicketSchema from "@/validations/meta.ticket.json";
+  import { isDeepEqual } from "@/utils/compare";
 
   let header_height: number;
-  let validator: Validator = createAjvValidator({ schema: {} });
   export let entry: ResponseEntry;
   export let space_name: string;
   export let subpath: string;
@@ -49,8 +49,14 @@
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry, text: undefined };
   let contentMeta = { json: {}, text: undefined };
+  let validatorMeta: Validator = createAjvValidator({
+    schema: metaTicketSchema,
+  });
+  let oldContentMeta = { json: entry || {}, text: undefined };
+
   let contentContent = { json: {}, text: undefined };
-  let oldContent = { json: entry, text: undefined };
+  let validator: Validator = createAjvValidator({ schema: {} });
+  let oldContent = { json: {}, text: undefined };
   let entryContent;
 
   onMount(async () => {
@@ -61,10 +67,12 @@
     }
     contentContent.json = cpy?.payload?.body ?? {};
     contentContent = { ...contentContent };
+    oldContent = { ...contentContent };
 
     delete cpy?.payload?.body;
     contentMeta.json = cpy;
     contentMeta = { ...contentMeta };
+    oldContentMeta = { ...contentMeta };
   });
 
   onDestroy(() => status_line.set(""));
@@ -245,6 +253,9 @@
       showToast(Level.info);
       contentShortname = "";
       isModalOpen = false;
+
+      oldContentMeta = { ...contentMeta };
+      oldContent = { ...contentContent };
     } else {
       showToast(Level.warn);
     }
@@ -292,14 +303,10 @@
   function beforeUnload(event) {
     event.preventDefault();
 
-    const x = content.json ? { ...content.json } : JSON.parse(content.text);
-    const y = oldContent.json
-      ? { ...oldContent.json }
-      : JSON.parse(oldContent.text);
-
-    console.log({ x }, { y });
-
-    if (JSON.stringify(x) !== JSON.stringify(y)) {
+    if (
+      !isDeepEqual(contentMeta, oldContentMeta) &&
+      !isDeepEqual(contentContent, oldContent)
+    ) {
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
@@ -626,7 +633,11 @@
         <Button type="submit">Save</Button>
       </Form>
 
-      <JSONEditor bind:content={contentMeta} onRenderMenu={handleRenderMenu} />
+      <JSONEditor
+        bind:content={contentMeta}
+        onRenderMenu={handleRenderMenu}
+        bind:validator={validatorMeta}
+      />
       {#if errorContent}
         <h3 class="mt-3">Error:</h3>
         <Prism bind:code={errorContent} />

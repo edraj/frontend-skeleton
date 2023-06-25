@@ -2,9 +2,9 @@
   import SidebarItem from "./SidebarItem.svelte";
   import Icon from "./Icon.svelte";
   import { _ } from "@/i18n";
-  import {Section} from "./types";
+  import { Section } from "./types";
 
-  export let section : Section; 
+  export let section: Section;
   // export let path : Array<string>;
   // export let expanded : boolean;
   // export let id : string;
@@ -27,16 +27,16 @@
 
 <div class="mb-3">
   <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <span class:expanded={section.expanded} on:click="{toggle}" class="py-1 ps-1">
-    <Icon name="{section.icon}" class="me-1" />
+  <span class:expanded={section.expanded} on:click={toggle} class="py-1 ps-1">
+    <Icon name={section.icon} class="me-1" />
     <b>{displayname}</b>
   </span>
   {#if section.expanded}
-    <ul class="border-start pt-1 px-1 ms-1 ">
+    <ul class="border-start pt-1 px-1 ms-1">
       {#each section.children as child}
         <li class="px-1 py-1">
           {#if child.type === "item"}
-            <SidebarItem item="{child}" />
+            <SidebarItem item={child} />
           {/if}
         </li>
       {/each}

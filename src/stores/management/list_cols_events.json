@@ -17,15 +17,9 @@
     "type": "string",
     "width": "15%"
   },
-  "created_at": {
-    "path": "attributes.created_at",
-    "title": "Created At",
-    "type": "string",
-    "width": "15%"
-  },
-  "updated_at": {
-    "path": "attributes.updated_at",
-    "title": "Updated At",
+  "timestamp": {
+    "path": "attributes.timestamp",
+    "title": "Timestamp",
     "type": "string",
     "width": "15%"
   }

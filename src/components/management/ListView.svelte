@@ -1,7 +1,13 @@
 <script lang="ts">
   import { status_line } from "@/stores/management/status_line.js";
-  import VirtualList from "svelte-tiny-virtual-list";
-  import InfiniteLoading from "svelte-infinite-loading";
+  import {
+    Engine,
+    functionCreateDatatable,
+    Pagination,
+    RowsPerPage,
+    Search,
+    Sort,
+  } from "svelte-datatables-net";
   import { query, QueryType } from "@/dmart";
   import { onDestroy } from "svelte";
   import cols from "@/stores/management/list_cols.json";
@@ -17,6 +23,7 @@
   };
 
   onDestroy(() => status_line.set(""));
+
   export let space_name: string;
   export let subpath: string;
   export let shortname: string = null;
@@ -24,55 +31,16 @@
   export let columns: any = cols;
   export let is_clickable = true;
 
-  let total: number;
-  let lastbatch: number;
-  let page = 0;
-  let items = [{}];
-  let currentItem = {};
+  let total: number = 0;
   let api_status = "-";
-  let records = [];
-  let infiniteId = Symbol();
-
-  async function infiniteHandler({ detail: { loaded, complete, error } }) {
-    try {
-      const resp = await query({
-        filter_shortnames: shortname ? [shortname] : [],
-        type,
-        space_name: space_name,
-        subpath: subpath,
-        exact_subpath: true,
-        limit: 50,
-        offset: 50 * page,
-        search: $search,
-      });
-
-      records = [...records, ...resp.records];
-      if (resp.status == "success") {
-        lastbatch = resp.attributes.returned;
-        total = resp.attributes.total;
-
-        if (lastbatch) {
-          page += 1;
-          items = [...items, ...resp.records];
-          loaded();
-        } else {
-          complete();
-        }
-        api_status = "success";
-        status_line.set(
-          `<small>Loaded: <strong>${
-            items.length - 1
-          } of ${total}</strong><br/>Api: <strong>${api_status}</strong></small>`
-        );
-      } else {
-        console.log("Error with query", resp);
-        api_status = resp.error.message || "Unknown error";
-        status_line.set(`api: ${api_status}`);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  let objectDatatable = functionCreateDatatable({
+    parData: [],
+    parSearchableColumns: Object.keys(columns),
+    parRowsPerPage: "10",
+    parSearchString: "",
+    parSortBy: "id",
+    parSortOrder: "ascending",
+  });
 
   function value(path: string, data, type) {
     if (path.length == 1 && path[0].length > 0 && path[0] in data) {
@@ -86,28 +54,50 @@
     return "not_applicable";
   }
 
-  function refreshList() {
-    currentItem = {};
-    page = 0;
-    records = [];
-    items = [{}];
-    infiniteId = Symbol();
-  }
-
   let height: number;
 
-  $: {
-    if ($search || $search === "") {
-      refreshList();
+  let numberActivePage = 1;
+  let propNumberOfPages = 1;
+  let numberRowsPerPage = 1;
+  function setNumberOfPages() {
+    propNumberOfPages = Math.ceil(total / objectDatatable.numberRowsPerPage);
+  }
+
+  async function fetchPageRecords(isSetPage = false) {
+    const resp = await query({
+      filter_shortnames: shortname ? [shortname] : [],
+      type,
+      space_name: space_name,
+      subpath: subpath,
+      exact_subpath: true,
+      limit: objectDatatable.numberRowsPerPage,
+      offset:
+        objectDatatable.numberRowsPerPage *
+        (objectDatatable.numberActivePage - 1),
+      search: $search,
+    });
+    total = resp.attributes.total;
+    if (isSetPage) {
+      setNumberOfPages();
+    }
+    objectDatatable.arrayRawData = resp.records;
+    if (resp.status === "success") {
+      api_status = "success";
+      status_line.set(
+        `<small>Loaded: <strong>${objectDatatable.numberRowsPerPage} of ${total}</strong><br/>Api: <strong>${api_status}</strong></small>`
+      );
+    } else {
+      console.log("Error with query", resp);
+      api_status = resp.error.message || "Unknown error";
+      status_line.set(`api: ${api_status}`);
     }
   }
 
-  async function onListClick(index: number) {
+  async function onListClick(record: any) {
     if (!is_clickable) {
       return;
     }
 
-    const record = { ...records[index - 1] };
     if ($active_section.name === "events") {
       content.json = record;
       quickPreview = true;
@@ -159,80 +149,107 @@
       );
     }
   }
+
+  $: {
+    if (objectDatatable.numberRowsPerPage != numberRowsPerPage) {
+      numberRowsPerPage = objectDatatable.numberRowsPerPage;
+      fetchPageRecords(true);
+    }
+    if (objectDatatable.numberActivePage != numberActivePage) {
+      numberActivePage = objectDatatable.numberActivePage;
+      fetchPageRecords();
+    }
+  }
 </script>
 
 <svelte:window bind:innerHeight={height} />
 
 <div class="list">
-  <VirtualList
-    height={height - 110}
-    width="auto"
-    stickyIndices={[0]}
-    itemCount={items.length}
-    overscanCount={100}
-    itemSize={25}
-  >
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div
-      slot="item"
-      let:index
-      let:style
-      style={style.replaceAll("left:0;", "")}
-      class="my-row"
-      on:click={() => onListClick(index)}
-      class:current={currentItem == index}
-    >
-      {#if index == 0}
-        {#each Object.keys(columns) as col}
-          <div class="my-cell" style="width: {columns[col].width};">
-            <strong>{columns[col].title}</strong>
+  {#await fetchPageRecords()}
+    READING DATA...
+  {:then}
+    <Engine bind:propDatatable={objectDatatable} />
+    <div class="container-sm">
+      <div class="mx-3">
+        <div class="row align-items-center mb-2">
+          <div class="col-12 col-md-6 text-md-start text-center mb-1 mb-md-0">
+            <div class="d-md-flex align-items-md-center">
+              <span class="me-1">Search:</span>
+              <Search
+                bind:propDatatable={objectDatatable}
+                propPlaceholder="Type here..."
+                class="form-control form-control-sm"
+              />
+            </div>
           </div>
-        {/each}
-      {:else}
-        {#each Object.keys(columns) as col}
+          <div class="col-12 col-md-6 text-md-end text-center">
+            <RowsPerPage
+              bind:propDatatable={objectDatatable}
+              class="d-inline form-select form-select-sm w-auto"
+            >
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </RowsPerPage>
+            <span>RESULTS PER PAGE</span>
+          </div>
+        </div>
+        {#if objectDatatable.arraySearched.length === 0}
+          <div class="text-center mt-5">
+            <strong>NO RECORDS FOUND.</strong>
+          </div>
+        {:else}
+          <table class="table table-striped table-sm mt-2">
+            <thead>
+              <tr>
+                {#each Object.keys(columns) as col}
+                  <th>
+                    <Sort bind:propDatatable={objectDatatable} propColumn={col}
+                      >{columns[col].title}</Sort
+                    >
+                  </th>
+                {/each}
+              </tr>
+            </thead>
+            <tbody>
+              {#each objectDatatable.arrayRawData as row}
+                <tr>
+                  {#each Object.keys(columns) as col}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <td
+                      style="cursor: pointer;"
+                      on:click={() => onListClick(row)}
+                    >
+                      {value(
+                        columns[col].path.split("."),
+                        row,
+                        columns[col].type
+                      )}
+                    </td>
+                  {/each}
+                </tr>
+              {/each}
+            </tbody>
+          </table>
           <div
-            class="my-cell hide-scroll"
-            style=" width: {columns[col].width};overflow: auto;"
+            class="d-flex justify-content-center justify-content-md-end mb-5"
           >
-            {value(
-              columns[col].path.split("."),
-              items[index],
-              columns[col].type
-            )}
+            {#key propNumberOfPages}
+              <Pagination
+                bind:propDatatable={objectDatatable}
+                bind:propNumberOfPages
+                propSize="default"
+              />
+            {/key}
           </div>
-        {/each}
-      {/if}
+        {/if}
+      </div>
     </div>
-    <div slot="footer">
-      <InfiniteLoading on:infinite={infiniteHandler} identifier={infiniteId}>
-        <span slot="noResults" />
-        <span slot="noMore" />
-        <span slot="error" />
-      </InfiniteLoading>
-    </div>
-  </VirtualList>
+  {/await}
 </div>
 
 <style>
-  /*
-  .back-icon {
-    margin-top: 8px;
-    margin-left: 8px;
-  }
-  h5 {
-    margin-top: 8px;
-    margin-left: 8px;
-  }*/
-  /* hr {
-    color: green;
-    background-color: blue;
-    height: 5px;
-    user-select: none;
-    margin: 0;
-    position: absolute;
-    border: solid 1px gray;
-  } 
-  */
   :global(.virtual-list-wrapper) {
     margin: 0 0px;
     background: #fff;
@@ -243,41 +260,5 @@
     font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
     color: #333;
     -webkit-font-smoothing: antialiased;
-  }
-
-  .my-row {
-    padding: 0 15px;
-    border-bottom: 1px solid #eee;
-    box-sizing: border-box;
-    height: 30px;
-    font-weight: 500;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-  }
-
-  .my-row:hover {
-    background-color: #ddd;
-  }
-
-  .current {
-    background-color: yellowgreen;
-  }
-
-  .my-cell {
-    display: inline;
-    /*border: 1px solid orange;*/
-  }
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .hide-scroll::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Hide scrollbar for IE, Edge and Firefox */
-  .hide-scroll {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
   }
 </style>

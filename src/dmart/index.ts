@@ -202,15 +202,18 @@ type Payload = {
   validation_status: "valid" | "invalid";
 };
 
-type User = {
+type MetaExtended = {
   email: string;
   msisdn: string;
   is_email_verified: boolean;
   is_msisdn_verified: boolean;
   force_password_change: boolean;
+  workflow_shortname: string;
+  state: string;
+  is_open: boolean;
 };
 
-export type ResponseEntry = User & {
+export type ResponseEntry = MetaExtended & {
   uuid: string;
   shortname: string;
   subpath: string;

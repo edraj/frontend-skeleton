@@ -37,6 +37,7 @@
   import "bootstrap";
   import { isDeepEqual } from "@/utils/compare";
   import metaUserSchema from "@/validations/meta.user.json";
+  import checkAccess from "@/utils/checkAccess";
 
   let header_height: number;
   export let entry: ResponseEntry;
@@ -46,11 +47,14 @@
   export let resource_type: ResourceType;
   export let schema_name: string | undefined = null;
 
+  const canUpdate = checkAccess("update", space_name, subpath, resource_type);
+  const canDelete = checkAccess("delete", space_name, subpath, resource_type);
+
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry || {}, text: undefined };
   let entryContent = { json: {} || {}, text: undefined };
 
-  let contentMeta : any = { json: {}, text: undefined };
+  let contentMeta: any = { json: {}, text: undefined };
   let validatorMeta: Validator = createAjvValidator({ schema: metaUserSchema });
   let oldContentMeta = { json: entry || {}, text: undefined };
 
@@ -74,8 +78,8 @@
 
     user = {
       ...user,
-      email: entry.email,
-      msisdn: entry.msisdn,
+      email: entry?.email,
+      msisdn: entry?.msisdn,
       password: "",
       is_email_verified: entry.is_email_verified,
       is_msisdn_verified: entry.is_msisdn_verified,
@@ -490,30 +494,33 @@
       >
         <Icon name="binoculars" />
       </Button>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1"
-        active={"edit_meta" == tab_option}
-        title={$_("edit") + " meta"}
-        on:click={() => (tab_option = "edit_meta")}
-      >
-        <Icon name="code-slash" />
-      </Button>
-      {#if entry.payload}
+      {#if canUpdate}
         <Button
           outline
           color="success"
           size="sm"
           class="justify-content-center text-center py-0 px-1"
-          active={"edit_content" == tab_option}
-          title={$_("edit") + " payload"}
-          on:click={() => (tab_option = "edit_content")}
+          active={"edit_meta" == tab_option}
+          title={$_("edit") + " meta"}
+          on:click={() => (tab_option = "edit_meta")}
         >
-          <Icon name="pencil" />
+          <Icon name="code-slash" />
         </Button>
+        {#if entry.payload}
+          <Button
+            outline
+            color="success"
+            size="sm"
+            class="justify-content-center text-center py-0 px-1"
+            active={"edit_content" == tab_option}
+            title={$_("edit") + " payload"}
+            on:click={() => (tab_option = "edit_content")}
+          >
+            <Icon name="pencil" />
+          </Button>
+        {/if}
       {/if}
+
       <Button
         outline
         color="success"
@@ -549,16 +556,18 @@
       >
         <Icon name="file-check" />
       </Button>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        title={$_("delete")}
-        on:click={handleDelete}
-        class="justify-content-center text-center py-0 px-1"
-      >
-        <Icon name="trash" />
-      </Button>
+      {#if canDelete}
+        <Button
+          outline
+          color="success"
+          size="sm"
+          title={$_("delete")}
+          on:click={handleDelete}
+          class="justify-content-center text-center py-0 px-1"
+        >
+          <Icon name="trash" />
+        </Button>
+      {/if}
     </ButtonGroup>
     {#if resource_type === ResourceType.folder}
       <ButtonGroup>
@@ -616,144 +625,148 @@
       <Prism code={entry} />
     </div>
   </div>
-  <div class="h-100 tab-pane" class:active={tab_option === "edit_meta"}>
-    <div
-      class="px-1 pb-1 h-100"
-      style="text-align: left; direction: ltr; overflow: hidden auto;"
-    >
-      <Form
-        class="d-flex flex-column px-5 mt-5 mb-5"
-        on:submit={handleUserSubmit}
-      >
-        <div class="row">
-          <FormGroup class="col-4">
-            <Label>Email</Label>
-            <Input
-              style="width: 100% !important"
-              bind:value={user.email}
-              class="w-25"
-              type="email"
-              name="email"
-              placeholder="Email..."
-            />
-          </FormGroup>
-          <FormGroup class="col-4">
-            <Label>MSISDN</Label>
-            <Input
-              style="width: 100% !important"
-              bind:value={user.msisdn}
-              class="w-25"
-              type="text"
-              name="msisdn"
-              placeholder="Email..."
-            />
-          </FormGroup>
-          <FormGroup class="col-4">
-            <Label>Password</Label>
-            <Input
-              style="width: 100% !important"
-              bind:value={user.password}
-              class="w-25"
-              type="password"
-              name="password"
-              placeholder="password..."
-            />
-          </FormGroup>
-        </div>
-        <div class="row">
-          <FormGroup class="col-4">
-            <Label>Arabic Displayname</Label>
-            <Input
-              style="width: 100% !important"
-              bind:value={user.displayname.en}
-              class="w-25"
-              type="text"
-              name="displayname_en"
-              placeholder="Arabic Displayname..."
-            />
-          </FormGroup>
-          <FormGroup class="col-4">
-            <Label>Kurdish Displayname</Label>
-            <Input
-              style="width: 100% !important"
-              bind:value={user.displayname.ar}
-              class="w-25"
-              type="text"
-              name="displayname_ar"
-              placeholder="Kurdish Displayname..."
-            />
-          </FormGroup>
-          <FormGroup class="col-4">
-            <Label>English Displayname</Label>
-            <Input
-              style="width: 100% !important"
-              bind:value={user.displayname.kd}
-              class="w-25"
-              type="text"
-              name="displayname_kd"
-              placeholder="English Displayname..."
-            />
-          </FormGroup>
-        </div>
-        <div class="row">
-          <FormGroup class="col-4">
-            <Input
-              name="is_email_verified"
-              bind:checked={user.is_email_verified}
-              type="checkbox"
-              label="Is Email Verified"
-            />
-          </FormGroup>
-          <FormGroup class="col-4">
-            <Input
-              name="is_msisdn_verified"
-              bind:checked={user.is_msisdn_verified}
-              type="checkbox"
-              label="Is MSISDN Verified"
-            />
-          </FormGroup>
-          <FormGroup class="col-4">
-            <Input
-              name="force_password_change"
-              bind:checked={user.force_password_change}
-              type="checkbox"
-              label="Force Password Change"
-            />
-          </FormGroup>
-        </div>
-        <Button style="width: 25% !important" type="submit">Save</Button>
-      </Form>
 
-      <JSONEditor
-        bind:content={contentMeta}
-        onRenderMenu={handleRenderMenu}
-        bind:validator={validatorMeta}
-      />
-      {#if errorContent}
-        <h3 class="mt-3">Error:</h3>
-        <Prism bind:code={errorContent} />
-      {/if}
-    </div>
-  </div>
-  {#if entry.payload}
-    <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
+  {#if canUpdate}
+    <div class="h-100 tab-pane" class:active={tab_option === "edit_meta"}>
       <div
         class="px-1 pb-1 h-100"
         style="text-align: left; direction: ltr; overflow: hidden auto;"
       >
-        <JSONEditor
-          bind:content={contentContent}
-          bind:validator={validatorContent}
-          onRenderMenu={handleRenderMenu}
-        />
+        <Form
+          class="d-flex flex-column px-5 mt-5 mb-5"
+          on:submit={handleUserSubmit}
+        >
+          <div class="row">
+            <FormGroup class="col-4">
+              <Label>Email</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.email}
+                class="w-25"
+                type="email"
+                name="email"
+                placeholder="Email..."
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Label>MSISDN</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.msisdn}
+                class="w-25"
+                type="text"
+                name="msisdn"
+                placeholder="Email..."
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Label>Password</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.password}
+                class="w-25"
+                type="password"
+                name="password"
+                placeholder="password..."
+              />
+            </FormGroup>
+          </div>
+          <div class="row">
+            <FormGroup class="col-4">
+              <Label>Arabic Displayname</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.displayname.en}
+                class="w-25"
+                type="text"
+                name="displayname_en"
+                placeholder="Arabic Displayname..."
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Label>Kurdish Displayname</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.displayname.ar}
+                class="w-25"
+                type="text"
+                name="displayname_ar"
+                placeholder="Kurdish Displayname..."
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Label>English Displayname</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.displayname.kd}
+                class="w-25"
+                type="text"
+                name="displayname_kd"
+                placeholder="English Displayname..."
+              />
+            </FormGroup>
+          </div>
+          <div class="row">
+            <FormGroup class="col-4">
+              <Input
+                name="is_email_verified"
+                bind:checked={user.is_email_verified}
+                type="checkbox"
+                label="Is Email Verified"
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Input
+                name="is_msisdn_verified"
+                bind:checked={user.is_msisdn_verified}
+                type="checkbox"
+                label="Is MSISDN Verified"
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Input
+                name="force_password_change"
+                bind:checked={user.force_password_change}
+                type="checkbox"
+                label="Force Password Change"
+              />
+            </FormGroup>
+          </div>
+          <Button style="width: 25% !important" type="submit">Save</Button>
+        </Form>
 
+        <JSONEditor
+          bind:content={contentMeta}
+          onRenderMenu={handleRenderMenu}
+          bind:validator={validatorMeta}
+        />
         {#if errorContent}
           <h3 class="mt-3">Error:</h3>
           <Prism bind:code={errorContent} />
         {/if}
       </div>
     </div>
+    {#if entry.payload}
+      <div class="h-100 tab-pane" class:active={tab_option === "edit_content"}>
+        <div
+          class="px-1 pb-1 h-100"
+          style="text-align: left; direction: ltr; overflow: hidden auto;"
+        >
+          <JSONEditor
+            bind:content={contentContent}
+            bind:validator={validatorContent}
+            onRenderMenu={handleRenderMenu}
+          />
+
+          {#if errorContent}
+            <h3 class="mt-3">Error:</h3>
+            <Prism bind:code={errorContent} />
+          {/if}
+        </div>
+      </div>
+    {/if}
   {/if}
+
   <div class="h-100 tab-pane" class:active={tab_option === "history"}>
     {#key tab_option}
       <ListView

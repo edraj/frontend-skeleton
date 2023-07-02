@@ -67,7 +67,24 @@
     }</strong></small>`
   );
 
+  let user: any = { displayname: { ar: "", en: "", kd: "" } };
+
   onMount(async () => {
+    console.log({ entry });
+
+    user = {
+      ...user,
+      email: entry.email,
+      msisdn: entry.msisdn,
+      password: "",
+      is_email_verified: entry.is_email_verified,
+      is_msisdn_verified: entry.is_msisdn_verified,
+      force_password_change: entry.force_password_change,
+    };
+    if (entry.displayname) {
+      user.displayname = entry.displayname;
+    }
+
     const cpy = JSON.parse(JSON.stringify(entry));
 
     if (contentContent === null) {
@@ -75,6 +92,7 @@
     }
     contentContent.json = cpy?.payload?.body ?? {};
     contentContent = { ...contentContent };
+    oldContentContent = { ...contentContent };
 
     delete cpy?.payload?.body;
     delete cpy?.attachments;
@@ -290,7 +308,6 @@
   }
 
   onDestroy(() => {
-    console.log("=======================");
     history.replaceState;
     return false;
   });
@@ -311,14 +328,7 @@
     }
     return true;
   }
-  // const user = {
-  //   email: user_entry.email,
-  //   msisdn: entry.msisdn,
-  //   password: "",
-  //   is_email_verified: entry.is_email_verified,
-  //   is_msisdn_verified: entry.is_msisdn_verified,
-  //   force_password_change: entry.force_password_change,
-  // };
+
   // function handleInputChange(e) {
   //   const { name, value, checked } = e.target;
   //   console.log({ name, value, checked });
@@ -329,32 +339,43 @@
 
   async function handleUserSubmit(e) {
     e.preventDefault();
-    // if (user.password === "") {
-    //   delete user.password;
-    // }
-    //
-    // const response = await request({
-    //   space_name: space_name,
-    //   request_type: RequestType.update,
-    //   records: [
-    //     {
-    //       resource_type,
-    //       shortname: entry.shortname,
-    //       subpath,
-    //       attributes: user,
-    //     },
-    //   ],
-    // });
-    // if (response.status == Status.success) {
-    //   showToast(Level.info);
-    //   content.json = { ...content.json, ...user };
-    //   content = { ...content };
-    //   oldContent = { ...content };
-    // } else {
-    //   errorContent = response;
-    //   showToast(Level.warn);
-    // }
+
+    if (user.password === "") {
+      delete user.password;
+    }
+
+    const response = await request({
+      space_name: space_name,
+      request_type: RequestType.update,
+      records: [
+        {
+          resource_type,
+          shortname: entry.shortname,
+          subpath,
+          attributes: user,
+        },
+      ],
+    });
+    if (response.status == Status.success) {
+      showToast(Level.info);
+      oldContentMeta = { ...contentMeta };
+      oldContentContent = { ...contentContent };
+    } else {
+      errorContent = response;
+      showToast(Level.warn);
+    }
   }
+
+  $: user &&
+    (() => {
+      console.log("user changed", { user });
+      contentMeta.json = { ...contentMeta.json, ...user };
+      contentMeta.json.displayname = {
+        ...contentMeta.json.displayname,
+        ...user.displayname,
+      };
+      contentMeta = { ...contentMeta };
+    })();
 </script>
 
 <svelte:window on:beforeunload={beforeUnload} />
@@ -600,6 +621,109 @@
       class="px-1 pb-1 h-100"
       style="text-align: left; direction: ltr; overflow: hidden auto;"
     >
+      <Form
+        class="d-flex flex-column px-5 mt-5 mb-5"
+        on:submit={handleUserSubmit}
+      >
+        <div class="row">
+          <FormGroup class="col-4">
+            <Label>Email</Label>
+            <Input
+              style="width: 100% !important"
+              bind:value={user.email}
+              class="w-25"
+              type="email"
+              name="email"
+              placeholder="Email..."
+            />
+          </FormGroup>
+          <FormGroup class="col-4">
+            <Label>MSISDN</Label>
+            <Input
+              style="width: 100% !important"
+              bind:value={user.msisdn}
+              class="w-25"
+              type="text"
+              name="msisdn"
+              placeholder="Email..."
+            />
+          </FormGroup>
+          <FormGroup class="col-4">
+            <Label>Password</Label>
+            <Input
+              style="width: 100% !important"
+              bind:value={user.password}
+              class="w-25"
+              type="password"
+              name="password"
+              placeholder="password..."
+            />
+          </FormGroup>
+        </div>
+        <div class="row">
+          <FormGroup class="col-4">
+            <Label>Arabic Displayname</Label>
+            <Input
+              style="width: 100% !important"
+              bind:value={user.displayname.en}
+              class="w-25"
+              type="text"
+              name="displayname_en"
+              placeholder="Arabic Displayname..."
+            />
+          </FormGroup>
+          <FormGroup class="col-4">
+            <Label>Kurdish Displayname</Label>
+            <Input
+              style="width: 100% !important"
+              bind:value={user.displayname.ar}
+              class="w-25"
+              type="text"
+              name="displayname_ar"
+              placeholder="Kurdish Displayname..."
+            />
+          </FormGroup>
+          <FormGroup class="col-4">
+            <Label>English Displayname</Label>
+            <Input
+              style="width: 100% !important"
+              bind:value={user.displayname.kd}
+              class="w-25"
+              type="text"
+              name="displayname_kd"
+              placeholder="English Displayname..."
+            />
+          </FormGroup>
+        </div>
+        <div class="row">
+          <FormGroup class="col-4">
+            <Input
+              name="is_email_verified"
+              bind:checked={user.is_email_verified}
+              type="checkbox"
+              label="Is Email Verified"
+            />
+          </FormGroup>
+          <FormGroup class="col-4">
+            <Input
+              name="is_msisdn_verified"
+              bind:checked={user.is_msisdn_verified}
+              type="checkbox"
+              label="Is MSISDN Verified"
+            />
+          </FormGroup>
+          <FormGroup class="col-4">
+            <Input
+              name="force_password_change"
+              bind:checked={user.force_password_change}
+              type="checkbox"
+              label="Force Password Change"
+            />
+          </FormGroup>
+        </div>
+        <Button style="width: 25% !important" type="submit">Save</Button>
+      </Form>
+
       <JSONEditor
         bind:content={contentMeta}
         onRenderMenu={handleRenderMenu}

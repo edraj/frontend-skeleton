@@ -48,6 +48,7 @@
   import SchemaEditor, {
     transformToProperBodyRequest,
   } from "./SchemaEditor.svelte";
+  import checkAccess from "@/utils/checkAccess";
 
   let header_height: number;
 
@@ -57,6 +58,9 @@
   export let resource_type: ResourceType;
   export let schema_name: string | undefined = null;
   export let refresh = {};
+
+  const canUpdate = checkAccess("update", space_name, subpath, resource_type);
+  const canDelete = checkAccess("delete", space_name, subpath, resource_type);
 
   let tab_option = resource_type === ResourceType.folder ? "list" : "view";
   let content = { json: entry, text: undefined };
@@ -625,30 +629,34 @@
       >
         <Icon name="binoculars" />
       </Button>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        class="justify-content-center text-center py-0 px-1"
-        active={"edit_meta" == tab_option}
-        title={$_("edit") + " meta"}
-        on:click={() => (tab_option = "edit_meta")}
-      >
-        <Icon name="code-slash" />
-      </Button>
-      {#if entry.payload}
+
+      {#if canUpdate}
         <Button
           outline
           color="success"
           size="sm"
           class="justify-content-center text-center py-0 px-1"
-          active={"edit_content" == tab_option}
-          title={$_("edit") + " payload"}
-          on:click={() => (tab_option = "edit_content")}
+          active={"edit_meta" == tab_option}
+          title={$_("edit") + " meta"}
+          on:click={() => (tab_option = "edit_meta")}
         >
-          <Icon name="pencil" />
+          <Icon name="code-slash" />
         </Button>
+        {#if entry.payload}
+          <Button
+            outline
+            color="success"
+            size="sm"
+            class="justify-content-center text-center py-0 px-1"
+            active={"edit_content" == tab_option}
+            title={$_("edit") + " payload"}
+            on:click={() => (tab_option = "edit_content")}
+          >
+            <Icon name="pencil" />
+          </Button>
+        {/if}
       {/if}
+
       <Button
         outline
         color="success"
@@ -684,16 +692,18 @@
       >
         <Icon name="file-check" />
       </Button>
-      <Button
-        outline
-        color="success"
-        size="sm"
-        title={$_("delete")}
-        on:click={handleDelete}
-        class="justify-content-center text-center py-0 px-1"
-      >
-        <Icon name="trash" />
-      </Button>
+      {#if canDelete}
+        <Button
+          outline
+          color="success"
+          size="sm"
+          title={$_("delete")}
+          on:click={handleDelete}
+          class="justify-content-center text-center py-0 px-1"
+        >
+          <Icon name="trash" />
+        </Button>
+      {/if}
     </ButtonGroup>
     {#if resource_type === ResourceType.folder}
       <ButtonGroup>

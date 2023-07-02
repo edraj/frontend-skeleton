@@ -50,7 +50,7 @@
   let content = { json: entry || {}, text: undefined };
   let entryContent = { json: {} || {}, text: undefined };
 
-  let contentMeta = { json: {}, text: undefined };
+  let contentMeta : any = { json: {}, text: undefined };
   let validatorMeta: Validator = createAjvValidator({ schema: metaUserSchema });
   let oldContentMeta = { json: entry || {}, text: undefined };
 

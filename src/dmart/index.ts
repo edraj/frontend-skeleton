@@ -202,7 +202,15 @@ type Payload = {
   validation_status: "valid" | "invalid";
 };
 
-export type ResponseEntry = {
+type User = {
+  email: string;
+  msisdn: string;
+  is_email_verified: boolean;
+  is_msisdn_verified: boolean;
+  force_password_change: boolean;
+};
+
+export type ResponseEntry = User & {
   uuid: string;
   shortname: string;
   subpath: string;

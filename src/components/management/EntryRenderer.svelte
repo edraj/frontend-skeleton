@@ -25,6 +25,7 @@
     Input,
     Nav,
     ButtonGroup,
+    Row,
   } from "sveltestrap";
   import Icon from "../Icon.svelte";
   import { _ } from "@/i18n";
@@ -43,6 +44,10 @@
   import MarkdownEditor from "./MarkdownEditor.svelte";
   import { isDeepEqual } from "@/utils/compare";
   import metaContentSchema from "@/validations/meta.content.json";
+  import JsonSchemaChild from "./JsonSchemaChild.svelte";
+  import SchemaEditor, {
+    transformToProperBodyRequest,
+  } from "./SchemaEditor.svelte";
 
   let header_height: number;
 
@@ -261,11 +266,47 @@
   let new_resource_type: ResourceType = ResourceType.content;
   let payloadFiles: FileList;
 
+  let itemsSchemaContent: any = [
+    {
+      id: (+new Date()).toString(),
+      name: "root",
+      type: "object",
+      title: "title",
+      description: "",
+    },
+  ];
+
   async function handleSubmit(event: Event) {
     event.preventDefault();
 
     let response: any;
-    if (entryType === "content") {
+    if (new_resource_type === "schema") {
+      let body = content.json ? { ...content.json } : JSON.parse(content.text);
+      body = transformToProperBodyRequest(body);
+      body = body[0];
+      delete body.name;
+
+      const request_body = {
+        space_name,
+        request_type: RequestType.create,
+        records: [
+          {
+            resource_type: ResourceType.schema,
+            shortname: contentShortname === "" ? "auto" : contentShortname,
+            subpath,
+            attributes: {
+              is_active: true,
+              payload: {
+                content_type: "json",
+                schema_shortname: "meta_schema",
+                body,
+              },
+            },
+          },
+        ],
+      };
+      response = await request(request_body);
+    } else if (entryType === "content") {
       if (
         [null, "json", "text", "html", "markdown"].includes(selectedContentType)
       ) {
@@ -423,7 +464,7 @@
     isModalOpen = !isModalOpen;
     contentShortname = "";
   }}
-  size={"lg"}
+  size={new_resource_type === "schema" ? "xl" : "lg"}
 >
   <ModalHeader />
   <Form on:submit={async (e) => await handleSubmit(e)}>
@@ -440,25 +481,31 @@
               <option value={type}>{type}</option>
             {/each}
           </Input>
-          <Label class="mt-3">Content type</Label>
-          <Input bind:value={selectedContentType} type="select">
-            <option value={null}>{"None"}</option>
-            {#each Object.values(ContentType) as type}
-              <option value={type}>{type}</option>
-            {/each}
-          </Input>
-          <Label class="mt-3">Schema</Label>
-          <Input bind:value={selectedSchema} type="select">
-            <option value={null}>{"None"}</option>
-            {#await query( { space_name, type: QueryType.search, subpath: "/schema", search: "", retrieve_json_payload: true, limit: 99 } ) then schemas}
-              {#each schemas.records.map((e) => e.shortname) as schema}
-                <option value={schema}>{schema}</option>
+
+          {#if new_resource_type !== "schema"}
+            <Label class="mt-3">Content type</Label>
+            <Input bind:value={selectedContentType} type="select">
+              <option value={null}>{"None"}</option>
+              {#each Object.values(ContentType) as type}
+                <option value={type}>{type}</option>
               {/each}
-            {/await}
-          </Input>
-          {#if new_resource_type === "ticket"}
-            <Label class="mt-3">Workflow Shortname</Label>
-            <Input placeholder="Shortname..." bind:value={workflowShortname} />
+            </Input>
+            <Label class="mt-3">Schema</Label>
+            <Input bind:value={selectedSchema} type="select">
+              <option value={null}>{"None"}</option>
+              {#await query( { space_name, type: QueryType.search, subpath: "/schema", search: "", retrieve_json_payload: true, limit: 99 } ) then schemas}
+                {#each schemas.records.map((e) => e.shortname) as schema}
+                  <option value={schema}>{schema}</option>
+                {/each}
+              {/await}
+            </Input>
+            {#if new_resource_type === "ticket"}
+              <Label class="mt-3">Workflow Shortname</Label>
+              <Input
+                placeholder="Shortname..."
+                bind:value={workflowShortname}
+              />
+            {/if}
           {/if}
         {/if}
         {#if entryType === "content" && modalFlag === "create"}
@@ -466,7 +513,15 @@
           <Input placeholder="Shortname..." bind:value={contentShortname} />
           <hr />
 
-          {#if selectedContentType}
+          {#if new_resource_type === "schema"}
+            <SchemaEditor bind:content bind:items={itemsSchemaContent} />
+            <Row>
+              {#if errorContent}
+                <h3 class="mt-3">Error:</h3>
+                <Prism bind:code={errorContent} />
+              {/if}
+            </Row>
+          {:else if selectedContentType}
             <Label class="mt-3">Content</Label>
             {#if ["image", "python", "pdf", "audio", "video"].includes(selectedContentType)}
               <Input

@@ -36,7 +36,7 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import history_cols from "@/stores/management/list_cols_history.json";
   import metaTicketSchema from "@/validations/meta.ticket.json";
-  import { isDeepEqual } from "@/utils/compare";
+  import { isDeepEqual, removeEmpty } from "@/utils/compare";
   import checkAccess from "@/utils/checkAccess";
 
   let header_height: number;
@@ -273,7 +273,6 @@
     ) {
       get_schema();
     }
-    // console.log({ entry });
   }
 
   async function handleDelete() {
@@ -305,16 +304,14 @@
   }
 
   function beforeUnload(event) {
-    event.preventDefault();
-
     if (
-      !isDeepEqual(contentMeta, oldContentMeta) &&
-      !isDeepEqual(contentContent, oldContent)
+      !isDeepEqual(removeEmpty(contentMeta), removeEmpty(oldContentMeta)) &&
+      !isDeepEqual(removeEmpty(contentContent), removeEmpty(oldContent))
     ) {
+      event.preventDefault();
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        event.returnValue = "";
         return false;
       }
     }
@@ -333,7 +330,6 @@
       resolution,
       comment
     );
-    // console.log({ r: response.status });
 
     if (response.status === "success") {
       showToast(Level.info);

@@ -23,7 +23,7 @@
     var y = Math.floor(Math.random() * 20) + 30;
     if ($dir == "rtl") y -= 5;
 
-    if ('routify' in window /* FIXME && window.routify.inBrowser*/) {
+    if ("routify" in window /* FIXME && window.routify.inBrowser*/) {
       const ctx = canvas_div.getContext("2d");
       try {
         ctx.strokeRect(1, 1, 149, 59);
@@ -40,7 +40,6 @@
   export let valid = false;
   let invalid = true;
   function handleInput(event) {
-    //console.log("Random: ", random, "Input: ", event.target.value);
     if (event.target.value.length < 4) {
       // invalid = valid = undefined;
       invalid = true;
@@ -57,21 +56,22 @@
   }
 </script>
 
-<FormGroup row="{true}" class="mx-1 py-0">
-  <canvas bind:this="{canvas_div}" width="150" height="60"></canvas>
+<FormGroup row={true} class="mx-1 py-0">
+  <canvas bind:this={canvas_div} width="150" height="60" />
   <Label class="col-md-3 text-start px-1 py-0 m-0" for="captcha" size="sm">
     {$_("verfication")}
   </Label>
-  <img class="col-md-2" bind:this="{image}" alt="check me out" />
+  <img class="col-md-2" bind:this={image} alt="check me out" />
   <Input
     class="py-0 form-control form-control-sm"
     id="captcha"
     type="text"
-    placeholder="{$_('enter_code_here')}"
+    placeholder={$_("enter_code_here")}
     bsSize="lg"
-    invalid="{invalid}"
-    valid="{valid}"
-    on:input="{handleInput}" />
+    {invalid}
+    {valid}
+    on:input={handleInput}
+  />
 </FormGroup>
 
 <style>

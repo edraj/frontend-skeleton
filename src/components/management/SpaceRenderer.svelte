@@ -34,6 +34,7 @@
   import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import refresh_spaces from "@/stores/management/refresh_spaces";
+  import { isDeepEqual, removeEmpty } from "@/utils/compare";
   // import { search } from "../_stores/triggers";
 
   let header_height: number;
@@ -198,18 +199,11 @@
   }
 
   function beforeUnload(event: Event) {
-    event.preventDefault();
-
-    const x = content.json ? { ...content.json } : JSON.parse(content.text);
-    const y = oldContent.json
-      ? { ...oldContent.json }
-      : JSON.parse(oldContent.text);
-
-    if (JSON.stringify(x) !== JSON.stringify(y)) {
+    if (!isDeepEqual(removeEmpty(content), removeEmpty(oldContent))) {
+      event.preventDefault();
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        // Deprecated? event.returnValue = false;
         return false;
       }
     }
@@ -299,7 +293,8 @@
     <ButtonGroup size="sm" class="align-items-center">
       <span class="font-monospace">
         <small>
-          <span class="text-success">{space_name}</span> : <strong>{current_space.shortname}</strong>
+          <span class="text-success">{space_name}</span> :
+          <strong>{current_space.shortname}</strong>
           ({ResourceType.space})
         </small>
       </span>

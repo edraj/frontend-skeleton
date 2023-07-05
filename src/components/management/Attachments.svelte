@@ -26,8 +26,6 @@
   import { JSONEditor, JSONContent } from "svelte-jsoneditor";
 
   export let attachments: Array<any>;
-  // console.log({ attachments });
-
   export let space_name: string;
   export let subpath: string;
   export let parent_shortname: string;

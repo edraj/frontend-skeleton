@@ -25,27 +25,12 @@ export default defineConfig({
   },*/
   plugins: [
     VitePWA({
-      injectRegister: "auto",
-      workbox: {
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
+      injectRegister: null,
+      injectManifest: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2,ts,svelte}"],
-        clientsClaim: true,
-        skipWaiting: true,
-        runtimeCaching: [
-          {
-            urlPattern: /\/management\/content/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "management-content-cache",
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
       },
       registerType: "autoUpdate",
       manifest: {
@@ -66,6 +51,7 @@ export default defineConfig({
       },
       devOptions: {
         enabled: true,
+        type: "module",
       },
     }),
     /*svelteInspector({

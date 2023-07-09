@@ -26,7 +26,6 @@
     "bootstrap-icons": "^1.10.3",
     "cl-editor": "^2.3.0",
     "eslint": "^8.44.0",
-    "eslint-plugin-svelte": "^2.32.2",
     "marked": "^5.0.0",
     "mdsvex": "^0.10.0",
     "prismjs": "^1.29.0",

@@ -312,11 +312,11 @@ export async function get_profile() {
         JSON.stringify(data.records[0].attributes.permissions)
       );
     }
+    return data;
   } catch (error) {
     await signout();
+    return null;
   }
-
-  return data;
 }
 
 export type ApiQueryResponse = ApiResponse & {

@@ -6,22 +6,18 @@
   import { user } from "@/stores/user";
   import Login from "@/components/Login.svelte";
   import { useRegisterSW } from "virtual:pwa-register/svelte";
+  import Offline from "@/components/Offline.svelte";
 
   let window_height: number;
   let header_height: number;
   let footer_height: number;
 
-  $: {
-    if (navigator.onLine) {
-      console.log("online");
-    } else {
-      console.log("offline");
-    }
-  }
+  let isOffline = false;
 
   const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
     onRegistered(swr) {
-      console.log(`SW registered: ${swr}`);
+      console.log(isOffline, `SW registered: ${swr}`);
+      isOffline = !navigator.onLine;
     },
     onRegisterError(error) {
       console.log("SW registration error", error);
@@ -35,30 +31,14 @@
     offlineReady.set(false);
     needRefresh.set(false);
   }
-  $: toast = $offlineReady || $needRefresh;
-  $: {
-    console.log({ toast });
-  }
 </script>
 
 <svelte:window bind:innerHeight={window_height} />
-
-{#if toast}
-  <div class="pwa-toast" role="alert">
-    <div class="message">
-      {#if $offlineReady}
-        <span> App ready to work offline </span>
-      {:else}
-        <span> New content available, click on reload button to update. </span>
-      {/if}
-    </div>
-    {#if $needRefresh}
-      <button on:click={() => updateServiceWorker(true)}> Reload </button>
-    {/if}
+{#if isOffline}
+  <div class="container-fluid d-flex align-items-start py-3 h-100">
+    <Offline />
   </div>
-{/if}
-
-{#if !$user || !$user.signedin}
+{:else if !$user || !$user.signedin}
   <div
     class="container-fluid d-flex align-items-start py-3 h-100"
     id="login-container"

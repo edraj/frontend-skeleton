@@ -9,27 +9,16 @@
     Input,
     Button,
   } from "sveltestrap";
-  import {signin} from "@/stores/user";
+  import { signin } from "@/stores/user";
   import { _ } from "@/i18n";
 
-  let username : string;
-  let password : string;
+  let username: string;
+  let password: string;
 
   async function handleSubmit(event: Event) {
     event.preventDefault();
 
     signin(username, password);
-    /*
-    let resp = await login(username, password);
-    let user = resp.records[0];
-    if (user.attributes?.displayname?.en) {
-      user.displayname = user.attributes.displayname.en;
-    } else {
-      user.displayname = user.shortname;
-    }
-
-    signedin_user.login(user);
-    */
   }
 </script>
 

@@ -1,6 +1,9 @@
 /// <reference lib="WebWorker" />
 
 // export empty type because of tsc --isolatedModules flag
+import { precacheAndRoute } from "workbox-precaching/precacheAndRoute";
+precacheAndRoute(self.__WB_MANIFEST);
+
 export type {};
 declare const self: ServiceWorkerGlobalScope;
 

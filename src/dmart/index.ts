@@ -1,5 +1,8 @@
+import { signout, user } from "@/stores/user";
+
 import axios from "axios";
 import { website } from "../config.js";
+
 axios.defaults.withCredentials = true;
 
 export enum Status {
@@ -296,19 +299,21 @@ export async function logout() {
 }
 
 export async function get_profile() {
-  const { data } = await axios.get<ProfileResponse>(
-    website.backend + "/user/profile",
-    {
-      headers,
-    }
-  );
-  if (data.status === "success") {
-    localStorage.setItem(
-      "permissions",
-      JSON.stringify(data.records[0].attributes.permissions)
+  try {
+    const { data } = await axios.get<ProfileResponse>(
+      website.backend + "/user/profile",
+      {
+        headers,
+      }
     );
-  } else {
-    await logout();
+    if (data.status === "success") {
+      localStorage.setItem(
+        "permissions",
+        JSON.stringify(data.records[0].attributes.permissions)
+      );
+    }
+  } catch (error) {
+    await signout();
   }
 
   return data;

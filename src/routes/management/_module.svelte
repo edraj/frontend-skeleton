@@ -15,6 +15,36 @@
   import Header from "@/components/management/Header.svelte";
   import Sidebar from "@/components/management/Sidebar.svelte";
   import { get_profile } from "@/dmart";
+  import { useRegisterSW } from "virtual:pwa-register/svelte";
+
+  $: {
+    if (navigator.onLine) {
+      console.log("online");
+    } else {
+      console.log("offline");
+    }
+  }
+
+  const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
+    onRegistered(swr) {
+      console.log(`SW registered: ${swr}`);
+    },
+    onRegisterError(error) {
+      console.log("SW registration error", error);
+    },
+    onOfflineReady() {
+      console.log("SW ready for offline");
+      setTimeout(() => close(), 5000);
+    },
+  });
+  function close() {
+    offlineReady.set(false);
+    needRefresh.set(false);
+  }
+  $: toast = $offlineReady || $needRefresh;
+  $: {
+    console.log({ toast });
+  }
 
   let window_height: number;
   let header_height: number;

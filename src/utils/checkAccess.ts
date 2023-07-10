@@ -46,7 +46,6 @@ export default function checkAccess(
     space,
     resourceType
   );
-  console.log({ scopedPermissionsKeys });
 
   if (subpath.startsWith("/")) {
     itemSubpath = subpath.slice(1);

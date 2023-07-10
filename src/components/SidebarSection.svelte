@@ -19,7 +19,6 @@
   section.path.push(section.id);
   async function toggle() {
     section.expanded = !section.expanded;
-    //console.log("Expanding: ", path, expanded);
   }
 
   // type = type; // silence the warning

@@ -17,6 +17,7 @@
   import { url } from "@roxi/routify";
   import { active_section } from "@/stores/management/active_section";
   import sections from "@/stores/management/sections.json";
+  import { fly } from "svelte/transition";
 
   let search_value = "";
   function handleSearch(e) {
@@ -26,7 +27,19 @@
   function handleInput(e) {
     search_value = e.target.value;
   }
+  let isOnline = navigator.onLine;
+  function handleNetStatus() {
+    isOnline = navigator.onLine;
+  }
 </script>
+
+<svelte:window on:online={handleNetStatus} on:offline={handleNetStatus} />
+
+{#if !isOnline}
+  <div class="d-flex justify-content-center bg-warning" transition:fly>
+    <p class="pt-3 fs-5">Network issue</p>
+  </div>
+{/if}
 
 <Navbar class="py-0 px-0">
   <Nav tabs class="align-items-center w-100" style="background-color: #f4f4f4;">

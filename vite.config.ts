@@ -1,9 +1,10 @@
+import { VitePWA } from "vite-plugin-pwa";
 /// <reference types="vitest" />
 import { defineConfig } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { mdsvex } from "mdsvex";
 import preprocess from "svelte-preprocess";
 import routify from "@roxi/routify/vite-plugin";
-import { mdsvex } from "mdsvex";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 // import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
 // import path from "path";
 
@@ -14,7 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       /*'@': path.resolve(__dirname, './src'),*/
-      '@':  process.cwd() + '/src'
+      "@": process.cwd() + "/src",
     },
   },
   /*resolve: {
@@ -23,6 +24,36 @@ export default defineConfig({
     }
   },*/
   plugins: [
+    VitePWA({
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
+      injectRegister: null,
+      injectManifest: {
+        globPatterns: ["**/*.{js,css,html,svg,png,woff2,ts,svelte}"],
+      },
+      registerType: "autoUpdate",
+      manifest: {
+        background_color: "#ffffff",
+        theme_color: "#7E1F86",
+        name: "Unixfy.net",
+        short_name: "Unixfy.net",
+        start_url: "/",
+        display: "standalone",
+        icons: [
+          {
+            src: "/images/largeicon.png",
+            sizes: "1000x1000",
+            type: "image/png",
+            purpose: "maskable any",
+          },
+        ],
+      },
+      devOptions: {
+        enabled: true,
+        type: "module",
+      },
+    }),
     /*svelteInspector({
             // toggleKeyCombo: 'meta-shift',
       showToggleButton: 'always',
@@ -37,28 +68,28 @@ export default defineConfig({
         hydratable: !!process.env.ROUTIFY_SSR_ENABLE,
       },
       extensions: [".md", ".svelte"],
-      preprocess: [
-        preprocess(), 
-        mdsvex({ extension: "md" })
-      ],
+      preprocess: [preprocess(), mdsvex({ extension: "md" })],
       onwarn: (warning, defaultHandler) => {
         // Ignore a11y-click-events-have-key-events warning from sveltestrap
-        if ( warning.code === "a11y-click-events-have-key-events" || warning.filename?.startsWith("/node_modules/svelte-jsoneditor"))
+        if (
+          warning.code?.startsWith("a11y") ||
+          // warning.filename?.startsWith("/node_modules/svelte-jsoneditor")
+          warning.filename?.startsWith("/node_modules")
+        )
           return;
-        if(typeof defaultHandler != "undefined")
-          defaultHandler(warning);
+        if (typeof defaultHandler != "undefined") defaultHandler(warning);
       },
     }),
   ],
   build: {
-    chunkSizeWarningLimit: 900
+    chunkSizeWarningLimit: 900,
   },
   server: { port: 1337 },
   test: {
-      environment: 'jsdom',
-      globals: true,
+    environment: "jsdom",
+    globals: true,
   },
   ssr: {
-		noExternal: ['@popperjs/core']
-	}
-})
+    noExternal: ["@popperjs/core"],
+  },
+});

@@ -1,13 +1,5 @@
 <!-- routify:meta reset -->
 
-<!--script context="module" lang="ts">
-    export const load = _ => {
-        return {
-            redirect: '/login'
-        }
-    }
-</script-->
-
 <script lang="ts">
   import { Col, Container, Row } from "sveltestrap";
   import { user } from "@/stores/user";
@@ -15,6 +7,28 @@
   import Header from "@/components/management/Header.svelte";
   import Sidebar from "@/components/management/Sidebar.svelte";
   import { get_profile } from "@/dmart";
+  import { useRegisterSW } from "virtual:pwa-register/svelte";
+  import Offline from "@/components/Offline.svelte";
+
+  let isOffline = false;
+
+  const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
+    onRegistered(swr) {
+      console.log(`SW registered: ${swr}`);
+      isOffline = !navigator.onLine;
+    },
+    onRegisterError(error) {
+      console.log("SW registration error", error);
+    },
+    onOfflineReady() {
+      console.log("SW ready for offline");
+      setTimeout(() => close(), 5000);
+    },
+  });
+  function close() {
+    offlineReady.set(false);
+    needRefresh.set(false);
+  }
 
   let window_height: number;
   let header_height: number;
@@ -26,7 +40,11 @@
 
 <svelte:window bind:innerHeight={window_height} />
 
-{#if !$user || !$user.signedin}
+{#if isOffline}
+  <div class="container-fluid d-flex align-items-start py-3 h-100">
+    <Offline />
+  </div>
+{:else if !$user || !$user.signedin}
   <div
     class="container-fluid d-flex align-items-start py-3 h-100"
     id="login-container"

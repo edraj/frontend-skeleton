@@ -16,14 +16,10 @@
     }
 
     const fd = new FormData(event.target);
-    //console.log("Event: ", event.target[1]);
-    //console.log("Email: ", fd.get("email"));
     let record = {};
     for (var pair of fd.entries()) {
-      //console.log("key ", pair[0], "value: ", pair[1]);
       record[pair[0]] = pair[1];
     }
-    //console.log("Form data: ", fd);
     dispatch("response", record);
   }
 
@@ -32,9 +28,9 @@
   // needs-validation
 </script>
 
-<Form on:submit="{onSubmit}" class="needs-validation">
+<Form on:submit={onSubmit} class="needs-validation">
   {#if title && title.length != 0}
-    <Row form="{true}">
+    <Row form={true}>
       <Col class="text-center">
         <h4>{title}</h4>
       </Col>
@@ -42,9 +38,9 @@
   {/if}
   <slot />
   {#if captcha}
-    <Captcha bind:valid="{valid_captcha}" />
+    <Captcha bind:valid={valid_captcha} />
   {/if}
-  <Row form="{true}">
+  <Row form={true}>
     <Col class="text-center">
       <Button outline type="submit">{$_("submit")}</Button>
     </Col>

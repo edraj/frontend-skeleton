@@ -1,25 +1,43 @@
-export function isDeepEqual(object1: any, object2: any) {
-  const objKeys1 = Object.keys(object1);
-  const objKeys2 = Object.keys(object2);
-
-  if (objKeys1.length !== objKeys2.length) return false;
-
-  for (var key of objKeys1) {
-    const value1 = object1[key];
-    const value2 = object2[key];
-
-    const isObjects = isObject(value1) && isObject(value2);
-
-    if (
-      (isObjects && !isDeepEqual(value1, value2)) ||
-      (!isObjects && value1 !== value2)
-    ) {
+export function isDeepEqual(x, y) {
+  if (x === y) {
+    return true;
+  } else if (
+    typeof x == "object" &&
+    x != null &&
+    typeof y == "object" &&
+    y != null
+  ) {
+    if (Object.keys(x).length != Object.keys(y).length) {
       return false;
     }
+
+    for (var prop in x) {
+      if (y.hasOwnProperty(prop)) {
+        if (!isDeepEqual(x[prop], y[prop])) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    return true;
+  } else {
+    return false;
   }
-  return true;
 }
 
-const isObject = (object: any) => {
-  return object != null && typeof object === "object";
+export const removeEmpty = (obj) => {
+  let newObj = {};
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] === Object(obj[key])) newObj[key] = removeEmpty(obj[key]);
+    else if (
+      obj[key] !== undefined &&
+      typeof obj[key] === "string" &&
+      obj[key].trim().length != 0
+    ) {
+      newObj[key] = obj[key];
+    }
+  });
+  return newObj;
 };

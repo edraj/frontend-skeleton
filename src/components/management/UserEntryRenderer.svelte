@@ -35,7 +35,7 @@
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import history_cols from "@/stores/management/list_cols_history.json";
   import "bootstrap";
-  import { isDeepEqual } from "@/utils/compare";
+  import { isDeepEqual, removeEmpty } from "@/utils/compare";
   import metaUserSchema from "@/validations/meta.user.json";
   import checkAccess from "@/utils/checkAccess";
 
@@ -74,8 +74,6 @@
   let user: any = { displayname: { ar: "", en: "", kd: "" } };
 
   onMount(async () => {
-    console.log({ entry });
-
     user = {
       ...user,
       email: entry?.email,
@@ -128,7 +126,6 @@
       alert("A user must have a password");
       return;
     }
-    // console.log({ data }, data.password.startsWith("$2b$12$"));
 
     if (data.password.startsWith("$2b$12$")) {
       delete data.password;
@@ -317,20 +314,17 @@
   });
 
   function beforeUnload(event) {
-    event.preventDefault();
-
     if (
-      !isDeepEqual(contentMeta, oldContentMeta) &&
-      !isDeepEqual(contentContent, oldContentContent)
+      !isDeepEqual(removeEmpty(contentMeta), removeEmpty(oldContentMeta)) &&
+      !isDeepEqual(removeEmpty(contentContent), removeEmpty(oldContentContent))
     ) {
+      event.preventDefault();
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        event.returnValue = "";
         return false;
       }
     }
-    return true;
   }
 
   // function handleInputChange(e) {
@@ -372,7 +366,6 @@
 
   $: user &&
     (() => {
-      console.log("user changed", { user });
       contentMeta.json = { ...contentMeta.json, ...user };
       contentMeta.json.displayname = {
         ...contentMeta.json.displayname,

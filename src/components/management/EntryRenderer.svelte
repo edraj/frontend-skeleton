@@ -33,18 +33,17 @@
   import Prism from "../Prism.svelte";
   import { JSONEditor, Validator, createAjvValidator } from "svelte-jsoneditor";
   import { status_line } from "@/stores/management/status_line";
+  import { authToken } from "@/stores/management/auth";
   import { timeAgo } from "@/utils/timeago";
   import { showToast, Level } from "@/utils/toast";
   import { faSave } from "@fortawesome/free-regular-svg-icons";
   import history_cols from "@/stores/management/list_cols_history.json";
   import refresh_spaces from "@/stores/management/refresh_spaces";
   import { website } from "@/config";
-  // import { search } from "../_stores/triggers";
   import HtmlEditor from "./HtmlEditor.svelte";
   import MarkdownEditor from "./MarkdownEditor.svelte";
-  import { isDeepEqual } from "@/utils/compare";
+  import { isDeepEqual, removeEmpty } from "@/utils/compare";
   import metaContentSchema from "@/validations/meta.content.json";
-  import JsonSchemaChild from "./JsonSchemaChild.svelte";
   import SchemaEditor, {
     transformToProperBodyRequest,
   } from "./SchemaEditor.svelte";
@@ -75,6 +74,11 @@
   let validator: Validator = createAjvValidator({ schema: {} });
   let entryContent: any;
 
+  let ws = new WebSocket(`${website.websocket}?token=${$authToken}`);
+  function isOpen(ws: any) {
+    return ws.readyState === ws.OPEN;
+  }
+
   onMount(async () => {
     const cpy = JSON.parse(JSON.stringify(entry));
     if (entry?.payload?.content_type === "json") {
@@ -84,37 +88,41 @@
       contentContent.json = cpy?.payload?.body ?? {};
       contentContent = { ...contentContent };
     } else {
-      // console.log(cpy?.payload);
-      // console.log(cpy?.payload?.body);
       contentContent = cpy?.payload?.body;
     }
     delete cpy?.payload?.body;
     contentMeta.json = cpy;
     contentMeta = { ...contentMeta };
     oldContentMeta = { ...contentMeta };
+
+    ws.onopen = () => {
+      ws.send(
+        JSON.stringify({
+          type: "notification_subscription",
+          space_name: space_name,
+          subpath: subpath,
+        })
+      );
+    };
+
+    ws.onmessage = (event) => {
+      console.log({ event });
+
+      const data = JSON.parse(event?.data ?? "");
+      if (data?.message?.title) {
+        console.log("Title", data?.message);
+      }
+    };
   });
 
-  // separating the content by 2 calls
-  // onMount(async () => {
-  //   contentMeta.json = await retrieve_entry(
-  //     resource_type,
-  //     space_name,
-  //     subpath,
-  //     entry.shortname,
-  //     false,
-  //     false
-  //   );
-  //   contentContent.json = await get_payload(
-  //     resource_type,
-  //     space_name,
-  //     subpath,
-  //     entry.shortname
-  //   );
-  //   content.json = contentMeta.json;
-  //   content.json["patload"]["body"] = contentContent.json;
-  // });
+  onDestroy(() => {
+    status_line.set("");
 
-  onDestroy(() => status_line.set(""));
+    if (isOpen(ws)) {
+      ws.send(JSON.stringify({ type: "notification_unsubscribe" }));
+    }
+    ws.close();
+  });
   status_line.set(
     `<small>Last updated: <strong>${timeAgo(
       new Date(entry.updated_at)
@@ -384,7 +392,7 @@
       showToast(Level.info);
       contentShortname = "";
       isModalOpen = false;
-      refresh = !refresh;
+      // refresh = !refresh;
     } else {
       showToast(Level.warn);
     }
@@ -436,14 +444,12 @@
     }
   }
 
-  function beforeUnload(event: Event) {
-    event.preventDefault();
-
-    if (!isDeepEqual(content, oldContentMeta)) {
+  function beforeUnload(event) {
+    if (!isDeepEqual(removeEmpty(contentMeta), removeEmpty(oldContentMeta))) {
+      event.preventDefault();
       if (
         confirm("You have unsaved changes, do you want to leave ?") === false
       ) {
-        // Deprecated event.returnValue = false;
         return false;
       }
     }

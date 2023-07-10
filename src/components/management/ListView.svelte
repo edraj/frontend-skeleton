@@ -150,6 +150,8 @@
     }
   }
 
+  let paginationBottomInfoFrom = 0;
+  let paginationBottomInfoTo = 0;
   $: {
     if (objectDatatable.numberRowsPerPage != numberRowsPerPage) {
       numberRowsPerPage = objectDatatable.numberRowsPerPage;
@@ -159,6 +161,15 @@
       numberActivePage = objectDatatable.numberActivePage;
       fetchPageRecords();
     }
+
+    paginationBottomInfoFrom =
+      objectDatatable.numberRowsPerPage *
+        (objectDatatable.numberActivePage - 1) +
+      1;
+    paginationBottomInfoTo =
+      objectDatatable.numberRowsPerPage * objectDatatable.numberActivePage;
+    paginationBottomInfoTo =
+      paginationBottomInfoTo >= total ? total : paginationBottomInfoTo;
   }
 </script>
 
@@ -236,11 +247,19 @@
             class="d-flex justify-content-center justify-content-md-end mb-5"
           >
             {#key propNumberOfPages}
-              <Pagination
-                bind:propDatatable={objectDatatable}
-                bind:propNumberOfPages
-                propSize="default"
-              />
+              <div
+                class="d-flex justify-content-between align-items-center w-100"
+              >
+                <p class="p-0 m-0">
+                  Showing {paginationBottomInfoFrom} to {paginationBottomInfoTo}
+                  of {total} entries
+                </p>
+                <Pagination
+                  bind:propDatatable={objectDatatable}
+                  bind:propNumberOfPages
+                  propSize="default"
+                />
+              </div>
             {/key}
           </div>
         {/if}

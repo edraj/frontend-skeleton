@@ -3,7 +3,6 @@
   import { ResourceType, retrieve_entry } from "@/dmart";
   import { params } from "@roxi/routify";
   const resource_type: ResourceType = ResourceType[$params.resource_type];
-  console.log($params, resource_type);
 </script>
 
 {#await retrieve_entry(resource_type, $params.space_name, $params.subpath.replaceAll("-", "/"), $params.shortname, true, true)}

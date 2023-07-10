@@ -1,6 +1,7 @@
 import { Writable, writable } from "svelte/store";
 import { login, logout } from "@/dmart";
 
+import { authToken } from "@/stores/management/auth";
 import { getLocaleFromNavigator } from "svelte-i18n";
 
 enum Locale {
@@ -43,6 +44,9 @@ export async function signin(username: string, password: string) {
   const response = await login(username, password);
   if (response.status == "success" && response.records.length > 0) {
     const account = response.records[0];
+    const auth = account.attributes.access_token;
+    authToken.set(auth);
+
     const _user: User = {
       signedin: true,
       locale: Locale.ar,
@@ -61,9 +65,7 @@ export async function signin(username: string, password: string) {
 export async function signout() {
   logout();
   user.set(signedout);
-  // localStorage.removeItem(KEY);
   localStorage.setItem(KEY, JSON.stringify(signedout));
-  // console.log("Completed signout process");
 }
 
 export function switchLocale(locale: Locale) {

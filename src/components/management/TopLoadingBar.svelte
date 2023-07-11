@@ -1,11 +1,18 @@
 <script context="module" lang="ts">
   import { writable } from "svelte/store";
-  export const isLoading = writable(false);
+  export const isLoading = writable(0);
 </script>
 
 <script>
-  let isVisible = false;
+  let isVisible = 0;
   isLoading.subscribe((v) => {
+    // if (v === 0) {
+    //   setTimeout(() => {
+    //     isVisible = v;
+    //   }, 1000);
+    // } else {
+    //   isVisible = v;
+    // }
     isVisible = v;
   });
 </script>

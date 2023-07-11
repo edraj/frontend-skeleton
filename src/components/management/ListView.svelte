@@ -14,6 +14,7 @@
   import { search } from "@/stores/management/triggers";
   import { active_section } from "@/stores/management/active_section.js";
   import { goto } from "@roxi/routify";
+  import { fade } from "svelte/transition";
 
   let quickPreview = false;
 
@@ -181,7 +182,7 @@
   {:then}
     <Engine bind:propDatatable={objectDatatable} />
     <div class="container-sm">
-      <div class="mx-3">
+      <div class="mx-3" transition:fade={{ delay: 25 }}>
         <div class="row align-items-center mb-2">
           <div class="col-12 col-md-6 text-md-start text-center mb-1 mb-md-0">
             <div class="d-md-flex align-items-md-center">

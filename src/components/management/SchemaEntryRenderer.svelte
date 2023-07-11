@@ -23,6 +23,7 @@
   import SchemaEditor, {
     transformToProperBodyRequest,
   } from "./SchemaEditor.svelte";
+  import BreadCrumbLite from "./BreadCrumbLite.svelte";
 
   let header_height: number;
 
@@ -246,17 +247,13 @@
 
 <div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
   <Nav class="w-100">
-    <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace">
-        <small>
-          <span class="text-success">{space_name}</span>/<span
-            class="text-primary">{subpath}</span
-          >
-          : <strong>{entry.shortname}</strong>
-          ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
-        </small>
-      </span>
-    </ButtonGroup>
+    <BreadCrumbLite
+      {space_name}
+      {subpath}
+      {resource_type}
+      {schema_name}
+      shortname={entry.shortname}
+    />
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>
 

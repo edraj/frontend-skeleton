@@ -45,13 +45,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "content_type",
-        "schema_shortname",
-        "body",
-        "last_validated",
-        "validation_status"
-      ]
+      "required": ["content_type", "schema_shortname"]
     }
   },
   "required": [

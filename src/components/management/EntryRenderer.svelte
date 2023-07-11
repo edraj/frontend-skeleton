@@ -93,6 +93,7 @@
       contentContent = cpy?.payload?.body;
     }
     delete cpy?.payload?.body;
+    delete cpy?.attachments;
     contentMeta.json = cpy;
     contentMeta = { ...contentMeta };
     oldContentMeta = { ...contentMeta };

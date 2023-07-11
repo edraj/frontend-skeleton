@@ -38,6 +38,8 @@
   import { isDeepEqual, removeEmpty } from "@/utils/compare";
   import metaUserSchema from "@/validations/meta.user.json";
   import checkAccess from "@/utils/checkAccess";
+  import { fade } from "svelte/transition";
+  import BreadCrumbLite from "./BreadCrumbLite.svelte";
 
   let header_height: number;
   export let entry: ResponseEntry;
@@ -447,19 +449,19 @@
   </Form>
 </Modal>
 
-<div bind:clientHeight={header_height} class="pt-3 pb-2 px-2">
+<div
+  bind:clientHeight={header_height}
+  class="pt-3 pb-2 px-2"
+  transition:fade={{ delay: 25 }}
+>
   <Nav class="w-100">
-    <ButtonGroup size="sm" class="align-items-center">
-      <span class="font-monospace">
-        <small>
-          <span class="text-success">{space_name}</span>/<span
-            class="text-primary">{subpath}</span
-          >
-          : <strong>{entry.shortname}</strong>
-          ({resource_type}{#if schema_name}&nbsp;: {schema_name}{/if})
-        </small>
-      </span>
-    </ButtonGroup>
+    <BreadCrumbLite
+      {space_name}
+      {subpath}
+      {resource_type}
+      {schema_name}
+      shortname={entry.shortname}
+    />
     <ButtonGroup size="sm" class="ms-auto align-items-center">
       <span class="ps-2 pe-1"> {$_("views")} </span>
       {#if resource_type === ResourceType.folder}
@@ -595,6 +597,7 @@
 <div
   class="px-1 pb-1 tab-content"
   style="height: calc(100% - {header_height}px); overflow: hidden auto;"
+  transition:fade={{ delay: 25 }}
 >
   <div class="h-100 tab-pane" class:active={tab_option === "list"}>
     <ListView {space_name} {subpath} />
@@ -649,7 +652,7 @@
                 class="w-25"
                 type="text"
                 name="msisdn"
-                placeholder="Email..."
+                placeholder="MSISDN..."
               />
             </FormGroup>
             <FormGroup class="col-4">
@@ -666,13 +669,24 @@
           </div>
           <div class="row">
             <FormGroup class="col-4">
-              <Label>Arabic Displayname</Label>
+              <Label>English Displayname</Label>
               <Input
                 style="width: 100% !important"
                 bind:value={user.displayname.en}
                 class="w-25"
                 type="text"
                 name="displayname_en"
+                placeholder="English Displayname..."
+              />
+            </FormGroup>
+            <FormGroup class="col-4">
+              <Label>Arabic Displayname</Label>
+              <Input
+                style="width: 100% !important"
+                bind:value={user.displayname.ar}
+                class="w-25"
+                type="text"
+                name="displayname_ar"
                 placeholder="Arabic Displayname..."
               />
             </FormGroup>
@@ -680,22 +694,11 @@
               <Label>Kurdish Displayname</Label>
               <Input
                 style="width: 100% !important"
-                bind:value={user.displayname.ar}
-                class="w-25"
-                type="text"
-                name="displayname_ar"
-                placeholder="Kurdish Displayname..."
-              />
-            </FormGroup>
-            <FormGroup class="col-4">
-              <Label>English Displayname</Label>
-              <Input
-                style="width: 100% !important"
                 bind:value={user.displayname.kd}
                 class="w-25"
                 type="text"
                 name="displayname_kd"
-                placeholder="English Displayname..."
+                placeholder="Kurdish Displayname..."
               />
             </FormGroup>
           </div>
@@ -725,7 +728,9 @@
               />
             </FormGroup>
           </div>
-          <Button style="width: 25% !important" type="submit">Save</Button>
+          <Button color="primary" style="width: 25% !important" type="submit"
+            >Save</Button
+          >
         </Form>
 
         <JSONEditor

@@ -8,11 +8,11 @@ axios.defaults.withCredentials = true;
 
 axios.interceptors.request.use(
   function (config) {
-    isLoading.set(true);
+    isLoading.update((n) => n + 1);
     return config;
   },
   function (error) {
-    isLoading.set(false);
+    isLoading.update((n) => n - 1);
     return Promise.reject(error);
   }
 );
@@ -20,11 +20,11 @@ axios.interceptors.request.use(
 // Add a response interceptor
 axios.interceptors.response.use(
   function (response) {
-    isLoading.set(false);
+    isLoading.update((n) => n - 1);
     return response;
   },
   function (error) {
-    isLoading.set(false);
+    isLoading.update((n) => n - 1);
     return Promise.reject(error);
   }
 );

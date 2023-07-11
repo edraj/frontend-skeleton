@@ -1,9 +1,33 @@
 import { signout, user } from "@/stores/user";
 
 import axios from "axios";
+import { isLoading } from "@/components/management/TopLoadingBar.svelte";
 import { website } from "../config.js";
 
 axios.defaults.withCredentials = true;
+
+axios.interceptors.request.use(
+  function (config) {
+    isLoading.set(true);
+    return config;
+  },
+  function (error) {
+    isLoading.set(false);
+    return Promise.reject(error);
+  }
+);
+
+// Add a response interceptor
+axios.interceptors.response.use(
+  function (response) {
+    isLoading.set(false);
+    return response;
+  },
+  function (error) {
+    isLoading.set(false);
+    return Promise.reject(error);
+  }
+);
 
 export enum Status {
   success = "success",

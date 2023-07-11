@@ -9,6 +9,7 @@
   import { get_profile } from "@/dmart";
   import { useRegisterSW } from "virtual:pwa-register/svelte";
   import Offline from "@/components/Offline.svelte";
+  import TopLoadingBar from "@/components/management/TopLoadingBar.svelte";
 
   let isOffline = false;
 
@@ -39,6 +40,8 @@
 </script>
 
 <svelte:window bind:innerHeight={window_height} />
+
+<TopLoadingBar />
 
 {#if isOffline}
   <div class="container-fluid d-flex align-items-start py-3 h-100">

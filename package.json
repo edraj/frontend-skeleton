@@ -43,7 +43,7 @@
     "workbox-window": "^7.0.0"
   },
   "dependencies": {
-    "svelte-datatables-net": "^0.0.11",
+    "svelte-datatables-net": "https://github.com/edraj/svelte-datatables-net",
     "sveltestrap": "5.10.0",
     "vite-plugin-pwa": "^0.16.4"
   }

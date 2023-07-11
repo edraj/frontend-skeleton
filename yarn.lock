@@ -3440,10 +3440,9 @@ p-locate@^5.0.0:
   dependencies:
     p-limit "^3.0.2"
 
-pagination-svelte@^0.1.4:
+"pagination-svelte@https://github.com/edraj/pagination-svelte":
   version "0.1.4"
-  resolved "https://registry.yarnpkg.com/pagination-svelte/-/pagination-svelte-0.1.4.tgz#3aa64e20f187f2ba1d581928a9f8bf39050dbf6b"
-  integrity sha512-RYdaFbgXIRzV36ONUTS91CAuzvOFT8sy7+lDHlAOEG4pwgegFIcrQo6t9sbEIThfmqwsAW5/ldFOhCvQlGIrQg==
+  resolved "https://github.com/edraj/pagination-svelte#bddf5979128b7039c2c057a7b8ca66a3852108f6"
 
 parent-module@^1.0.0:
   version "1.0.1"
@@ -3986,12 +3985,11 @@ svelte-check@^3.4.5:
     svelte-preprocess "^5.0.3"
     typescript "^5.0.3"
 
-svelte-datatables-net@^0.0.11:
+"svelte-datatables-net@https://github.com/edraj/svelte-datatables-net":
   version "0.0.11"
-  resolved "https://registry.yarnpkg.com/svelte-datatables-net/-/svelte-datatables-net-0.0.11.tgz#957555c1ba363d4d1d73d68d8edf1e7e28051123"
-  integrity sha512-Cd8zBDreV/5dggC5oM7sL/EvYhKn6wjFIGIka/W4MGTJ1ywp6phvQNYRYeWY/IfWPytSkjl1HkZSzgI8nsPoWQ==
+  resolved "https://github.com/edraj/svelte-datatables-net#f4c741a790bf1b10fc4954e0855dded8169b7150"
   dependencies:
-    pagination-svelte "^0.1.4"
+    pagination-svelte "https://github.com/edraj/pagination-svelte"
 
 svelte-floating-ui@1.2.8:
   version "1.2.8"

@@ -258,6 +258,7 @@
                 <Pagination
                   bind:propDatatable={objectDatatable}
                   bind:propNumberOfPages
+                  maxPageDisplay={5}
                   propSize="default"
                 />
               </div>
